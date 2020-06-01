@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/pages/home.xhtml">
+
+	<ui:define name="content">
+		<h:form id="menuformid">
+			<h3 style="margin: 0px">Mô tả công việc [#{describeJobBean.describeJob.positionJob.name}]</h3>
+			<div style="float: right; margin-top: -20px;">
+				<p:commandButton type="submit" value="Lưu/cập nhật" process="@form"
+					action="#{describeJobBean.createOrUpdate()}" update=":messages"
+					icon="ui-icon-disk" />
+			</div>
+			<p:separator />
+			<p:fieldset legend="1. Tóm tắt công việc" toggleable="true"
+				toggleSpeed="500" collapsed="false"
+				style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;"
+				styleClass="toggleabldetail">
+				<p:dataTable var="item" id="tborverviewJobs"
+					style="width:50%;margin:10px; margin-left: 100px" emptyMessage=""
+					value="#{describeJobBean.describeJob.orverviewJobs}">
+					<p:column headerText="STT" width="20">
+						<p:inputTextarea value="#{item.no}" rows="1"
+							style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Nội dung">
+						<p:inputTextarea value="#{item.content}" rows="1">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandLink value="Thêm dòng"
+							action="#{describeJobBean.addRow('orverview')}"
+							style="float:left" update="tborverviewJobs" />
+						<div style="clear: both" />
+					</f:facet>
+				</p:dataTable>
+			</p:fieldset>
+			<p:fieldset legend="2. Nhiệm vụ và trách nhiệm chính"
+				toggleable="true" toggleSpeed="500" collapsed="true"
+				style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;"
+				styleClass="toggleabldetail">
+				<p:dataTable var="item" id="tbmission"
+					style="width:80%;margin:10px; margin-left: 100px" emptyMessage=""
+					value="#{describeJobBean.describeJob.missionResponsibilities}">
+					<p:column headerText="STT" width="10">
+						<p:inputTextarea value="#{item.no}" rows="1"
+							style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Nội dung" width="200">
+						<p:inputTextarea value="#{item.content}" rows="1">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Tần suất" width="100">
+						<p:inputTextarea value="#{item.frequencyRate}" rows="1">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Trọng số(%)" width="40">
+						<p:inputNumber value="#{item.weighted}" symbol="%" style="text-align:center"
+							decimalPlaces="0" symbolPosition="s">
+							<p:ajax process="@this" />
+						</p:inputNumber>
+					</p:column>
+					<p:column headerText="Tiêu chí đánh giá" width="80">
+						<p:inputTextarea value="#{item.criterion}" rows="1"
+							style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandLink value="Thêm dòng"
+							action="#{describeJobBean.addRow('mission')}" style="float:left"
+							update="tbmission" />
+						<div style="clear: both" />
+					</f:facet>
+				</p:dataTable>
+
+			</p:fieldset>
+
+			<p:fieldset legend="3. Nhiệm vụ và trách nhiệm khác"
+				toggleable="true" toggleSpeed="500" collapsed="true"
+				style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;"
+				styleClass="toggleabldetail">
+				<p:dataTable var="item" id="tbmissionAno"
+					style="width:80%;margin:10px; margin-left: 100px" emptyMessage=""
+					value="#{describeJobBean.describeJob.missionAnothers}">
+					<p:column headerText="STT" width="10">
+						<p:inputTextarea value="#{item.no}" rows="1"
+							style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Nội dung" width="200">
+						<p:inputTextarea value="#{item.content}" rows="1">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Tần suất" width="100">
+						<p:inputTextarea value="#{item.frequencyRate}" rows="1">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Trọng số(%)" width="40">
+						<p:inputNumber value="#{item.weighted}" symbol="%"  style="text-align:center"
+							decimalPlaces="0" symbolPosition="s">
+							<p:ajax process="@this" />
+						</p:inputNumber>
+					</p:column>
+					<p:column headerText="Tiêu chí đánh giá" width="80">
+						<p:inputTextarea value="#{item.criterion}" rows="1"
+							style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandLink value="Thêm dòng"
+							action="#{describeJobBean.addRow('missionAno')}"
+							style="float:left" update="tbmissionAno" />
+						<div style="clear: both" />
+					</f:facet>
+				</p:dataTable>
+			</p:fieldset>
+
+			<p:fieldset legend="4. Quan hệ trong công việc" toggleable="true"
+				toggleSpeed="500" collapsed="true"
+				style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;"
+				styleClass="toggleabldetail">
+				<p:outputLabel value="4.1 Quan hệ nội bộ trong phòng"
+					style="margin-left: 25px;font-weight: bold;" />
+				<br />
+				<div style="width: 50%; margin-left: 100px">
+					<p:panelGrid columns="2"
+						style="width:100%;margin-top:10px;margin-bottom:10px;">
+						<p:outputLabel value="Báo cáo trực tiếp cho ai?" />
+						<p:outputLabel value="Quản lý ai?" />
+						<p:inputTextarea rows="2"
+							value="#{describeJobBean.describeJob.relaLocal.handler}">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+						<p:inputTextarea rows="2"
+							value="#{describeJobBean.describeJob.relaLocal.manager}">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:panelGrid>
+				</div>
+				<br />
+				<p:outputLabel value="4.2 Quan hệ bên ngoài phòng/ban"
+					style="margin-left: 25px;font-weight: bold;" />
+				<br />
+				<p:dataTable var="item" id="tbrelaIn"
+					style="width:50%;margin:10px; margin-left: 100px" emptyMessage=""
+					value="#{describeJobBean.describeJob.relaInternals}">
+					<p:column headerText="Đối tượng">
+						<p:inputTextarea value="#{item.object}" rows="2" style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Bản chất quan hệ">
+						<p:inputTextarea rows="2" value="#{item.relationship}"
+							style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandLink value="Thêm dòng"
+							action="#{describeJobBean.addRow('relaIn')}" style="float:left"
+							update="tbrelaIn" />
+						<div style="clear: both" />
+					</f:facet>
+				</p:dataTable>
+				<br />
+				<p:outputLabel value="4.3 Quan hệ bên ngoài công ty"
+					style="margin-left: 25px;font-weight: bold;" />
+				<p:dataTable var="item" id="tbrelaEx"
+					style="width:50%;margin:10px; margin-left: 100px;" emptyMessage=""
+					value="#{describeJobBean.describeJob.relaExternals}">
+					<p:column headerText="Đối tượng">
+						<p:inputTextarea rows="2" value="#{item.object}" style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column headerText="Bản chất quan hệ">
+						<p:inputTextarea rows="2" value="#{item.relationship}"
+							style="text-align:center">
+							<p:ajax event="blur" process="@this" />
+						</p:inputTextarea>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandLink value="Thêm dòng"
+							action="#{describeJobBean.addRow('relaEx')}" style="float:left"
+							update="tbrelaEx" />
+						<div style="clear: both" />
+					</f:facet>
+				</p:dataTable>
+			</p:fieldset>
+
+			<p:fieldset legend="5. Phạm vi quyền hạn" toggleable="true"
+				toggleSpeed="500" collapsed="true"
+				style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;"
+				styleClass="toggleabldetail">
+				<div style="width: 50%; margin-left: 100px">
+					<p:panelGrid columns="2" columnClasses="w40,w60"
+						style="width:100%;margin-top:10px;margin-bottom:10px;">
+						<p:outputLabel value="Phạm vi quyền hạn trong công việc" />
+						<p:inputTextarea rows="3"
+							value="#{describeJobBean.describeJob.permissionInJob}" />
+						<p:outputLabel value="Phạm vi quyền hạn về tài chánh" />
+						<p:inputTextarea rows="3"
+							value="#{describeJobBean.describeJob.permissionFinance}" />
+					</p:panelGrid>
+				</div>
+			</p:fieldset>
+
+			<p:fieldset legend="6. Yêu cầu trình độ, kỹ năng cần thiết"
+				toggleable="true" toggleSpeed="500" collapsed="true"
+				style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;"
+				styleClass="toggleabldetail">
+				<h:panelGrid columns="1" styleClass="noneformat"
+					style="width:80%;margin:10px;">
+					<p:outputLabel value="- Trình độ văn hoá tốt nghiệp (chọn 1):"
+						style="font-weight: bold;" />
+					<p:selectOneRadio style="width:80%; margin:auto"
+						value="#{describeJobBean.describeJob.educationLevel}">
+						<f:selectItem itemLabel="5/12" itemValue="5/12" />
+						<f:selectItem itemLabel="9/12" itemValue="9/12" />
+						<f:selectItem itemLabel="12/12" itemValue="12/12" />
+						<f:selectItem itemLabel="Khác" itemValue="khac" />
+					</p:selectOneRadio>
+					<p:outputLabel value="- Trình độ chuyên môn (chọn 1):"
+						style="font-weight: bold;" />
+					<p:selectOneRadio style="width:80%; margin:auto"
+						value="#{describeJobBean.describeJob.professionalSkill}">
+						<f:selectItem itemLabel="Trung cấp" itemValue="trungcap" />
+						<f:selectItem itemLabel="Cao đẳng" itemValue="caodang" />
+						<f:selectItem itemLabel="Đại học" itemValue="daihoc" />
+						<f:selectItem itemLabel="Trên đại học" itemValue="trendh" />
+					</p:selectOneRadio>
+					<h:panelGrid columns="2" style="width:80%; margin:auto"
+						columnClasses="w40,w50">
+						<p:outputLabel value="Chuyên ngành hoặc lĩnh vực tương đương:" />
+						<p:inputText value="#{describeJobBean.describeJob.specialized}" />
+					</h:panelGrid>
+					<p:outputLabel value="- Trình độ ngoại ngữ (Anh văn hoặc Pháp văn)"
+						style="font-weight: bold;" />
+					<p:selectOneRadio value="#{describeJobBean.describeJob.language}"
+						style="width:80%; margin:auto">
+						<f:selectItem itemLabel="Trình độ A" itemValue="tdA" />
+						<f:selectItem itemLabel="Trình độ B" itemValue="tdB" />
+						<f:selectItem itemLabel="Trình độ C" itemValue="tdC" />
+						<f:selectItem itemLabel="Khác" itemValue="khac" />
+					</p:selectOneRadio>
+					<p:outputLabel value="- Trình độ vi tính"
+						style="font-weight: bold;" />
+					<p:selectOneRadio style="width:80%; margin:auto"
+						value="#{describeJobBean.describeJob.computerSkill}">
+						<f:selectItem itemLabel="Trình độ A" itemValue="tdA" />
+						<f:selectItem itemLabel="Trình độ B" itemValue="tdB" />
+						<f:selectItem itemLabel="Đại học CNTT" itemValue="tdC" />
+						<f:selectItem itemLabel="Khác" itemValue="khac" />
+					</p:selectOneRadio>
+					<p:outputLabel style="font-weight: bold;"
+						value="- Kinh nghiệm (thời gian đã làm việc cùng chuyên môn hay cùng lĩnh vực):" />
+					<p:selectOneRadio value="#{describeJobBean.describeJob.experience}"
+						style="width:80%; margin:auto">
+						<f:selectItem itemLabel="Dưới 1 năm" itemValue="duoi1" />
+						<f:selectItem itemLabel="1 đến 2 năm" itemValue="1den2" />
+						<f:selectItem itemLabel="2 đến 5 năm" itemValue="2den5" />
+						<f:selectItem itemLabel="Trên 5 năm" itemValue="tren5" />
+					</p:selectOneRadio>
+					<p:outputLabel value="- Sức khoẻ (yêu cầu khám sức khoẻ):"
+						style="font-weight: bold;" />
+					<p:selectOneRadio value="#{describeJobBean.describeJob.health}"
+						style="width:80%; margin:auto">
+						<f:selectItem itemLabel="Bình thường" itemValue="binhthuong" />
+						<f:selectItem itemLabel="Có yêu cầu đặc biệt" itemValue="dacbiet" />
+					</p:selectOneRadio>
+					<p:outputLabel style="font-weight: bold;"
+						value="- Kỹ năng thiết yếu cho công việc (có thể chọn nhiều kỹ năng):" />
+					<h:panelGrid columns="4" style="width:80%; margin:auto">
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.talk}" />
+							<p:outputLabel value="Giao tiếp" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.show}" />
+							<p:outputLabel value="Thuyết trình" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.doc}" />
+							<p:outputLabel value="Soạn thảo văn bản" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.analyse}" />
+							<p:outputLabel value="Phân tích" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.group}" />
+							<p:outputLabel value="Làm việc nhóm" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.negotiat}" />
+							<p:outputLabel value="Đàm phán" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.manInfor}" />
+							<p:outputLabel value="Quản lý hồ sơ" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.selfEducated}" />
+							<p:outputLabel value="Tự học" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.manJob}" />
+							<p:outputLabel value="Tổ chức công việc" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.assign}" />
+							<p:outputLabel value="Giao việc" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.checkEmp}" />
+							<p:outputLabel value="Đánh giá NV" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.meeting}" />
+							<p:outputLabel value="Hội họp" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.processProblem}" />
+							<p:outputLabel value="Giải quyết vấn đề" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.leader}" />
+							<p:outputLabel value="Lãnh đạo" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.interview}" />
+							<p:outputLabel value="Phỏng vấn" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox
+								value="#{describeJobBean.describeJob.think}" />
+							<p:outputLabel value="Tư duy" />
+						</h:panelGrid>
+					</h:panelGrid>
+				</h:panelGrid>
+			</p:fieldset>
+
+			<p:fieldset legend="7. Yêu cầu về điều kiện và môi trường làm việc"
+				toggleable="true" toggleSpeed="500" collapsed="true"
+				style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;"
+				styleClass="toggleabldetail">
+				<h:panelGrid columns="1" styleClass="noneformat"
+					style="width:80%;margin:10px;">
+					<p:outputLabel style="font-weight: bold;"
+						value="- Vị trí làm việc (nơi làm việc chiếm nhiều thời gian nhất)" />
+					<p:selectOneRadio style="width:80%; margin:auto" columns="4"
+						layout="grid"
+						value="#{describeJobBean.describeJob.positionWoking}">
+						<f:selectItem itemLabel="Văn phòng công ty" itemValue="vanphongct" />
+						<f:selectItem itemLabel="Văn phòng đơn vị" itemValue="vanphongdv" />
+						<f:selectItem itemLabel="Xưởng" itemValue="xuong" />
+						<f:selectItem itemLabel="Ngoài trời" itemValue="ngoaitroi" />
+						<f:selectItem itemLabel="Phòng TN/Điện" itemValue="phongtn" />
+						<f:selectItem itemLabel="Trong dây chuyền" itemValue="trongdc" />
+						<f:selectItem itemLabel="Trên cao" itemValue="trencao" />
+						<f:selectItem itemLabel="Đi lại nhiều" itemValue="dilainhieu" />
+					</p:selectOneRadio>
+					<p:outputLabel style="font-weight: bold;"
+						value="- Môi trường làm việc (môi trường của nơi làm việc chiếm nhiều thời gian nhất)" />
+					<p:selectOneRadio style="width:80%; margin:auto" columns="4"
+						layout="grid" value="#{describeJobBean.describeJob.envirWorking}">
+						<f:selectItem itemLabel="Bình thường" itemValue="binhthuong" />
+						<f:selectItem itemLabel="Nóng, ồn, bụi" itemValue="nongon" />
+						<f:selectItem itemLabel="Độc hại" itemValue="dochai" />
+						<f:selectItem itemLabel="Rất độc hại" itemValue="ratdochai" />
+					</p:selectOneRadio>
+					<p:outputLabel value="- Thời gian làm việc"
+						style="font-weight: bold;" />
+					<p:selectOneRadio style="width:80%; margin:auto" columns="4"
+						layout="grid" value="#{describeJobBean.describeJob.timeWorking}">
+						<f:selectItem itemLabel="Giờ hành chánh" itemValue="hanhchanh" />
+						<f:selectItem itemLabel="Ca kíp" itemValue="cakip" />
+						<f:selectItem itemLabel="Đặc thù" itemValue="datthu" />
+						<f:selectItem itemLabel="Có tăng ca" itemValue="tangca" />
+					</p:selectOneRadio>
+					<p:outputLabel style="font-weight: bold;"
+						value="- Phương tiện làm việc (trang thiết bọi cần thiết sử dụng khi làm việc)" />
+					<p:selectOneRadio style="width:80%; margin:auto" columns="4"
+						layout="grid" value="#{describeJobBean.describeJob.toolWorking}">
+						<f:selectItem itemLabel="Công cụ văn phòng" itemValue="ccvanphong" />
+						<f:selectItem itemLabel="Dụng cụ cầm tay" itemValue="dungcucamtay" />
+						<f:selectItem itemLabel="Thiết bị" itemValue="thietbi" />
+						<f:selectItem itemLabel="Thiết bị nặng" itemValue="tbnang" />
+					</p:selectOneRadio>
+					<p:outputLabel style="font-weight: bold;"
+						value="- Thể chất (hao phí sức lực để thực hiện công việc):" />
+					<p:selectOneRadio style="width:80%; margin:auto" columns="4"
+						layout="grid" value="#{describeJobBean.describeJob.healthWorking}">
+						<f:selectItem itemLabel="Nhẹ nhàng" itemValue="nhenhang" />
+						<f:selectItem itemLabel="Bình thường" itemValue="binhthuong" />
+						<f:selectItem itemLabel="Ít nặng nhọc" itemValue="itnangnhoc" />
+						<f:selectItem itemLabel="Nặng" itemValue="nang" />
+					</p:selectOneRadio>
+					<p:outputLabel style="font-weight: bold;"
+						value="- Hoặc (hao phí trí óc để thực hiện công việc):" />
+					<p:selectOneRadio style="width:80%; margin:auto" columns="4"
+						layout="grid"
+						value="#{describeJobBean.describeJob.intellectWorking}">
+						<f:selectItem itemLabel="Đơn giản" itemValue="dongian" />
+						<f:selectItem itemLabel="Ít suy nghĩ" itemValue="itsuynghi" />
+						<f:selectItem itemLabel="Suy nghĩ nhiều" itemValue="suynghinhieu" />
+						<f:selectItem itemLabel="Quyết định" itemValue="quyetdinh" />
+					</p:selectOneRadio>
+					<p:outputLabel style="font-weight: bold;"
+						value="- Bảo hộ lao động (yêu cầu trang bị loại bảo hộ lao động):" />
+					<p:selectOneRadio style="width:80%; margin:auto" columns="4"
+						layout="grid"
+						value="#{describeJobBean.describeJob.protectWorking}">
+						<f:selectItem itemLabel="Không" itemValue="khong7" />
+						<f:selectItem itemLabel="Đồng phục" itemValue="dongphuc" />
+						<f:selectItem itemLabel="Bình thường" itemValue="binhthuong" />
+						<f:selectItem itemLabel="Chuyên dùng" itemValue="chuyendung" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+			</p:fieldset>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,2192 @@
+/**
+ * Employee.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.nhansu.servicepublics;
+
+public class Employee  extends trong.lixco.com.ejb.servicepublics.AbstractEntity  implements java.io.Serializable {
+    private trong.lixco.com.ejb.servicepublics.LAddress addresstemp;
+
+    private java.util.Calendar birthday;
+
+    private trong.lixco.com.ejb.servicepublics.CateJob cateJob;
+
+    private trong.lixco.com.ejb.servicepublics.City cityPlace;
+
+    private java.lang.String code;
+
+    private java.lang.String codeInfor;
+
+    private java.lang.String codeOld;
+
+    private java.lang.String contractNoNewest;
+
+    private trong.lixco.com.ejb.servicepublics.ContractType contractType;
+
+    private java.util.Calendar dateAdjournContract;
+
+    private java.util.Calendar dateEndContract;
+
+    private java.util.Calendar dateFirstContract;
+
+    private java.util.Calendar dateLayOff;
+
+    private java.util.Calendar dateMemberShip;
+
+    private java.util.Calendar datePartisan;
+
+    private java.util.Calendar dateRankSalary;
+
+    private java.util.Calendar dayAtWork;
+
+    private trong.lixco.com.ejb.servicepublics.Department department;
+
+    private trong.lixco.com.ejb.servicepublics.Distrist distristPlace;
+
+    private java.lang.String email;
+
+    private java.lang.String employeeCode;
+
+    private java.lang.String employeeName;
+
+    private boolean female;
+
+    private java.lang.String heathInsuranceNo;
+
+    private trong.lixco.com.ejb.servicepublics.City heathPlace;
+
+    private trong.lixco.com.ejb.servicepublics.Hospital hospital;
+
+    private java.lang.String householderAdress;
+
+    private java.lang.String householderName;
+
+    private java.lang.String householderNo;
+
+    private java.lang.String inforComment;
+
+    private java.lang.String inforURL;
+
+    private boolean is7_30;
+
+    private boolean layOff;
+
+    private trong.lixco.com.ejb.servicepublics.Level level;
+
+    private trong.lixco.com.ejb.servicepublics.LevelSalary levelSalary;
+
+    private boolean managerComp;
+
+    private boolean memberShip;
+
+    private int numberDayOff;
+
+    private boolean partisan;
+
+    private trong.lixco.com.ejb.servicepublics.People people;
+
+    private java.lang.String personID;
+
+    private trong.lixco.com.ejb.servicepublics.City personIDCity;
+
+    private java.util.Calendar personIDDate;
+
+    private boolean pestiferous;
+
+    private java.lang.String phone;
+
+    private trong.lixco.com.ejb.servicepublics.Position position;
+
+    private boolean quitEating;
+
+    private trong.lixco.com.ejb.servicepublics.ReasonLayOff reasonLayOff;
+
+    private java.lang.String socialInsuranceNo;
+
+    private java.lang.String taxPersonId;
+
+    private java.lang.String training;
+
+    private trong.lixco.com.ejb.servicepublics.TypeJob typeJob;
+
+    private boolean vegetarian;
+
+    private java.lang.String wageAdjustment;
+
+    private trong.lixco.com.ejb.servicepublics.Wards wardsPlace;
+
+    private boolean workShift;
+
+    private boolean yearOfBirth;
+
+    private trong.lixco.com.ejb.servicepublics.LAddress lAddress;
+
+    public Employee() {
+    }
+
+    public Employee(
+           boolean color,
+           java.util.Calendar createdDate,
+           java.lang.String createdUser,
+           boolean disable,
+           java.lang.Long id,
+           long iduser,
+           int index,
+           java.util.Calendar modifiedDate,
+           java.lang.String note,
+           boolean oldData,
+           boolean select,
+           trong.lixco.com.ejb.servicepublics.LAddress addresstemp,
+           java.util.Calendar birthday,
+           trong.lixco.com.ejb.servicepublics.CateJob cateJob,
+           trong.lixco.com.ejb.servicepublics.City cityPlace,
+           java.lang.String code,
+           java.lang.String codeInfor,
+           java.lang.String codeOld,
+           java.lang.String contractNoNewest,
+           trong.lixco.com.ejb.servicepublics.ContractType contractType,
+           java.util.Calendar dateAdjournContract,
+           java.util.Calendar dateEndContract,
+           java.util.Calendar dateFirstContract,
+           java.util.Calendar dateLayOff,
+           java.util.Calendar dateMemberShip,
+           java.util.Calendar datePartisan,
+           java.util.Calendar dateRankSalary,
+           java.util.Calendar dayAtWork,
+           trong.lixco.com.ejb.servicepublics.Department department,
+           trong.lixco.com.ejb.servicepublics.Distrist distristPlace,
+           java.lang.String email,
+           java.lang.String employeeCode,
+           java.lang.String employeeName,
+           boolean female,
+           java.lang.String heathInsuranceNo,
+           trong.lixco.com.ejb.servicepublics.City heathPlace,
+           trong.lixco.com.ejb.servicepublics.Hospital hospital,
+           java.lang.String householderAdress,
+           java.lang.String householderName,
+           java.lang.String householderNo,
+           java.lang.String inforComment,
+           java.lang.String inforURL,
+           boolean is7_30,
+           boolean layOff,
+           trong.lixco.com.ejb.servicepublics.Level level,
+           trong.lixco.com.ejb.servicepublics.LevelSalary levelSalary,
+           boolean managerComp,
+           boolean memberShip,
+           int numberDayOff,
+           boolean partisan,
+           trong.lixco.com.ejb.servicepublics.People people,
+           java.lang.String personID,
+           trong.lixco.com.ejb.servicepublics.City personIDCity,
+           java.util.Calendar personIDDate,
+           boolean pestiferous,
+           java.lang.String phone,
+           trong.lixco.com.ejb.servicepublics.Position position,
+           boolean quitEating,
+           trong.lixco.com.ejb.servicepublics.ReasonLayOff reasonLayOff,
+           java.lang.String socialInsuranceNo,
+           java.lang.String taxPersonId,
+           java.lang.String training,
+           trong.lixco.com.ejb.servicepublics.TypeJob typeJob,
+           boolean vegetarian,
+           java.lang.String wageAdjustment,
+           trong.lixco.com.ejb.servicepublics.Wards wardsPlace,
+           boolean workShift,
+           boolean yearOfBirth,
+           trong.lixco.com.ejb.servicepublics.LAddress lAddress) {
+        super(
+            color,
+            createdDate,
+            createdUser,
+            disable,
+            id,
+            iduser,
+            index,
+            modifiedDate,
+            note,
+            oldData,
+            select);
+        this.addresstemp = addresstemp;
+        this.birthday = birthday;
+        this.cateJob = cateJob;
+        this.cityPlace = cityPlace;
+        this.code = code;
+        this.codeInfor = codeInfor;
+        this.codeOld = codeOld;
+        this.contractNoNewest = contractNoNewest;
+        this.contractType = contractType;
+        this.dateAdjournContract = dateAdjournContract;
+        this.dateEndContract = dateEndContract;
+        this.dateFirstContract = dateFirstContract;
+        this.dateLayOff = dateLayOff;
+        this.dateMemberShip = dateMemberShip;
+        this.datePartisan = datePartisan;
+        this.dateRankSalary = dateRankSalary;
+        this.dayAtWork = dayAtWork;
+        this.department = department;
+        this.distristPlace = distristPlace;
+        this.email = email;
+        this.employeeCode = employeeCode;
+        this.employeeName = employeeName;
+        this.female = female;
+        this.heathInsuranceNo = heathInsuranceNo;
+        this.heathPlace = heathPlace;
+        this.hospital = hospital;
+        this.householderAdress = householderAdress;
+        this.householderName = householderName;
+        this.householderNo = householderNo;
+        this.inforComment = inforComment;
+        this.inforURL = inforURL;
+        this.is7_30 = is7_30;
+        this.layOff = layOff;
+        this.level = level;
+        this.levelSalary = levelSalary;
+        this.managerComp = managerComp;
+        this.memberShip = memberShip;
+        this.numberDayOff = numberDayOff;
+        this.partisan = partisan;
+        this.people = people;
+        this.personID = personID;
+        this.personIDCity = personIDCity;
+        this.personIDDate = personIDDate;
+        this.pestiferous = pestiferous;
+        this.phone = phone;
+        this.position = position;
+        this.quitEating = quitEating;
+        this.reasonLayOff = reasonLayOff;
+        this.socialInsuranceNo = socialInsuranceNo;
+        this.taxPersonId = taxPersonId;
+        this.training = training;
+        this.typeJob = typeJob;
+        this.vegetarian = vegetarian;
+        this.wageAdjustment = wageAdjustment;
+        this.wardsPlace = wardsPlace;
+        this.workShift = workShift;
+        this.yearOfBirth = yearOfBirth;
+        this.lAddress = lAddress;
+    }
+
+
+    /**
+     * Gets the addresstemp value for this Employee.
+     * 
+     * @return addresstemp
+     */
+    public trong.lixco.com.ejb.servicepublics.LAddress getAddresstemp() {
+        return addresstemp;
+    }
+
+
+    /**
+     * Sets the addresstemp value for this Employee.
+     * 
+     * @param addresstemp
+     */
+    public void setAddresstemp(trong.lixco.com.ejb.servicepublics.LAddress addresstemp) {
+        this.addresstemp = addresstemp;
+    }
+
+
+    /**
+     * Gets the birthday value for this Employee.
+     * 
+     * @return birthday
+     */
+    public java.util.Calendar getBirthday() {
+        return birthday;
+    }
+
+
+    /**
+     * Sets the birthday value for this Employee.
+     * 
+     * @param birthday
+     */
+    public void setBirthday(java.util.Calendar birthday) {
+        this.birthday = birthday;
+    }
+
+
+    /**
+     * Gets the cateJob value for this Employee.
+     * 
+     * @return cateJob
+     */
+    public trong.lixco.com.ejb.servicepublics.CateJob getCateJob() {
+        return cateJob;
+    }
+
+
+    /**
+     * Sets the cateJob value for this Employee.
+     * 
+     * @param cateJob
+     */
+    public void setCateJob(trong.lixco.com.ejb.servicepublics.CateJob cateJob) {
+        this.cateJob = cateJob;
+    }
+
+
+    /**
+     * Gets the cityPlace value for this Employee.
+     * 
+     * @return cityPlace
+     */
+    public trong.lixco.com.ejb.servicepublics.City getCityPlace() {
+        return cityPlace;
+    }
+
+
+    /**
+     * Sets the cityPlace value for this Employee.
+     * 
+     * @param cityPlace
+     */
+    public void setCityPlace(trong.lixco.com.ejb.servicepublics.City cityPlace) {
+        this.cityPlace = cityPlace;
+    }
+
+
+    /**
+     * Gets the code value for this Employee.
+     * 
+     * @return code
+     */
+    public java.lang.String getCode() {
+        return code;
+    }
+
+
+    /**
+     * Sets the code value for this Employee.
+     * 
+     * @param code
+     */
+    public void setCode(java.lang.String code) {
+        this.code = code;
+    }
+
+
+    /**
+     * Gets the codeInfor value for this Employee.
+     * 
+     * @return codeInfor
+     */
+    public java.lang.String getCodeInfor() {
+        return codeInfor;
+    }
+
+
+    /**
+     * Sets the codeInfor value for this Employee.
+     * 
+     * @param codeInfor
+     */
+    public void setCodeInfor(java.lang.String codeInfor) {
+        this.codeInfor = codeInfor;
+    }
+
+
+    /**
+     * Gets the codeOld value for this Employee.
+     * 
+     * @return codeOld
+     */
+    public java.lang.String getCodeOld() {
+        return codeOld;
+    }
+
+
+    /**
+     * Sets the codeOld value for this Employee.
+     * 
+     * @param codeOld
+     */
+    public void setCodeOld(java.lang.String codeOld) {
+        this.codeOld = codeOld;
+    }
+
+
+    /**
+     * Gets the contractNoNewest value for this Employee.
+     * 
+     * @return contractNoNewest
+     */
+    public java.lang.String getContractNoNewest() {
+        return contractNoNewest;
+    }
+
+
+    /**
+     * Sets the contractNoNewest value for this Employee.
+     * 
+     * @param contractNoNewest
+     */
+    public void setContractNoNewest(java.lang.String contractNoNewest) {
+        this.contractNoNewest = contractNoNewest;
+    }
+
+
+    /**
+     * Gets the contractType value for this Employee.
+     * 
+     * @return contractType
+     */
+    public trong.lixco.com.ejb.servicepublics.ContractType getContractType() {
+        return contractType;
+    }
+
+
+    /**
+     * Sets the contractType value for this Employee.
+     * 
+     * @param contractType
+     */
+    public void setContractType(trong.lixco.com.ejb.servicepublics.ContractType contractType) {
+        this.contractType = contractType;
+    }
+
+
+    /**
+     * Gets the dateAdjournContract value for this Employee.
+     * 
+     * @return dateAdjournContract
+     */
+    public java.util.Calendar getDateAdjournContract() {
+        return dateAdjournContract;
+    }
+
+
+    /**
+     * Sets the dateAdjournContract value for this Employee.
+     * 
+     * @param dateAdjournContract
+     */
+    public void setDateAdjournContract(java.util.Calendar dateAdjournContract) {
+        this.dateAdjournContract = dateAdjournContract;
+    }
+
+
+    /**
+     * Gets the dateEndContract value for this Employee.
+     * 
+     * @return dateEndContract
+     */
+    public java.util.Calendar getDateEndContract() {
+        return dateEndContract;
+    }
+
+
+    /**
+     * Sets the dateEndContract value for this Employee.
+     * 
+     * @param dateEndContract
+     */
+    public void setDateEndContract(java.util.Calendar dateEndContract) {
+        this.dateEndContract = dateEndContract;
+    }
+
+
+    /**
+     * Gets the dateFirstContract value for this Employee.
+     * 
+     * @return dateFirstContract
+     */
+    public java.util.Calendar getDateFirstContract() {
+        return dateFirstContract;
+    }
+
+
+    /**
+     * Sets the dateFirstContract value for this Employee.
+     * 
+     * @param dateFirstContract
+     */
+    public void setDateFirstContract(java.util.Calendar dateFirstContract) {
+        this.dateFirstContract = dateFirstContract;
+    }
+
+
+    /**
+     * Gets the dateLayOff value for this Employee.
+     * 
+     * @return dateLayOff
+     */
+    public java.util.Calendar getDateLayOff() {
+        return dateLayOff;
+    }
+
+
+    /**
+     * Sets the dateLayOff value for this Employee.
+     * 
+     * @param dateLayOff
+     */
+    public void setDateLayOff(java.util.Calendar dateLayOff) {
+        this.dateLayOff = dateLayOff;
+    }
+
+
+    /**
+     * Gets the dateMemberShip value for this Employee.
+     * 
+     * @return dateMemberShip
+     */
+    public java.util.Calendar getDateMemberShip() {
+        return dateMemberShip;
+    }
+
+
+    /**
+     * Sets the dateMemberShip value for this Employee.
+     * 
+     * @param dateMemberShip
+     */
+    public void setDateMemberShip(java.util.Calendar dateMemberShip) {
+        this.dateMemberShip = dateMemberShip;
+    }
+
+
+    /**
+     * Gets the datePartisan value for this Employee.
+     * 
+     * @return datePartisan
+     */
+    public java.util.Calendar getDatePartisan() {
+        return datePartisan;
+    }
+
+
+    /**
+     * Sets the datePartisan value for this Employee.
+     * 
+     * @param datePartisan
+     */
+    public void setDatePartisan(java.util.Calendar datePartisan) {
+        this.datePartisan = datePartisan;
+    }
+
+
+    /**
+     * Gets the dateRankSalary value for this Employee.
+     * 
+     * @return dateRankSalary
+     */
+    public java.util.Calendar getDateRankSalary() {
+        return dateRankSalary;
+    }
+
+
+    /**
+     * Sets the dateRankSalary value for this Employee.
+     * 
+     * @param dateRankSalary
+     */
+    public void setDateRankSalary(java.util.Calendar dateRankSalary) {
+        this.dateRankSalary = dateRankSalary;
+    }
+
+
+    /**
+     * Gets the dayAtWork value for this Employee.
+     * 
+     * @return dayAtWork
+     */
+    public java.util.Calendar getDayAtWork() {
+        return dayAtWork;
+    }
+
+
+    /**
+     * Sets the dayAtWork value for this Employee.
+     * 
+     * @param dayAtWork
+     */
+    public void setDayAtWork(java.util.Calendar dayAtWork) {
+        this.dayAtWork = dayAtWork;
+    }
+
+
+    /**
+     * Gets the department value for this Employee.
+     * 
+     * @return department
+     */
+    public trong.lixco.com.ejb.servicepublics.Department getDepartment() {
+        return department;
+    }
+
+
+    /**
+     * Sets the department value for this Employee.
+     * 
+     * @param department
+     */
+    public void setDepartment(trong.lixco.com.ejb.servicepublics.Department department) {
+        this.department = department;
+    }
+
+
+    /**
+     * Gets the distristPlace value for this Employee.
+     * 
+     * @return distristPlace
+     */
+    public trong.lixco.com.ejb.servicepublics.Distrist getDistristPlace() {
+        return distristPlace;
+    }
+
+
+    /**
+     * Sets the distristPlace value for this Employee.
+     * 
+     * @param distristPlace
+     */
+    public void setDistristPlace(trong.lixco.com.ejb.servicepublics.Distrist distristPlace) {
+        this.distristPlace = distristPlace;
+    }
+
+
+    /**
+     * Gets the email value for this Employee.
+     * 
+     * @return email
+     */
+    public java.lang.String getEmail() {
+        return email;
+    }
+
+
+    /**
+     * Sets the email value for this Employee.
+     * 
+     * @param email
+     */
+    public void setEmail(java.lang.String email) {
+        this.email = email;
+    }
+
+
+    /**
+     * Gets the employeeCode value for this Employee.
+     * 
+     * @return employeeCode
+     */
+    public java.lang.String getEmployeeCode() {
+        return employeeCode;
+    }
+
+
+    /**
+     * Sets the employeeCode value for this Employee.
+     * 
+     * @param employeeCode
+     */
+    public void setEmployeeCode(java.lang.String employeeCode) {
+        this.employeeCode = employeeCode;
+    }
+
+
+    /**
+     * Gets the employeeName value for this Employee.
+     * 
+     * @return employeeName
+     */
+    public java.lang.String getEmployeeName() {
+        return employeeName;
+    }
+
+
+    /**
+     * Sets the employeeName value for this Employee.
+     * 
+     * @param employeeName
+     */
+    public void setEmployeeName(java.lang.String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+
+    /**
+     * Gets the female value for this Employee.
+     * 
+     * @return female
+     */
+    public boolean isFemale() {
+        return female;
+    }
+
+
+    /**
+     * Sets the female value for this Employee.
+     * 
+     * @param female
+     */
+    public void setFemale(boolean female) {
+        this.female = female;
+    }
+
+
+    /**
+     * Gets the heathInsuranceNo value for this Employee.
+     * 
+     * @return heathInsuranceNo
+     */
+    public java.lang.String getHeathInsuranceNo() {
+        return heathInsuranceNo;
+    }
+
+
+    /**
+     * Sets the heathInsuranceNo value for this Employee.
+     * 
+     * @param heathInsuranceNo
+     */
+    public void setHeathInsuranceNo(java.lang.String heathInsuranceNo) {
+        this.heathInsuranceNo = heathInsuranceNo;
+    }
+
+
+    /**
+     * Gets the heathPlace value for this Employee.
+     * 
+     * @return heathPlace
+     */
+    public trong.lixco.com.ejb.servicepublics.City getHeathPlace() {
+        return heathPlace;
+    }
+
+
+    /**
+     * Sets the heathPlace value for this Employee.
+     * 
+     * @param heathPlace
+     */
+    public void setHeathPlace(trong.lixco.com.ejb.servicepublics.City heathPlace) {
+        this.heathPlace = heathPlace;
+    }
+
+
+    /**
+     * Gets the hospital value for this Employee.
+     * 
+     * @return hospital
+     */
+    public trong.lixco.com.ejb.servicepublics.Hospital getHospital() {
+        return hospital;
+    }
+
+
+    /**
+     * Sets the hospital value for this Employee.
+     * 
+     * @param hospital
+     */
+    public void setHospital(trong.lixco.com.ejb.servicepublics.Hospital hospital) {
+        this.hospital = hospital;
+    }
+
+
+    /**
+     * Gets the householderAdress value for this Employee.
+     * 
+     * @return householderAdress
+     */
+    public java.lang.String getHouseholderAdress() {
+        return householderAdress;
+    }
+
+
+    /**
+     * Sets the householderAdress value for this Employee.
+     * 
+     * @param householderAdress
+     */
+    public void setHouseholderAdress(java.lang.String householderAdress) {
+        this.householderAdress = householderAdress;
+    }
+
+
+    /**
+     * Gets the householderName value for this Employee.
+     * 
+     * @return householderName
+     */
+    public java.lang.String getHouseholderName() {
+        return householderName;
+    }
+
+
+    /**
+     * Sets the householderName value for this Employee.
+     * 
+     * @param householderName
+     */
+    public void setHouseholderName(java.lang.String householderName) {
+        this.householderName = householderName;
+    }
+
+
+    /**
+     * Gets the householderNo value for this Employee.
+     * 
+     * @return householderNo
+     */
+    public java.lang.String getHouseholderNo() {
+        return householderNo;
+    }
+
+
+    /**
+     * Sets the householderNo value for this Employee.
+     * 
+     * @param householderNo
+     */
+    public void setHouseholderNo(java.lang.String householderNo) {
+        this.householderNo = householderNo;
+    }
+
+
+    /**
+     * Gets the inforComment value for this Employee.
+     * 
+     * @return inforComment
+     */
+    public java.lang.String getInforComment() {
+        return inforComment;
+    }
+
+
+    /**
+     * Sets the inforComment value for this Employee.
+     * 
+     * @param inforComment
+     */
+    public void setInforComment(java.lang.String inforComment) {
+        this.inforComment = inforComment;
+    }
+
+
+    /**
+     * Gets the inforURL value for this Employee.
+     * 
+     * @return inforURL
+     */
+    public java.lang.String getInforURL() {
+        return inforURL;
+    }
+
+
+    /**
+     * Sets the inforURL value for this Employee.
+     * 
+     * @param inforURL
+     */
+    public void setInforURL(java.lang.String inforURL) {
+        this.inforURL = inforURL;
+    }
+
+
+    /**
+     * Gets the is7_30 value for this Employee.
+     * 
+     * @return is7_30
+     */
+    public boolean isIs7_30() {
+        return is7_30;
+    }
+
+
+    /**
+     * Sets the is7_30 value for this Employee.
+     * 
+     * @param is7_30
+     */
+    public void setIs7_30(boolean is7_30) {
+        this.is7_30 = is7_30;
+    }
+
+
+    /**
+     * Gets the layOff value for this Employee.
+     * 
+     * @return layOff
+     */
+    public boolean isLayOff() {
+        return layOff;
+    }
+
+
+    /**
+     * Sets the layOff value for this Employee.
+     * 
+     * @param layOff
+     */
+    public void setLayOff(boolean layOff) {
+        this.layOff = layOff;
+    }
+
+
+    /**
+     * Gets the level value for this Employee.
+     * 
+     * @return level
+     */
+    public trong.lixco.com.ejb.servicepublics.Level getLevel() {
+        return level;
+    }
+
+
+    /**
+     * Sets the level value for this Employee.
+     * 
+     * @param level
+     */
+    public void setLevel(trong.lixco.com.ejb.servicepublics.Level level) {
+        this.level = level;
+    }
+
+
+    /**
+     * Gets the levelSalary value for this Employee.
+     * 
+     * @return levelSalary
+     */
+    public trong.lixco.com.ejb.servicepublics.LevelSalary getLevelSalary() {
+        return levelSalary;
+    }
+
+
+    /**
+     * Sets the levelSalary value for this Employee.
+     * 
+     * @param levelSalary
+     */
+    public void setLevelSalary(trong.lixco.com.ejb.servicepublics.LevelSalary levelSalary) {
+        this.levelSalary = levelSalary;
+    }
+
+
+    /**
+     * Gets the managerComp value for this Employee.
+     * 
+     * @return managerComp
+     */
+    public boolean isManagerComp() {
+        return managerComp;
+    }
+
+
+    /**
+     * Sets the managerComp value for this Employee.
+     * 
+     * @param managerComp
+     */
+    public void setManagerComp(boolean managerComp) {
+        this.managerComp = managerComp;
+    }
+
+
+    /**
+     * Gets the memberShip value for this Employee.
+     * 
+     * @return memberShip
+     */
+    public boolean isMemberShip() {
+        return memberShip;
+    }
+
+
+    /**
+     * Sets the memberShip value for this Employee.
+     * 
+     * @param memberShip
+     */
+    public void setMemberShip(boolean memberShip) {
+        this.memberShip = memberShip;
+    }
+
+
+    /**
+     * Gets the numberDayOff value for this Employee.
+     * 
+     * @return numberDayOff
+     */
+    public int getNumberDayOff() {
+        return numberDayOff;
+    }
+
+
+    /**
+     * Sets the numberDayOff value for this Employee.
+     * 
+     * @param numberDayOff
+     */
+    public void setNumberDayOff(int numberDayOff) {
+        this.numberDayOff = numberDayOff;
+    }
+
+
+    /**
+     * Gets the partisan value for this Employee.
+     * 
+     * @return partisan
+     */
+    public boolean isPartisan() {
+        return partisan;
+    }
+
+
+    /**
+     * Sets the partisan value for this Employee.
+     * 
+     * @param partisan
+     */
+    public void setPartisan(boolean partisan) {
+        this.partisan = partisan;
+    }
+
+
+    /**
+     * Gets the people value for this Employee.
+     * 
+     * @return people
+     */
+    public trong.lixco.com.ejb.servicepublics.People getPeople() {
+        return people;
+    }
+
+
+    /**
+     * Sets the people value for this Employee.
+     * 
+     * @param people
+     */
+    public void setPeople(trong.lixco.com.ejb.servicepublics.People people) {
+        this.people = people;
+    }
+
+
+    /**
+     * Gets the personID value for this Employee.
+     * 
+     * @return personID
+     */
+    public java.lang.String getPersonID() {
+        return personID;
+    }
+
+
+    /**
+     * Sets the personID value for this Employee.
+     * 
+     * @param personID
+     */
+    public void setPersonID(java.lang.String personID) {
+        this.personID = personID;
+    }
+
+
+    /**
+     * Gets the personIDCity value for this Employee.
+     * 
+     * @return personIDCity
+     */
+    public trong.lixco.com.ejb.servicepublics.City getPersonIDCity() {
+        return personIDCity;
+    }
+
+
+    /**
+     * Sets the personIDCity value for this Employee.
+     * 
+     * @param personIDCity
+     */
+    public void setPersonIDCity(trong.lixco.com.ejb.servicepublics.City personIDCity) {
+        this.personIDCity = personIDCity;
+    }
+
+
+    /**
+     * Gets the personIDDate value for this Employee.
+     * 
+     * @return personIDDate
+     */
+    public java.util.Calendar getPersonIDDate() {
+        return personIDDate;
+    }
+
+
+    /**
+     * Sets the personIDDate value for this Employee.
+     * 
+     * @param personIDDate
+     */
+    public void setPersonIDDate(java.util.Calendar personIDDate) {
+        this.personIDDate = personIDDate;
+    }
+
+
+    /**
+     * Gets the pestiferous value for this Employee.
+     * 
+     * @return pestiferous
+     */
+    public boolean isPestiferous() {
+        return pestiferous;
+    }
+
+
+    /**
+     * Sets the pestiferous value for this Employee.
+     * 
+     * @param pestiferous
+     */
+    public void setPestiferous(boolean pestiferous) {
+        this.pestiferous = pestiferous;
+    }
+
+
+    /**
+     * Gets the phone value for this Employee.
+     * 
+     * @return phone
+     */
+    public java.lang.String getPhone() {
+        return phone;
+    }
+
+
+    /**
+     * Sets the phone value for this Employee.
+     * 
+     * @param phone
+     */
+    public void setPhone(java.lang.String phone) {
+        this.phone = phone;
+    }
+
+
+    /**
+     * Gets the position value for this Employee.
+     * 
+     * @return position
+     */
+    public trong.lixco.com.ejb.servicepublics.Position getPosition() {
+        return position;
+    }
+
+
+    /**
+     * Sets the position value for this Employee.
+     * 
+     * @param position
+     */
+    public void setPosition(trong.lixco.com.ejb.servicepublics.Position position) {
+        this.position = position;
+    }
+
+
+    /**
+     * Gets the quitEating value for this Employee.
+     * 
+     * @return quitEating
+     */
+    public boolean isQuitEating() {
+        return quitEating;
+    }
+
+
+    /**
+     * Sets the quitEating value for this Employee.
+     * 
+     * @param quitEating
+     */
+    public void setQuitEating(boolean quitEating) {
+        this.quitEating = quitEating;
+    }
+
+
+    /**
+     * Gets the reasonLayOff value for this Employee.
+     * 
+     * @return reasonLayOff
+     */
+    public trong.lixco.com.ejb.servicepublics.ReasonLayOff getReasonLayOff() {
+        return reasonLayOff;
+    }
+
+
+    /**
+     * Sets the reasonLayOff value for this Employee.
+     * 
+     * @param reasonLayOff
+     */
+    public void setReasonLayOff(trong.lixco.com.ejb.servicepublics.ReasonLayOff reasonLayOff) {
+        this.reasonLayOff = reasonLayOff;
+    }
+
+
+    /**
+     * Gets the socialInsuranceNo value for this Employee.
+     * 
+     * @return socialInsuranceNo
+     */
+    public java.lang.String getSocialInsuranceNo() {
+        return socialInsuranceNo;
+    }
+
+
+    /**
+     * Sets the socialInsuranceNo value for this Employee.
+     * 
+     * @param socialInsuranceNo
+     */
+    public void setSocialInsuranceNo(java.lang.String socialInsuranceNo) {
+        this.socialInsuranceNo = socialInsuranceNo;
+    }
+
+
+    /**
+     * Gets the taxPersonId value for this Employee.
+     * 
+     * @return taxPersonId
+     */
+    public java.lang.String getTaxPersonId() {
+        return taxPersonId;
+    }
+
+
+    /**
+     * Sets the taxPersonId value for this Employee.
+     * 
+     * @param taxPersonId
+     */
+    public void setTaxPersonId(java.lang.String taxPersonId) {
+        this.taxPersonId = taxPersonId;
+    }
+
+
+    /**
+     * Gets the training value for this Employee.
+     * 
+     * @return training
+     */
+    public java.lang.String getTraining() {
+        return training;
+    }
+
+
+    /**
+     * Sets the training value for this Employee.
+     * 
+     * @param training
+     */
+    public void setTraining(java.lang.String training) {
+        this.training = training;
+    }
+
+
+    /**
+     * Gets the typeJob value for this Employee.
+     * 
+     * @return typeJob
+     */
+    public trong.lixco.com.ejb.servicepublics.TypeJob getTypeJob() {
+        return typeJob;
+    }
+
+
+    /**
+     * Sets the typeJob value for this Employee.
+     * 
+     * @param typeJob
+     */
+    public void setTypeJob(trong.lixco.com.ejb.servicepublics.TypeJob typeJob) {
+        this.typeJob = typeJob;
+    }
+
+
+    /**
+     * Gets the vegetarian value for this Employee.
+     * 
+     * @return vegetarian
+     */
+    public boolean isVegetarian() {
+        return vegetarian;
+    }
+
+
+    /**
+     * Sets the vegetarian value for this Employee.
+     * 
+     * @param vegetarian
+     */
+    public void setVegetarian(boolean vegetarian) {
+        this.vegetarian = vegetarian;
+    }
+
+
+    /**
+     * Gets the wageAdjustment value for this Employee.
+     * 
+     * @return wageAdjustment
+     */
+    public java.lang.String getWageAdjustment() {
+        return wageAdjustment;
+    }
+
+
+    /**
+     * Sets the wageAdjustment value for this Employee.
+     * 
+     * @param wageAdjustment
+     */
+    public void setWageAdjustment(java.lang.String wageAdjustment) {
+        this.wageAdjustment = wageAdjustment;
+    }
+
+
+    /**
+     * Gets the wardsPlace value for this Employee.
+     * 
+     * @return wardsPlace
+     */
+    public trong.lixco.com.ejb.servicepublics.Wards getWardsPlace() {
+        return wardsPlace;
+    }
+
+
+    /**
+     * Sets the wardsPlace value for this Employee.
+     * 
+     * @param wardsPlace
+     */
+    public void setWardsPlace(trong.lixco.com.ejb.servicepublics.Wards wardsPlace) {
+        this.wardsPlace = wardsPlace;
+    }
+
+
+    /**
+     * Gets the workShift value for this Employee.
+     * 
+     * @return workShift
+     */
+    public boolean isWorkShift() {
+        return workShift;
+    }
+
+
+    /**
+     * Sets the workShift value for this Employee.
+     * 
+     * @param workShift
+     */
+    public void setWorkShift(boolean workShift) {
+        this.workShift = workShift;
+    }
+
+
+    /**
+     * Gets the yearOfBirth value for this Employee.
+     * 
+     * @return yearOfBirth
+     */
+    public boolean isYearOfBirth() {
+        return yearOfBirth;
+    }
+
+
+    /**
+     * Sets the yearOfBirth value for this Employee.
+     * 
+     * @param yearOfBirth
+     */
+    public void setYearOfBirth(boolean yearOfBirth) {
+        this.yearOfBirth = yearOfBirth;
+    }
+
+
+    /**
+     * Gets the lAddress value for this Employee.
+     * 
+     * @return lAddress
+     */
+    public trong.lixco.com.ejb.servicepublics.LAddress getLAddress() {
+        return lAddress;
+    }
+
+
+    /**
+     * Sets the lAddress value for this Employee.
+     * 
+     * @param lAddress
+     */
+    public void setLAddress(trong.lixco.com.ejb.servicepublics.LAddress lAddress) {
+        this.lAddress = lAddress;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof Employee)) return false;
+        Employee other = (Employee) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = super.equals(obj) && 
+            ((this.addresstemp==null && other.getAddresstemp()==null) || 
+             (this.addresstemp!=null &&
+              this.addresstemp.equals(other.getAddresstemp()))) &&
+            ((this.birthday==null && other.getBirthday()==null) || 
+             (this.birthday!=null &&
+              this.birthday.equals(other.getBirthday()))) &&
+            ((this.cateJob==null && other.getCateJob()==null) || 
+             (this.cateJob!=null &&
+              this.cateJob.equals(other.getCateJob()))) &&
+            ((this.cityPlace==null && other.getCityPlace()==null) || 
+             (this.cityPlace!=null &&
+              this.cityPlace.equals(other.getCityPlace()))) &&
+            ((this.code==null && other.getCode()==null) || 
+             (this.code!=null &&
+              this.code.equals(other.getCode()))) &&
+            ((this.codeInfor==null && other.getCodeInfor()==null) || 
+             (this.codeInfor!=null &&
+              this.codeInfor.equals(other.getCodeInfor()))) &&
+            ((this.codeOld==null && other.getCodeOld()==null) || 
+             (this.codeOld!=null &&
+              this.codeOld.equals(other.getCodeOld()))) &&
+            ((this.contractNoNewest==null && other.getContractNoNewest()==null) || 
+             (this.contractNoNewest!=null &&
+              this.contractNoNewest.equals(other.getContractNoNewest()))) &&
+            ((this.contractType==null && other.getContractType()==null) || 
+             (this.contractType!=null &&
+              this.contractType.equals(other.getContractType()))) &&
+            ((this.dateAdjournContract==null && other.getDateAdjournContract()==null) || 
+             (this.dateAdjournContract!=null &&
+              this.dateAdjournContract.equals(other.getDateAdjournContract()))) &&
+            ((this.dateEndContract==null && other.getDateEndContract()==null) || 
+             (this.dateEndContract!=null &&
+              this.dateEndContract.equals(other.getDateEndContract()))) &&
+            ((this.dateFirstContract==null && other.getDateFirstContract()==null) || 
+             (this.dateFirstContract!=null &&
+              this.dateFirstContract.equals(other.getDateFirstContract()))) &&
+            ((this.dateLayOff==null && other.getDateLayOff()==null) || 
+             (this.dateLayOff!=null &&
+              this.dateLayOff.equals(other.getDateLayOff()))) &&
+            ((this.dateMemberShip==null && other.getDateMemberShip()==null) || 
+             (this.dateMemberShip!=null &&
+              this.dateMemberShip.equals(other.getDateMemberShip()))) &&
+            ((this.datePartisan==null && other.getDatePartisan()==null) || 
+             (this.datePartisan!=null &&
+              this.datePartisan.equals(other.getDatePartisan()))) &&
+            ((this.dateRankSalary==null && other.getDateRankSalary()==null) || 
+             (this.dateRankSalary!=null &&
+              this.dateRankSalary.equals(other.getDateRankSalary()))) &&
+            ((this.dayAtWork==null && other.getDayAtWork()==null) || 
+             (this.dayAtWork!=null &&
+              this.dayAtWork.equals(other.getDayAtWork()))) &&
+            ((this.department==null && other.getDepartment()==null) || 
+             (this.department!=null &&
+              this.department.equals(other.getDepartment()))) &&
+            ((this.distristPlace==null && other.getDistristPlace()==null) || 
+             (this.distristPlace!=null &&
+              this.distristPlace.equals(other.getDistristPlace()))) &&
+            ((this.email==null && other.getEmail()==null) || 
+             (this.email!=null &&
+              this.email.equals(other.getEmail()))) &&
+            ((this.employeeCode==null && other.getEmployeeCode()==null) || 
+             (this.employeeCode!=null &&
+              this.employeeCode.equals(other.getEmployeeCode()))) &&
+            ((this.employeeName==null && other.getEmployeeName()==null) || 
+             (this.employeeName!=null &&
+              this.employeeName.equals(other.getEmployeeName()))) &&
+            this.female == other.isFemale() &&
+            ((this.heathInsuranceNo==null && other.getHeathInsuranceNo()==null) || 
+             (this.heathInsuranceNo!=null &&
+              this.heathInsuranceNo.equals(other.getHeathInsuranceNo()))) &&
+            ((this.heathPlace==null && other.getHeathPlace()==null) || 
+             (this.heathPlace!=null &&
+              this.heathPlace.equals(other.getHeathPlace()))) &&
+            ((this.hospital==null && other.getHospital()==null) || 
+             (this.hospital!=null &&
+              this.hospital.equals(other.getHospital()))) &&
+            ((this.householderAdress==null && other.getHouseholderAdress()==null) || 
+             (this.householderAdress!=null &&
+              this.householderAdress.equals(other.getHouseholderAdress()))) &&
+            ((this.householderName==null && other.getHouseholderName()==null) || 
+             (this.householderName!=null &&
+              this.householderName.equals(other.getHouseholderName()))) &&
+            ((this.householderNo==null && other.getHouseholderNo()==null) || 
+             (this.householderNo!=null &&
+              this.householderNo.equals(other.getHouseholderNo()))) &&
+            ((this.inforComment==null && other.getInforComment()==null) || 
+             (this.inforComment!=null &&
+              this.inforComment.equals(other.getInforComment()))) &&
+            ((this.inforURL==null && other.getInforURL()==null) || 
+             (this.inforURL!=null &&
+              this.inforURL.equals(other.getInforURL()))) &&
+            this.is7_30 == other.isIs7_30() &&
+            this.layOff == other.isLayOff() &&
+            ((this.level==null && other.getLevel()==null) || 
+             (this.level!=null &&
+              this.level.equals(other.getLevel()))) &&
+            ((this.levelSalary==null && other.getLevelSalary()==null) || 
+             (this.levelSalary!=null &&
+              this.levelSalary.equals(other.getLevelSalary()))) &&
+            this.managerComp == other.isManagerComp() &&
+            this.memberShip == other.isMemberShip() &&
+            this.numberDayOff == other.getNumberDayOff() &&
+            this.partisan == other.isPartisan() &&
+            ((this.people==null && other.getPeople()==null) || 
+             (this.people!=null &&
+              this.people.equals(other.getPeople()))) &&
+            ((this.personID==null && other.getPersonID()==null) || 
+             (this.personID!=null &&
+              this.personID.equals(other.getPersonID()))) &&
+            ((this.personIDCity==null && other.getPersonIDCity()==null) || 
+             (this.personIDCity!=null &&
+              this.personIDCity.equals(other.getPersonIDCity()))) &&
+            ((this.personIDDate==null && other.getPersonIDDate()==null) || 
+             (this.personIDDate!=null &&
+              this.personIDDate.equals(other.getPersonIDDate()))) &&
+            this.pestiferous == other.isPestiferous() &&
+            ((this.phone==null && other.getPhone()==null) || 
+             (this.phone!=null &&
+              this.phone.equals(other.getPhone()))) &&
+            ((this.position==null && other.getPosition()==null) || 
+             (this.position!=null &&
+              this.position.equals(other.getPosition()))) &&
+            this.quitEating == other.isQuitEating() &&
+            ((this.reasonLayOff==null && other.getReasonLayOff()==null) || 
+             (this.reasonLayOff!=null &&
+              this.reasonLayOff.equals(other.getReasonLayOff()))) &&
+            ((this.socialInsuranceNo==null && other.getSocialInsuranceNo()==null) || 
+             (this.socialInsuranceNo!=null &&
+              this.socialInsuranceNo.equals(other.getSocialInsuranceNo()))) &&
+            ((this.taxPersonId==null && other.getTaxPersonId()==null) || 
+             (this.taxPersonId!=null &&
+              this.taxPersonId.equals(other.getTaxPersonId()))) &&
+            ((this.training==null && other.getTraining()==null) || 
+             (this.training!=null &&
+              this.training.equals(other.getTraining()))) &&
+            ((this.typeJob==null && other.getTypeJob()==null) || 
+             (this.typeJob!=null &&
+              this.typeJob.equals(other.getTypeJob()))) &&
+            this.vegetarian == other.isVegetarian() &&
+            ((this.wageAdjustment==null && other.getWageAdjustment()==null) || 
+             (this.wageAdjustment!=null &&
+              this.wageAdjustment.equals(other.getWageAdjustment()))) &&
+            ((this.wardsPlace==null && other.getWardsPlace()==null) || 
+             (this.wardsPlace!=null &&
+              this.wardsPlace.equals(other.getWardsPlace()))) &&
+            this.workShift == other.isWorkShift() &&
+            this.yearOfBirth == other.isYearOfBirth() &&
+            ((this.lAddress==null && other.getLAddress()==null) || 
+             (this.lAddress!=null &&
+              this.lAddress.equals(other.getLAddress())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = super.hashCode();
+        if (getAddresstemp() != null) {
+            _hashCode += getAddresstemp().hashCode();
+        }
+        if (getBirthday() != null) {
+            _hashCode += getBirthday().hashCode();
+        }
+        if (getCateJob() != null) {
+            _hashCode += getCateJob().hashCode();
+        }
+        if (getCityPlace() != null) {
+            _hashCode += getCityPlace().hashCode();
+        }
+        if (getCode() != null) {
+            _hashCode += getCode().hashCode();
+        }
+        if (getCodeInfor() != null) {
+            _hashCode += getCodeInfor().hashCode();
+        }
+        if (getCodeOld() != null) {
+            _hashCode += getCodeOld().hashCode();
+        }
+        if (getContractNoNewest() != null) {
+            _hashCode += getContractNoNewest().hashCode();
+        }
+        if (getContractType() != null) {
+            _hashCode += getContractType().hashCode();
+        }
+        if (getDateAdjournContract() != null) {
+            _hashCode += getDateAdjournContract().hashCode();
+        }
+        if (getDateEndContract() != null) {
+            _hashCode += getDateEndContract().hashCode();
+        }
+        if (getDateFirstContract() != null) {
+            _hashCode += getDateFirstContract().hashCode();
+        }
+        if (getDateLayOff() != null) {
+            _hashCode += getDateLayOff().hashCode();
+        }
+        if (getDateMemberShip() != null) {
+            _hashCode += getDateMemberShip().hashCode();
+        }
+        if (getDatePartisan() != null) {
+            _hashCode += getDatePartisan().hashCode();
+        }
+        if (getDateRankSalary() != null) {
+            _hashCode += getDateRankSalary().hashCode();
+        }
+        if (getDayAtWork() != null) {
+            _hashCode += getDayAtWork().hashCode();
+        }
+        if (getDepartment() != null) {
+            _hashCode += getDepartment().hashCode();
+        }
+        if (getDistristPlace() != null) {
+            _hashCode += getDistristPlace().hashCode();
+        }
+        if (getEmail() != null) {
+            _hashCode += getEmail().hashCode();
+        }
+        if (getEmployeeCode() != null) {
+            _hashCode += getEmployeeCode().hashCode();
+        }
+        if (getEmployeeName() != null) {
+            _hashCode += getEmployeeName().hashCode();
+        }
+        _hashCode += (isFemale() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getHeathInsuranceNo() != null) {
+            _hashCode += getHeathInsuranceNo().hashCode();
+        }
+        if (getHeathPlace() != null) {
+            _hashCode += getHeathPlace().hashCode();
+        }
+        if (getHospital() != null) {
+            _hashCode += getHospital().hashCode();
+        }
+        if (getHouseholderAdress() != null) {
+            _hashCode += getHouseholderAdress().hashCode();
+        }
+        if (getHouseholderName() != null) {
+            _hashCode += getHouseholderName().hashCode();
+        }
+        if (getHouseholderNo() != null) {
+            _hashCode += getHouseholderNo().hashCode();
+        }
+        if (getInforComment() != null) {
+            _hashCode += getInforComment().hashCode();
+        }
+        if (getInforURL() != null) {
+            _hashCode += getInforURL().hashCode();
+        }
+        _hashCode += (isIs7_30() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        _hashCode += (isLayOff() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getLevel() != null) {
+            _hashCode += getLevel().hashCode();
+        }
+        if (getLevelSalary() != null) {
+            _hashCode += getLevelSalary().hashCode();
+        }
+        _hashCode += (isManagerComp() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        _hashCode += (isMemberShip() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        _hashCode += getNumberDayOff();
+        _hashCode += (isPartisan() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getPeople() != null) {
+            _hashCode += getPeople().hashCode();
+        }
+        if (getPersonID() != null) {
+            _hashCode += getPersonID().hashCode();
+        }
+        if (getPersonIDCity() != null) {
+            _hashCode += getPersonIDCity().hashCode();
+        }
+        if (getPersonIDDate() != null) {
+            _hashCode += getPersonIDDate().hashCode();
+        }
+        _hashCode += (isPestiferous() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getPhone() != null) {
+            _hashCode += getPhone().hashCode();
+        }
+        if (getPosition() != null) {
+            _hashCode += getPosition().hashCode();
+        }
+        _hashCode += (isQuitEating() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getReasonLayOff() != null) {
+            _hashCode += getReasonLayOff().hashCode();
+        }
+        if (getSocialInsuranceNo() != null) {
+            _hashCode += getSocialInsuranceNo().hashCode();
+        }
+        if (getTaxPersonId() != null) {
+            _hashCode += getTaxPersonId().hashCode();
+        }
+        if (getTraining() != null) {
+            _hashCode += getTraining().hashCode();
+        }
+        if (getTypeJob() != null) {
+            _hashCode += getTypeJob().hashCode();
+        }
+        _hashCode += (isVegetarian() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getWageAdjustment() != null) {
+            _hashCode += getWageAdjustment().hashCode();
+        }
+        if (getWardsPlace() != null) {
+            _hashCode += getWardsPlace().hashCode();
+        }
+        _hashCode += (isWorkShift() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        _hashCode += (isYearOfBirth() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getLAddress() != null) {
+            _hashCode += getLAddress().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+    // Type metadata
+    private static org.apache.axis.description.TypeDesc typeDesc =
+        new org.apache.axis.description.TypeDesc(Employee.class, true);
+
+    static {
+        typeDesc.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "employee"));
+        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("addresstemp");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "addresstemp"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "lAddress"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("birthday");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "birthday"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("cateJob");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "cateJob"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "cateJob"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("cityPlace");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "cityPlace"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "city"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("code");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "code"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("codeInfor");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "codeInfor"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("codeOld");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "codeOld"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("contractNoNewest");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "contractNoNewest"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("contractType");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "contractType"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "contractType"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dateAdjournContract");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dateAdjournContract"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dateEndContract");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dateEndContract"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dateFirstContract");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dateFirstContract"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dateLayOff");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dateLayOff"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dateMemberShip");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dateMemberShip"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("datePartisan");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "datePartisan"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dateRankSalary");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dateRankSalary"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dayAtWork");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dayAtWork"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("department");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "department"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "department"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("distristPlace");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "distristPlace"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "distrist"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("email");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "email"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("employeeCode");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "employeeCode"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("employeeName");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "employeeName"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("female");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "female"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("heathInsuranceNo");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "heathInsuranceNo"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("heathPlace");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "heathPlace"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "city"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("hospital");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "hospital"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "hospital"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("householderAdress");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "householderAdress"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("householderName");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "householderName"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("householderNo");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "householderNo"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("inforComment");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "inforComment"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("inforURL");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "inforURL"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("is7_30");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "is7_30"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("layOff");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "layOff"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("level");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "level"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "level"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("levelSalary");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "levelSalary"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "levelSalary"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("managerComp");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "managerComp"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("memberShip");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "memberShip"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("numberDayOff");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "numberDayOff"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("partisan");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "partisan"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("people");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "people"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "people"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("personID");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "personID"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("personIDCity");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "personIDCity"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "city"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("personIDDate");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "personIDDate"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("pestiferous");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "pestiferous"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("phone");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "phone"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("position");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "position"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "position"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("quitEating");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "quitEating"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("reasonLayOff");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "reasonLayOff"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "reasonLayOff"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("socialInsuranceNo");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "socialInsuranceNo"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("taxPersonId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "taxPersonId"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("training");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "training"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("typeJob");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "typeJob"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "typeJob"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("vegetarian");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "vegetarian"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("wageAdjustment");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "wageAdjustment"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("wardsPlace");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "wardsPlace"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "wards"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("workShift");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "workShift"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("yearOfBirth");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "yearOfBirth"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("LAddress");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "lAddress"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "lAddress"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+    }
+
+    /**
+     * Return type metadata object
+     */
+    public static org.apache.axis.description.TypeDesc getTypeDesc() {
+        return typeDesc;
+    }
+
+    /**
+     * Get Custom Serializer
+     */
+    public static org.apache.axis.encoding.Serializer getSerializer(
+           java.lang.String mechType, 
+           java.lang.Class _javaType,  
+           javax.xml.namespace.QName _xmlType) {
+        return 
+          new  org.apache.axis.encoding.ser.BeanSerializer(
+            _javaType, _xmlType, typeDesc);
+    }
+
+    /**
+     * Get Custom Deserializer
+     */
+    public static org.apache.axis.encoding.Deserializer getDeserializer(
+           java.lang.String mechType, 
+           java.lang.Class _javaType,  
+           javax.xml.namespace.QName _xmlType) {
+        return 
+          new  org.apache.axis.encoding.ser.BeanDeserializer(
+            _javaType, _xmlType, typeDesc);
+    }
+
+}

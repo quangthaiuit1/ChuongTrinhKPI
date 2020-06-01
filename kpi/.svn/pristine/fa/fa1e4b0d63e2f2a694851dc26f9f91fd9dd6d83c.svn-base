@@ -1,0 +1,17 @@
+/**
+ * EmployeeServicePublic.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.ejb.servicepublics;
+
+public interface EmployeeServicePublic extends java.rmi.Remote {
+    public trong.lixco.com.ejb.servicepublics.Employee[] findByDepp(trong.lixco.com.ejb.servicepublics.DepartmentParent arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.ejb.servicepublics.Employee saveOrUpdate(trong.lixco.com.ejb.servicepublics.Employee arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.ejb.servicepublics.Employee findByCode(java.lang.String arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.ejb.servicepublics.Employee[] findLike(java.lang.String[] arg0, java.lang.String arg1) throws java.rmi.RemoteException;
+    public trong.lixco.com.ejb.servicepublics.Employee[] findByPositionJob(trong.lixco.com.ejb.servicepublics.PositionJob arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.ejb.servicepublics.Employee[] findByDep(trong.lixco.com.ejb.servicepublics.Department arg0, trong.lixco.com.ejb.servicepublics.DepartmentParent arg1, trong.lixco.com.ejb.servicepublics.Employee arg2, boolean arg3) throws java.rmi.RemoteException;
+}

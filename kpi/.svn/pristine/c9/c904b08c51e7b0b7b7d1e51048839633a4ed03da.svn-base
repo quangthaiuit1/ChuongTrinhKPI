@@ -1,0 +1,16 @@
+/**
+ * PrivateConfigServicePublic.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.service.publics;
+
+public interface PrivateConfigServicePublic extends java.rmi.Remote {
+    public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException;
+    public boolean delete(trong.lixco.com.service.publics.PrivateConfig arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.PrivateConfig findId(long arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.PrivateConfig create(trong.lixco.com.service.publics.PrivateConfig arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.PrivateConfig update(trong.lixco.com.service.publics.PrivateConfig arg0) throws java.rmi.RemoteException;
+}

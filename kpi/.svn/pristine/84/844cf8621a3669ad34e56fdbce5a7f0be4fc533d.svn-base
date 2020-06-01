@@ -1,0 +1,619 @@
+package trong.lixco.com.bean;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+
+import org.apache.poi.ss.formula.functions.Address;
+import org.jboss.logging.Logger;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
+
+import trong.lixco.com.classInfor.CheckFolder;
+import trong.lixco.com.classInfor.ResizeImage;
+import trong.lixco.com.ejb.service.AddressService;
+import trong.lixco.com.ejb.service.CateJobService;
+import trong.lixco.com.ejb.service.CityService;
+import trong.lixco.com.ejb.service.ContractTypeService;
+import trong.lixco.com.ejb.service.DepartmentParentService;
+import trong.lixco.com.ejb.service.DepartmentService;
+import trong.lixco.com.ejb.service.DistristService;
+import trong.lixco.com.ejb.service.EmployeeService;
+import trong.lixco.com.ejb.service.LevelSalaryService;
+import trong.lixco.com.ejb.service.LevelService;
+import trong.lixco.com.ejb.service.PositionService;
+import trong.lixco.com.ejb.service.ReasonLayOffService;
+import trong.lixco.com.ejb.service.TypeJobService;
+import trong.lixco.com.ejb.service.WardsService;
+import trong.lixco.com.ejb.servicekpi.EmpPJobService;
+import trong.lixco.com.ejb.servicekpi.PositionJobService;
+import trong.lixco.com.jpa.entity.CateJob;
+import trong.lixco.com.jpa.entity.City;
+import trong.lixco.com.jpa.entity.ContractType;
+import trong.lixco.com.jpa.entity.Department;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entity.Distrist;
+import trong.lixco.com.jpa.entity.Employee;
+import trong.lixco.com.jpa.entity.LAddress;
+import trong.lixco.com.jpa.entity.Level;
+import trong.lixco.com.jpa.entity.LevelSalary;
+import trong.lixco.com.jpa.entity.Position;
+import trong.lixco.com.jpa.entity.ReasonLayOff;
+import trong.lixco.com.jpa.entity.TypeJob;
+import trong.lixco.com.jpa.entity.Wards;
+import trong.lixco.com.jpa.entitykpi.KPIPerson;
+import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
+import trong.lixco.com.jpa.entitykpi.PositionJob;
+import trong.lixco.com.util.Notify;
+
+@SessionScoped
+@ManagedBean
+public class EmployeeBean extends AbstractBean<Employee> {
+	private static final long serialVersionUID = 1L;
+	private Notify notify;
+	private List<Employee> employees;
+	private Employee employee;
+	private Employee employeeEdit;
+	private String searchText = "";
+	private int tabindex;
+
+	private Department departmentSearch;
+	private DepartmentParent departmentParentSearch;
+	private Employee employeeSearch;
+	private boolean showlayoff = false;
+
+	private List<PositionJob> positionJobSaves;
+
+	@Inject
+	private DepartmentParentService departmentParentService;
+	@Inject
+	private AddressService addressService;
+	@Inject
+	private PositionJobService positionJobService;
+	@Inject
+	private ReasonLayOffService reasonLayOffService;
+	@Inject
+	private CateJobService cateJobService;
+	@Inject
+	private TypeJobService typeJobService;
+	@Inject
+	private LevelSalaryService levelSalaryService;
+	@Inject
+	private PositionService positionService;
+	@Inject
+	private LevelService levelService;
+	@Inject
+	private ContractTypeService contractTypeService;
+	@Inject
+	private EmployeeService employeeService;
+	@Inject
+	private DepartmentService departmentService;
+	@Inject
+	private CityService cityService;
+	@Inject
+	private DistristService distristService;
+	@Inject
+	private WardsService wardsService;
+
+	private List<ContractType> contractTypes;
+	private List<Department> departments;
+	private List<Level> levels;
+	private List<Position> positions;
+	private List<LevelSalary> levelSalaries;
+	private List<TypeJob> typeJobs;
+	private List<CateJob> cateJobs;
+	private List<ReasonLayOff> reasonLayOffs;
+	private List<PositionJob> positionJobs;
+	private List<DepartmentParent> departmentParents;
+
+	// Dia chi thuong tru
+	private List<City> cities;
+	private List<Distrist> distrists;
+	private List<Wards> wards;
+
+	// Dia chi tam tru
+	private List<City> citieTemps;
+	private List<Distrist> distristTemps;
+	private List<Wards> wardTemps;
+
+	// Noi sinh
+	private List<City> citiePlaces;
+	private List<Distrist> distristPlaces;
+	private List<Wards> wardPlaces;
+
+	@Inject
+	private Logger logger;
+
+	@Override
+	protected Logger getLogger() {
+		return logger;
+	}
+
+	@Override
+	public void initItem() {
+		employee = new Employee();
+		employees=new ArrayList<Employee>();
+
+		departments = departmentService.findAll();
+		departmentParents = departmentParentService.findAll();
+		cities = cityService.findAll();
+		citiePlaces = cities;
+		citieTemps = citiePlaces;
+		contractTypes = contractTypeService.findAll();
+		levels = levelService.findAll();
+		positions = positionService.findAll();
+		levelSalaries = levelSalaryService.findAll();
+		typeJobs = typeJobService.findAll();
+		cateJobs = cateJobService.findAll();
+		reasonLayOffs = reasonLayOffService.findAll();
+
+		tabindex = 0;
+
+	}
+
+	public void reset() {
+		employee = new Employee();
+	}
+
+	// Dieu huong
+	public void navigation(String navig) {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		boolean complete = false;
+		if (employee != null && employee.getId() != null) {
+			if (navig.equals("next")) {
+				if (employees.size() > 1)
+					for (int i = 0; i < employees.size(); i++) {
+						long id = employee.getId();
+						long idl = employees.get(i).getId();
+						if (id == idl) {
+							if (i + 1 < employees.size()) {
+								employeeEdit = employees.get(i + 1);
+								showEdit();
+								complete = true;
+								break;
+							} else {
+								complete = false;
+								break;
+							}
+						}
+					}
+			}
+			if (navig.equals("pre")) {
+				if (employees.size() > 1)
+					for (int i = 0; i < employees.size(); i++) {
+						long id = employee.getId();
+						long idl = employees.get(i).getId();
+						if (id == idl) {
+							if (i == 0) {
+								complete = false;
+								break;
+							} else {
+								employeeEdit = employees.get(i - 1);
+								showEdit();
+								complete = true;
+								break;
+							}
+						}
+					}
+			}
+			if (complete == false) {
+				notify.warning("Hết danh sách!");
+			}
+		}
+	}
+
+	@Inject
+	private EmpPJobService empPJobService;
+
+	// luu hoac cap nhat
+	public void createOrUpdate() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		Employee emps = employee;
+		if (emps.getId() == null) {
+			if (allowSave(null)) {
+				Employee wf = employeeService.saveOrUpdate(emps);
+				if(wf!=null){
+				employee = wf;
+				empPJobService.saveOrUpdate(employee, positionJobSaves);
+				writeLogInfo("Tao moi " + wf.toString());
+				notify.success();
+				}else{
+					notify.error();
+				}
+			} else {
+				notify.warningDetail();
+			}
+		} else {
+			if (allowUpdate(null)) {
+				Employee wf = employeeService.saveOrUpdate(emps);
+				if (wf != null) {
+					
+					if (employees.contains(wf)) {
+						employees.set(employees.indexOf(wf), wf);
+					} else {
+						employees.add(wf);
+					}
+					employee = wf;
+					empPJobService.saveOrUpdate(employee, positionJobSaves);
+					writeLogInfo("Cap nhat" + wf.toString());
+					notify.success();
+				} else {
+					notify.error();
+				}
+			} else {
+				notify.warningDetail();
+			}
+		}
+	}
+
+	// Edit
+	public void showEdit() {
+		this.employee = employeeEdit;
+
+		long begin = Calendar.getInstance().getTimeInMillis();
+
+		installDistrist();
+		installDistristPlace();
+		installDistristTemp();
+		installWard();
+		installWardPlace();
+		installWardTemp();
+		installPositonJob();
+		positionJobSaves = empPJobService.findByEmployeePos(employee);
+		// some code.....
+		long end = Calendar.getInstance().getTimeInMillis();
+		System.out.println("Executed Time: " + (end - begin));
+	}
+
+	// tim kiem
+	public void search() {
+		employees = employeeService.findByDep(departmentSearch, departmentParentSearch, employeeSearch, showlayoff);
+	}
+
+	// Xoa nhan vien
+	public void delete() {
+
+	}
+
+	// Cai dat vi tri - chuc vu cong viec
+	public void installPositonJob() {
+		if (employee.getDepartment() != null && employee.getDepartment().getId() != null) {
+			positionJobs = positionJobService.findByDepartmentP(employee.getDepartment().getDepartmentParent());
+		}
+	}
+
+	// Cai dat quan huyen (dia chi thuong tru)
+	public void installDistrist() {
+		try {
+			if (employee.getlAddress().getCity() != null && employee.getlAddress().getCity().getId() != null) {
+				distrists = distristService.findByCity(employee.getlAddress().getCity());
+			}
+		} catch (Exception e) {
+			employee.setlAddress(new LAddress());
+		}
+
+	}
+
+	// Cai dat quan huyen (dia chi tam tru)
+	public void installDistristTemp() {
+		try {
+			if (employee.getAddresstemp().getCity() != null && employee.getAddresstemp().getCity().getId() != null) {
+				distristTemps = distristService.findByCity(employee.getAddresstemp().getCity());
+			}
+		} catch (Exception e) {
+			employee.setAddresstemp(new LAddress());
+		}
+
+	}
+
+	// Cai dat quan huyen (noi sinh)
+	public void installDistristPlace() {
+		if (employee.getCityPlace() != null && employee.getCityPlace().getId() != null) {
+			distristPlaces = distristService.findByCity(employee.getCityPlace());
+		}
+	}
+
+	// Cai dat phuong xa (dia chi thuong tru)
+	public void installWard() {
+		if (employee.getlAddress().getDistrist() != null && employee.getlAddress().getDistrist().getId() != null) {
+			wards = wardsService.findByDistrist(employee.getlAddress().getDistrist());
+		}
+	}
+
+	// Cai dat phuong xa (dia chi tam tru)
+	public void installWardTemp() {
+		if (employee.getAddresstemp().getDistrist() != null && employee.getAddresstemp().getDistrist().getId() != null) {
+			wardTemps = wardsService.findByDistrist(employee.getAddresstemp().getDistrist());
+		}
+	}
+
+	// Cai dat phuong xa (dia chi noi sinh)
+	public void installWardPlace() {
+		if (employee.getDistristPlace() != null && employee.getDistristPlace().getId() != null) {
+			wardPlaces = wardsService.findByDistrist(employee.getDistristPlace());
+		}
+	}
+
+	// Cap nhat avatar
+	public void uploadAlbum(FileUploadEvent event) {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		employee.setId(1l);
+		if (employee.getId() != null) {
+			if (event.getFile() != null) {
+				String dirPath = FacesContext.getCurrentInstance().getExternalContext()
+						.getRealPath("/resources/inforEmp/" + employee.getId());
+				CheckFolder.checkCreateFolder(dirPath);
+				try (InputStream input = event.getFile().getInputstream()) {
+					byte[] file = ResizeImage.resizeThumb(input);
+					InputStream myInputStream = new ByteArrayInputStream(file);
+
+					String filename = "avatar.jpg";
+					Files.copy(myInputStream, new File(dirPath, filename).toPath(), StandardCopyOption.REPLACE_EXISTING);
+					// AlbumParentService.saveOrUpdate(albumParent);
+					// albumParents = AlbumParentService.findAll();
+					notify.success();
+				} catch (Exception e) {
+					e.printStackTrace();
+					notify.error();
+				}
+			}
+		} else {
+			notify.warning("Lưu thông tin trước khi tải ảnh!");
+		}
+
+	}
+
+	public List<Employee> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(List<Employee> Employees) {
+		this.employees = Employees;
+	}
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee Employee) {
+		this.employee = Employee;
+	}
+
+	public Employee getEmployeeEdit() {
+		return employeeEdit;
+	}
+
+	public void setEmployeeEdit(Employee EmployeeEdit) {
+		this.employeeEdit = EmployeeEdit;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+
+	public List<Department> getDepartments() {
+		return departments;
+	}
+
+	public void setDepartments(List<Department> departments) {
+		this.departments = departments;
+	}
+
+	public List<City> getCities() {
+		return cities;
+	}
+
+	public void setCities(List<City> cities) {
+		this.cities = cities;
+	}
+
+	public List<Distrist> getDistrists() {
+		return distrists;
+	}
+
+	public void setDistrists(List<Distrist> distrists) {
+		this.distrists = distrists;
+	}
+
+	public List<Wards> getWards() {
+		return wards;
+	}
+
+	public void setWards(List<Wards> wards) {
+		this.wards = wards;
+	}
+
+	public int getTabindex() {
+		return tabindex;
+	}
+
+	public void setTabindex(int tabindex) {
+		this.tabindex = tabindex;
+	}
+
+	public Department getDepartmentSearch() {
+		return departmentSearch;
+	}
+
+	public void setDepartmentSearch(Department departmentSearch) {
+		this.departmentSearch = departmentSearch;
+	}
+
+	public List<City> getCitiePlaces() {
+		return citiePlaces;
+	}
+
+	public void setCitiePlaces(List<City> citiePlaces) {
+		this.citiePlaces = citiePlaces;
+	}
+
+	public List<Distrist> getDistristPlaces() {
+		return distristPlaces;
+	}
+
+	public void setDistristPlaces(List<Distrist> distristPlaces) {
+		this.distristPlaces = distristPlaces;
+	}
+
+	public List<Wards> getWardPlaces() {
+		return wardPlaces;
+	}
+
+	public void setWardPlaces(List<Wards> wardPlaces) {
+		this.wardPlaces = wardPlaces;
+	}
+
+	public List<ContractType> getContractTypes() {
+		return contractTypes;
+	}
+
+	public void setContractTypes(List<ContractType> contractTypes) {
+		this.contractTypes = contractTypes;
+	}
+
+	public List<Level> getLevels() {
+		return levels;
+	}
+
+	public void setLevels(List<Level> levels) {
+		this.levels = levels;
+	}
+
+	public List<Position> getPositions() {
+		return positions;
+	}
+
+	public void setPositions(List<Position> positions) {
+		this.positions = positions;
+	}
+
+	public List<LevelSalary> getLevelSalaries() {
+		return levelSalaries;
+	}
+
+	public void setLevelSalaries(List<LevelSalary> levelSalaries) {
+		this.levelSalaries = levelSalaries;
+	}
+
+	public List<TypeJob> getTypeJobs() {
+		return typeJobs;
+	}
+
+	public void setTypeJobs(List<TypeJob> typeJobs) {
+		this.typeJobs = typeJobs;
+	}
+
+	public List<CateJob> getCateJobs() {
+		return cateJobs;
+	}
+
+	public void setCateJobs(List<CateJob> cateJobs) {
+		this.cateJobs = cateJobs;
+	}
+
+	public WardsService getWardsService() {
+		return wardsService;
+	}
+
+	public void setWardsService(WardsService wardsService) {
+		this.wardsService = wardsService;
+	}
+
+	public List<City> getCitieTemps() {
+		return citieTemps;
+	}
+
+	public void setCitieTemps(List<City> citieTemps) {
+		this.citieTemps = citieTemps;
+	}
+
+	public List<Distrist> getDistristTemps() {
+		return distristTemps;
+	}
+
+	public void setDistristTemps(List<Distrist> distristTemps) {
+		this.distristTemps = distristTemps;
+	}
+
+	public List<Wards> getWardTemps() {
+		return wardTemps;
+	}
+
+	public void setWardTemps(List<Wards> wardTemps) {
+		this.wardTemps = wardTemps;
+	}
+
+	public List<ReasonLayOff> getReasonLayOffs() {
+		return reasonLayOffs;
+	}
+
+	public void setReasonLayOffs(List<ReasonLayOff> reasonLayOffs) {
+		this.reasonLayOffs = reasonLayOffs;
+	}
+
+	public List<PositionJob> getPositionJobs() {
+		return positionJobs;
+	}
+
+	public void setPositionJobs(List<PositionJob> positionJobs) {
+		this.positionJobs = positionJobs;
+	}
+
+	public DepartmentParent getDepartmentParentSearch() {
+		return departmentParentSearch;
+	}
+
+	public void setDepartmentParentSearch(DepartmentParent departmentParentSearch) {
+		this.departmentParentSearch = departmentParentSearch;
+	}
+
+	public Employee getEmployeeSearch() {
+		return employeeSearch;
+	}
+
+	public void setEmployeeSearch(Employee employeeSearch) {
+		this.employeeSearch = employeeSearch;
+	}
+
+	public List<DepartmentParent> getDepartmentParents() {
+		return departmentParents;
+	}
+
+	public void setDepartmentParents(List<DepartmentParent> departmentParents) {
+		this.departmentParents = departmentParents;
+	}
+
+	public boolean isShowlayoff() {
+		return showlayoff;
+	}
+
+	public void setShowlayoff(boolean showlayoff) {
+		this.showlayoff = showlayoff;
+	}
+
+	public List<PositionJob> getPositionJobSaves() {
+		return positionJobSaves;
+	}
+
+	public void setPositionJobSaves(List<PositionJob> positionJobSaves) {
+		this.positionJobSaves = positionJobSaves;
+	}
+
+}

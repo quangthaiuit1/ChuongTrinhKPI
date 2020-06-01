@@ -1,0 +1,19 @@
+/**
+ * ProgramServicePublic.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.service.publics;
+
+public interface ProgramServicePublic extends java.rmi.Remote {
+    public boolean delete(trong.lixco.com.service.publics.Program arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Program[] findAll() throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Program findId(long arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Program create(trong.lixco.com.service.publics.Program arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Program findByName(java.lang.String arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Program update(trong.lixco.com.service.publics.Program arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Program getFirst() throws java.rmi.RemoteException;
+    public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException;
+}

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<h3 style="margin: 0px">Bộ công thức KPI</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<h:panelGrid columns="2" style="width:100%;" columnClasses="w50,w50">
+				<p:panel header="Danh sách" id="preview">
+					<p:dataTable value="#{formulaKPIBean.formulaKPIs}" lazy="true"
+						paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
+						paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
+						scrollHeight="570" selection="#{formulaKPIBean.formulaKPIEdit}"
+						selectionMode="single" id="tableid" widgetVar="datatb"
+						resizableColumns="true" var="item">
+						<p:ajax event="rowSelect" listener="#{formulaKPIBean.showEdit()}"
+							update=":menuformid:infor" />
+						<p:column headerText="ID" width="20">
+							<h:outputText value="#{item.id}" />
+						</p:column>
+						<p:column headerText="Mô tả công thức" width="170">
+							<p:panelGrid columns="1" style="width:100%">
+								<h:outputText value="#{item.code}" />
+								<h:outputText value="#{item.comment}" />
+							</p:panelGrid>
+						</p:column>
+						<p:column headerText="Chi tiết">
+							<p:panelGrid columns="3" style="width:100%"
+								columnClasses="w10,w30,w30">
+								<p:outputLabel value="Kết quả" />
+								<p:outputLabel value="So sánh" />
+								<p:outputLabel value="Công thức tính kết quả" />
+								<p:outputLabel value="Đạt" />
+								<p:outputLabel value="#{item.codeVSGood}" />
+								<p:outputLabel value="#{item.codeGood}" />
+								<p:outputLabel value="Không đạt" />
+								<p:outputLabel value="#{item.codeVSNotGood}" />
+								<p:outputLabel value="#{item.codeNotGood}" />
+							</p:panelGrid>
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+				<p:panel header="Thông tin" id="infor">
+					<h:panelGrid style="width:100%">
+						<p:panelGrid columns="2" style="width:100%"
+							columnClasses="w40,w60">
+							<p:outputLabel value="Mô tả công thức chung" />
+							<p:outputLabel value="Công thức" />
+							<p:inputTextarea value="#{formulaKPIBean.formulaKPI.code}"
+								rows="6" />
+							<p:panelGrid columns="3" style="width:100%">
+								<p:outputLabel value="Kết quả" />
+								<p:outputLabel value="So sánh" />
+								<p:outputLabel value="Công thức tính kết quả" />
+								<p:outputLabel value="Đạt" />
+								<p:inputTextarea rows="2"
+									disabled="#{formulaKPIBean.formulaKPI.id!= null}"
+									value="#{formulaKPIBean.formulaKPI.codeVSGood}" />
+								<p:inputTextarea rows="2"
+									disabled="#{formulaKPIBean.formulaKPI.id!= null}"
+									value="#{formulaKPIBean.formulaKPI.codeGood}" />
+								<p:outputLabel value="Không đạt" />
+								<p:inputTextarea rows="2"
+									disabled="#{formulaKPIBean.formulaKPI.id!= null}"
+									value="#{formulaKPIBean.formulaKPI.codeVSNotGood}" />
+								<p:inputTextarea rows="2"
+									disabled="#{formulaKPIBean.formulaKPI.id!= null}"
+									value="#{formulaKPIBean.formulaKPI.codeNotGood}" />
+							</p:panelGrid>
+						</p:panelGrid>
+						<p:panelGrid columns="2" style="width:100%">
+							<p:selectBooleanCheckbox itemLabel="Tối đa 100%"
+								value="#{formulaKPIBean.formulaKPI.max100}" />
+							<p:selectBooleanCheckbox itemLabel="Tối thiểu 0%"
+								value="#{formulaKPIBean.formulaKPI.min0}" />
+						</p:panelGrid>
+						<p:inputTextarea value="#{formulaKPIBean.formulaKPI.comment}"
+							placeholder="Ghi chú" rows="2" />
+						<p:outputLabel
+							value="Chú ý: Chỉ sử dụng các biến chung là: KH,TH,A,B,C,D,E,F." />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Lưu"
+						action="#{formulaKPIBean.createOrUpdateFormula()}"
+						update=":messages,:menuformid" />
+					<p:commandButton value="Tạo mới" action="#{formulaKPIBean.reset()}"
+						update=":messages,:menuformid" />
+					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
+						value="Xoá" update=":messages,:menuformid"
+						action="#{formulaKPIBean.delete()}">
+						<p:confirm icon="ui-icon-alert" />
+					</p:commandButton>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

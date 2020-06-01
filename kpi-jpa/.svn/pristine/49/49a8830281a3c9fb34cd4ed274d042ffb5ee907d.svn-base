@@ -1,0 +1,50 @@
+package trong.lixco.com.jpa.entity;
+
+import javax.persistence.Entity;
+/**
+ * @author vantrong
+ * @Time 16-04-2018 12:08:21
+ * Bac luong
+ */
+@Entity
+public class LevelSalary extends AbstractEntity {
+	private String code;
+	private String name;
+	//dulieu tam
+	private String mabac;
+	private String macdcv;
+	private String mskhblcv;
+	
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getMabac() {
+		return mabac;
+	}
+	public void setMabac(String mabac) {
+		this.mabac = mabac;
+	}
+	public String getMacdcv() {
+		return macdcv;
+	}
+	public void setMacdcv(String macdcv) {
+		this.macdcv = macdcv;
+	}
+	public String getMskhblcv() {
+		return mskhblcv;
+	}
+	public void setMskhblcv(String mskhblcv) {
+		this.mskhblcv = mskhblcv;
+	}
+	
+	
+}

@@ -1,0 +1,1505 @@
+package trong.lixco.com.bean;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Row;
+
+import trong.lixco.com.ejb.service.AddressService;
+import trong.lixco.com.ejb.service.CateJobService;
+import trong.lixco.com.ejb.service.CityService;
+import trong.lixco.com.ejb.service.ContractTypeService;
+import trong.lixco.com.ejb.service.DepartmentService;
+import trong.lixco.com.ejb.service.DistristService;
+import trong.lixco.com.ejb.service.EmployeeService;
+import trong.lixco.com.ejb.service.HospitalService;
+import trong.lixco.com.ejb.service.LevelSalaryService;
+import trong.lixco.com.ejb.service.LevelService;
+import trong.lixco.com.ejb.service.PeopleService;
+import trong.lixco.com.ejb.service.PositionService;
+import trong.lixco.com.ejb.service.ReasonLayOffService;
+import trong.lixco.com.ejb.service.TypeJobService;
+import trong.lixco.com.ejb.service.WardsService;
+import trong.lixco.com.jpa.entity.CateJob;
+import trong.lixco.com.jpa.entity.City;
+import trong.lixco.com.jpa.entity.ContractType;
+import trong.lixco.com.jpa.entity.Department;
+import trong.lixco.com.jpa.entity.Distrist;
+import trong.lixco.com.jpa.entity.Employee;
+import trong.lixco.com.jpa.entity.Hospital;
+import trong.lixco.com.jpa.entity.LAddress;
+import trong.lixco.com.jpa.entity.Level;
+import trong.lixco.com.jpa.entity.LevelSalary;
+import trong.lixco.com.jpa.entity.People;
+import trong.lixco.com.jpa.entity.Position;
+import trong.lixco.com.jpa.entity.ReasonLayOff;
+import trong.lixco.com.jpa.entity.TypeJob;
+import trong.lixco.com.jpa.entity.Wards;
+import trong.lixco.com.service.publics.MemberServicePublic;
+import trong.lixco.com.service.publics.MemberServicePublicProxy;
+import trong.lixco.com.util.Notify;
+
+@ManagedBean
+@ViewScoped
+public class ReadExcelBean {
+	private Notify notify;
+
+	@Inject
+	private LevelSalaryService levelSalaryService;
+	@Inject
+	private PositionService positionService;
+	@Inject
+	private TypeJobService typeJobService;
+	@Inject
+	private PeopleService peopleService;
+	@Inject
+	private CityService cityService;
+	@Inject
+	private DistristService distristService;
+	@Inject
+	private WardsService wardsService;
+	@Inject
+	private HospitalService hospitalService;
+	@Inject
+	private ContractTypeService contractTypeService;
+	@Inject
+	private LevelService levelService;
+	@Inject
+	private CateJobService cateJobService;
+	@Inject
+	private ReasonLayOffService reasonLayOffService;
+	@Inject
+	private DepartmentService departmentService;
+	@Inject
+	private AddressService addressService;
+	@Inject
+	private EmployeeService employeeService;
+
+	private MemberServicePublic memberServicePublic;
+	private String nameDB;
+
+	@PostConstruct
+	public void initItem() {
+		memberServicePublic = new MemberServicePublicProxy();
+		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+				.getRequest();
+		HttpSession session = req.getSession();
+		nameDB = (String) session.getAttribute("database");
+	}
+
+	public void bacluong() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\bacluong.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("khblcv")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, mabac = null, macdcv = null, mskhblcv = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						mabac = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						macdcv = row.getCell(tam + 3).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						mskhblcv = row.getCell(tam + 4).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					LevelSalary item = new LevelSalary();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					item.setMabac(mabac);
+					item.setMacdcv(macdcv);
+					item.setMskhblcv(mskhblcv);
+					try {
+						levelSalaryService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void chucvu() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try {
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\chucvu.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("machv")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null;
+					double phucap = 0;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						phucap = row.getCell(tam + 2).getNumericCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					Position item = new Position();
+					item.setId((long) i);
+					item.setCode(code);
+					item.setName(name);
+					item.setSupport(phucap);
+					try {
+						positionService.create(item);
+					} catch (Exception e) {
+					}
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+			notify.error();
+		}
+	}
+
+	public void congviec() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\congviec.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("macv")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, machv = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						machv = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					TypeJob item = new TypeJob();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					Position po = positionService.findByCode(machv);
+					item.setPosition(po);
+					try {
+						typeJobService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void dantoc() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\dantoc.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("madantoc")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, nameOther = null, codebh = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						nameOther = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						codebh = row.getCell(tam + 3).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					People item = new People();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					item.setNameOther(nameOther);
+					item.setCodeBH(codebh);
+					try {
+						peopleService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void tinh_tp() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\tinhbh.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("code")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, codeT = null, codeBH = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						codeT = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						codeBH = row.getCell(tam + 3).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					City item = new City();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					item.setCodeT(codeT);
+					item.setCodeBH(codeBH);
+					try {
+						cityService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void quanhuyen() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\quanbh.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("code")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, codeT = null, codeBH = null, cityBH = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						codeT = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						codeBH = row.getCell(tam + 3).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						cityBH = row.getCell(tam + 4).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					Distrist item = new Distrist();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					item.setCodeT(codeT);
+					item.setCodeBH(codeBH);
+					City city = cityService.findByCodeBH(cityBH);
+					item.setCity(city);
+					try {
+						distristService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void phuongxa() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\xabh.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("code")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, codeT = null, codeBH = null, distristBH = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						codeT = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						codeBH = row.getCell(tam + 3).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						distristBH = row.getCell(tam + 4).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					Wards item = new Wards();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					item.setCodeT(codeT);
+					item.setCodeBH(codeBH);
+					Distrist distrist = distristService.findByCodeBH(distristBH);
+					item.setDistrist(distrist);
+					try {
+						wardsService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void benhvien() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\dmbenhvien.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("mabenhvien")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, add = null, codeBH = null, tpBH = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						add = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						codeBH = row.getCell(tam + 3).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						tpBH = row.getCell(tam + 4).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					Hospital item = new Hospital();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					item.setAddl(add);
+					item.setCodeBH(codeBH);
+					City city = cityService.findByCodeBH(tpBH);
+					item.setCity(city);
+					try {
+						hospitalService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void loaihopdong() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\loaihopdong.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("loaihd")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					ContractType item = new ContractType();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					try {
+						contractTypeService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void trinhdo() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\trinhdo.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("matd")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, note = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						note = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					Level item = new Level();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					item.setNote(note);
+					try {
+						levelService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void phanloaikhoi() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\phanloaikhoi.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("plkhoi")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					CateJob item = new CateJob();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					try {
+						cateJobService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void lydonghi() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\lydonghi.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("masothldg")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null, note = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						note = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					ReasonLayOff item = new ReasonLayOff();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					item.setNote(note);
+					try {
+						reasonLayOffService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void donvi() {
+		try {
+			notify = new Notify(FacesContext.getCurrentInstance());
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\donvi.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("madv")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+
+					// Bat dau lay gia tri
+					String code = null, name = null;
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						name = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+					// Bat dau lay gia tri
+					Department item = new Department();
+					item.setId((long) (i));
+					item.setCode(code);
+					item.setName(name);
+					try {
+						departmentService.create(item);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void nhanvien() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		SimpleDateFormat sf = new SimpleDateFormat("dd-MMM-yy", java.util.Locale.US);
+		try {
+			FileInputStream excelFileToRead = new FileInputStream("D:\\dulieunhansu\\dmnv.xls");
+			// Get the workbook instance for XLS file
+			POIFSFileSystem fs = new POIFSFileSystem(excelFileToRead);
+			HSSFWorkbook workbook = new HSSFWorkbook(fs);
+			// Get first sheet from the workbook
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			// Iterate through each rows from first sheet
+			Row row;
+			int tam = -1;
+			// Chay danh sach tu 1 -> dong cuoi cung
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				if (tam == -1) {
+					// Vi tri bat dau la "Ngay"
+					for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+						try {
+							String a = row.getCell(j).getStringCellValue();
+							if (row.getCell(j).getStringCellValue().equalsIgnoreCase("mathe")) {
+								tam = j;
+								break;
+							}
+						} catch (Exception e) {
+						}
+					}
+				} else {
+					// Bat dau lay gia tri
+
+					String code = null;// ma the
+					String codeOld = null;// ma the cu
+					String codeInfor = null;// ma ho so (vi tri ho so trong tu)
+					Department department = null;// don vi
+					String employeeCode = null;
+					String employeeName = null;
+					boolean isManager = false;// can bo quan ly
+					LAddress lAddress = null;// Dia chi thuong tru
+					Date birthday = null;// ngay sinh
+					boolean isYearOfBirth = false;// chi co nam sinh
+
+					/*
+					 * Noi sinh
+					 */
+					City cityPlace = null;
+					Distrist distristPlace = null;
+					Wards wardsPlace = null;
+
+					boolean isFemale = false;// gioi tinh
+					Date dayAtWork = null;// ngay vao lam viec
+					int numberDayOff = 0;// so ngay phep
+					ContractType contractType = null;// Loai hop dong
+					Date dateFirstContract = null;// ngay ky hop dong lan 1
+					Date dateAdjournContract = null;// ngay gian han hop dong
+					Date dateEndContract = null;// ngay ket thuc hop dong
+					String contractNoNewest = null;// So hop dong mơi nhat
+					Level level = null;// cap bac/ trinh do
+					Position position = null;// vi tri, chuc vu
+					LevelSalary levelSalary = null;// bac luong
+					Date dateRankSalary = null;// Ngày xep luong hien tại
+					String socialInsuranceNo = null;// so bao hiem xa hoi
+					String heathInsuranceNo = null;// so bao hiem y te
+					TypeJob typeJob = null;// cong viec
+					CateJob cateJob = null;// phan loai khoi (viec)
+					String personID = null; // so CMND
+					Date personIDDate = null;// ngay cap
+					City personIDCity = null;// noi cap
+					People people = null;// dan toc
+					City heathPlace = null;// noi dang ky kham chua benh
+					Hospital lHospital = null;// benh vien
+					LAddress addresstemp = null;// Dia chi tam tru
+					String taxPersonId = null;// ma so thue
+					String phone = null;// so dien thoai
+					boolean is7_30 = false;// gio vao 7.30
+					boolean isWorkShift = false;// di ca
+					boolean isQuitEating = false; // cat com
+					boolean isVegetarian = false;// an chay
+					boolean isPartisan = false;// dang vien
+					Date datePartisan = null;// ngay vao dang
+					boolean isMemberShip = false;// doan vien
+					Date dateMemberShip = null;// ngay vao cong doan
+					boolean layOff = false;// nghi viec
+					Date dateLayOff = null;// ngay nghi viec
+					ReasonLayOff reasonLayOff = null;// ly do nghi viec
+					String householderName = null;// ten chu ho
+					String householderNo = null; // so ho khau
+					String householderAdress = null;// dia chi ho khau;
+					String inforURL = null;// ho so luu tru
+					String inforComment = null;// thong tin ho so
+					String wageAdjustment = null;// dien bien luong
+					String note = null;// ghi chu
+					String training = null;// dao tao
+
+					try {
+						code = row.getCell(tam).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						codeOld = row.getCell(tam + 1).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						codeInfor = row.getCell(tam + 2).getStringCellValue();
+					} catch (Exception e) {
+					}
+
+					try {
+						String madonvi = row.getCell(tam + 3).getStringCellValue();
+						department = departmentService.findByCode(madonvi);
+					} catch (Exception e) {
+					}
+					try {
+						employeeCode = row.getCell(tam + 4).getStringCellValue();
+					} catch (Exception e) {
+					}
+
+					try {
+						employeeName = row.getCell(tam + 5).getStringCellValue();
+					} catch (Exception e) {
+					}
+
+					try {
+						String a = row.getCell(tam + 6).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							isManager = true;
+						} else {
+							isManager = false;
+						}
+					} catch (Exception e) {
+					}
+
+					try {
+						String mapxtamtru = row.getCell(tam + 7).getStringCellValue();
+						Wards wa = wardsService.findByCodeBH(mapxtamtru);
+						String diachi = row.getCell(tam + 8).getStringCellValue();
+						LAddress address2 = new LAddress();
+						address2.setAddl(diachi);
+						if (wa != null) {
+							address2.setWards(wa);
+							address2.setDistrist(wa.getDistrist());
+							address2.setCity(wa.getDistrist().getCity());
+						}
+						lAddress = addressService.create(address2);
+
+					} catch (Exception e) {
+					}
+					try {
+						String ngaysinh = row.getCell(tam + 9).getStringCellValue();
+						birthday = sf.parse(ngaysinh);
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 10).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							isYearOfBirth = true;
+						} else {
+							isYearOfBirth = false;
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String tpnoisinh = row.getCell(tam + 11).getStringCellValue();
+						cityPlace = cityService.findByCodeBH(tpnoisinh);
+					} catch (Exception e) {
+					}
+					try {
+						String mapxnoisinh = row.getCell(tam + 12).getStringCellValue();
+						Wards wa = wardsService.findByCodeBH(mapxnoisinh);
+						if (wa != null) {
+							wardsPlace = wa;
+							distristPlace = wa.getDistrist();
+							cityPlace = wa.getDistrist().getCity();
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 13).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							isFemale = true;
+						} else {
+							isFemale = false;
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String ngayvao = row.getCell(tam + 14).getStringCellValue();
+						dayAtWork = sf.parse(ngayvao);
+					} catch (Exception e) {
+					}
+					try {
+						numberDayOff = Integer.parseInt(row.getCell(tam + 15).getStringCellValue());
+					} catch (Exception e) {
+					}
+					try {
+						String loaihopdong = row.getCell(tam + 16).getStringCellValue();
+						contractType = contractTypeService.findByCode(loaihopdong);
+					} catch (Exception e) {
+					}
+					try {
+						String ngaykyhd = row.getCell(tam + 17).getStringCellValue();
+						dateFirstContract = sf.parse(ngaykyhd);
+					} catch (Exception e) {
+					}
+					try {
+						String ngaygiahan = row.getCell(tam + 18).getStringCellValue();
+						dateAdjournContract = sf.parse(ngaygiahan);
+					} catch (Exception e) {
+					}
+					try {
+						String ngayketthuc = row.getCell(tam + 19).getStringCellValue();
+						dateEndContract = sf.parse(ngayketthuc);
+					} catch (Exception e) {
+					}
+					try {
+						contractNoNewest = row.getCell(tam + 20).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						String capbac = row.getCell(tam + 21).getStringCellValue();
+						level = levelService.findByCode(capbac);
+					} catch (Exception e) {
+					}
+					try {
+						String congviec = row.getCell(tam + 22).getStringCellValue();
+						typeJob = typeJobService.findByCode(congviec);
+					} catch (Exception e) {
+					}
+					try {
+						String mskhblcv = row.getCell(tam + 23).getStringCellValue();
+						levelSalary = levelSalaryService.findByCode(mskhblcv);
+					} catch (Exception e) {
+					}
+					try {
+						String tdxepluong = row.getCell(tam + 24).getStringCellValue();
+						dateRankSalary = sf.parse(tdxepluong);
+					} catch (Exception e) {
+					}
+					try {
+						socialInsuranceNo = row.getCell(tam + 25).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						heathInsuranceNo = row.getCell(tam + 26).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						String khoicongviec = row.getCell(tam + 27).getStringCellValue();
+						cateJob = cateJobService.findByCode(khoicongviec);
+					} catch (Exception e) {
+					}
+					try {
+						personID = row.getCell(tam + 28).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						String ngaycmnn = row.getCell(tam + 29).getStringCellValue();
+						personIDDate = sf.parse(ngaycmnn);
+					} catch (Exception e) {
+					}
+					try {
+						String tpcmnd = row.getCell(tam + 30).getStringCellValue();
+						personIDCity = cityService.findByCodeBH(tpcmnd);
+					} catch (Exception e) {
+					}
+					try {
+						String dantoc = row.getCell(tam + 31).getStringCellValue();
+						people = peopleService.findByCode(dantoc);
+					} catch (Exception e) {
+					}
+					try {
+						String benhvien = row.getCell(tam + 32).getStringCellValue();
+						lHospital = hospitalService.findByCode(benhvien);
+						if (lHospital != null) {
+							heathPlace = lHospital.getCity();
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String diachi = row.getCell(tam + 33).getStringCellValue();
+						String mapxtamtru = row.getCell(tam + 34).getStringCellValue();
+						Wards wa = wardsService.findByCodeBH(mapxtamtru);
+						LAddress address2 = new LAddress();
+						address2.setAddl(diachi);
+						if (wa != null) {
+							address2.setWards(wa);
+							address2.setDistrist(wa.getDistrist());
+							address2.setCity(wa.getDistrist().getCity());
+						}
+						addresstemp = addressService.create(address2);
+
+					} catch (Exception e) {
+					}
+					try {
+						taxPersonId = row.getCell(tam + 35).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						phone = row.getCell(tam + 36).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 37).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							is7_30 = true;
+						} else {
+							is7_30 = false;
+						}
+
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 38).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							isWorkShift = true;
+						} else {
+							isWorkShift = false;
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 39).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							isQuitEating = true;
+						} else {
+							isQuitEating = false;
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 40).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							isVegetarian = true;
+						} else {
+							isVegetarian = false;
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 41).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							isPartisan = true;
+						} else {
+							isPartisan = false;
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String ngayvaodang = row.getCell(tam + 42).getStringCellValue();
+						datePartisan = sf.parse(ngayvaodang);
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 43).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							isMemberShip = true;
+						} else {
+							isMemberShip = false;
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String ngayvaodoan = row.getCell(tam + 44).getStringCellValue();
+						dateMemberShip = sf.parse(ngayvaodoan);
+					} catch (Exception e) {
+					}
+					try {
+						String a = row.getCell(tam + 45).getStringCellValue();
+						if ("TRUE".equals(a)) {
+							layOff = true;
+						} else {
+							layOff = false;
+						}
+					} catch (Exception e) {
+					}
+					try {
+						String ngaynghi = row.getCell(tam + 46).getStringCellValue();
+						dateLayOff = sf.parse(ngaynghi);
+					} catch (Exception e) {
+					}
+					try {
+						String lydo = row.getCell(tam + 47).getStringCellValue();
+						reasonLayOff = reasonLayOffService.findByCode(lydo);
+					} catch (Exception e) {
+					}
+					try {
+						householderName = row.getCell(tam + 48).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						householderNo = row.getCell(tam + 49).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						householderAdress = row.getCell(tam + 50).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						wageAdjustment = row.getCell(tam + 51).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						note = row.getCell(tam + 52).getStringCellValue();
+					} catch (Exception e) {
+					}
+					try {
+						training = row.getCell(tam + 53).getStringCellValue();
+					} catch (Exception e) {
+					}
+					// Bat dau lay gia tri
+					try {
+						Employee item = new Employee();
+						item.setId((long) i);
+						item.setCode(code);
+						item.setCodeOld(codeOld);
+						item.setCodeInfor(codeInfor);
+						item.setDepartment(department);
+						item.setEmployeeCode(employeeCode);
+						item.setEmployeeName(employeeName);
+						item.setManagerComp(isManager);
+						item.setlAddress(lAddress);
+						item.setBirthday(birthday);
+						item.setYearOfBirth(isYearOfBirth);
+						item.setCityPlace(cityPlace);
+						item.setDistristPlace(distristPlace);
+						item.setWardsPlace(wardsPlace);
+						item.setFemale(isFemale);
+						item.setDayAtWork(dayAtWork);
+						item.setNumberDayOff(numberDayOff);
+						item.setContractType(contractType);
+						item.setDateFirstContract(dateFirstContract);
+						item.setDateAdjournContract(dateAdjournContract);
+						item.setDateEndContract(dateEndContract);
+						item.setContractNoNewest(contractNoNewest);
+						item.setLevel(level);
+						item.setPosition(position);
+						item.setLevelSalary(levelSalary);
+						item.setDateRankSalary(dateRankSalary);
+						item.setSocialInsuranceNo(socialInsuranceNo);
+						item.setHeathInsuranceNo(heathInsuranceNo);
+						item.setTypeJob(typeJob);
+						item.setCateJob(cateJob);
+						item.setPersonID(personID);
+						item.setPersonIDDate(personIDDate);
+						item.setPersonIDCity(personIDCity);
+						item.setPeople(people);
+						item.setHeathPlace(heathPlace);
+						item.setHospital(lHospital);
+						item.setAddresstemp(addresstemp);
+						item.setTaxPersonId(taxPersonId);
+						item.setPhone(phone);
+						item.setSt7_30(is7_30);
+						item.setWorkShift(isWorkShift);
+						item.setQuitEating(isQuitEating);
+						item.setVegetarian(isVegetarian);
+						item.setPartisan(isPartisan);
+						item.setDatePartisan(datePartisan);
+						item.setMemberShip(isMemberShip);
+						item.setDateMemberShip(dateMemberShip);
+						item.setLayOff(layOff);
+						item.setDateLayOff(dateLayOff);
+						item.setReasonLayOff(reasonLayOff);
+						item.setHouseholderName(householderName);
+						item.setHouseholderNo(householderNo);
+						item.setHouseholderAdress(householderAdress);
+						item.setWageAdjustment(wageAdjustment);
+						item.setNote(note);
+						item.setTraining(training);
+						employeeService.create(item);
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						break;
+					}
+
+				}
+			}
+			notify.success();
+		} catch (IOException e) {
+			e.printStackTrace();
+			notify.error();
+		}
+	}
+
+}

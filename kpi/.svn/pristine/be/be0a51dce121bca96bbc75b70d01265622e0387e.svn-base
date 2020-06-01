@@ -1,0 +1,1058 @@
+/**
+ * MemberDetail.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.service.publics;
+
+public class MemberDetail  extends trong.lixco.com.service.publics.AbstractEntity  implements java.io.Serializable {
+    private java.lang.String congviec;
+
+    private java.lang.String daotao;
+
+    private java.lang.String diachi;
+
+    private java.lang.String dienbienluong;
+
+    private java.lang.String hopdong;
+
+    private java.lang.String mahoso;
+
+    private java.lang.String masothue;
+
+    private java.util.Calendar ngaycap;
+
+    private java.util.Calendar ngaygiahanhopdong;
+
+    private java.util.Calendar ngayketthuchopdong;
+
+    private java.util.Calendar ngaykyhopdong;
+
+    private java.util.Calendar ngaynghi;
+
+    private java.util.Calendar ngaysinh;
+
+    private java.util.Calendar ngayvao;
+
+    private java.lang.String noicap;
+
+    private java.lang.String noisinh;
+
+    private java.lang.String phai;
+
+    private java.lang.String phep;
+
+    private java.lang.String phucap;
+
+    private java.lang.String sobaohiem;
+
+    private java.lang.String sochungminh;
+
+    private java.lang.String sodienthoai;
+
+    private java.lang.String sotuoi;
+
+    private java.lang.String tenkhoi;
+
+    private java.lang.String thamnien;
+
+    private java.lang.String trinhdo;
+
+    public MemberDetail() {
+    }
+
+    public MemberDetail(
+           java.util.Calendar createdDate,
+           java.lang.String createdUser,
+           java.lang.Long id,
+           java.util.Calendar modifiedDate,
+           java.lang.String note,
+           boolean select,
+           java.lang.String congviec,
+           java.lang.String daotao,
+           java.lang.String diachi,
+           java.lang.String dienbienluong,
+           java.lang.String hopdong,
+           java.lang.String mahoso,
+           java.lang.String masothue,
+           java.util.Calendar ngaycap,
+           java.util.Calendar ngaygiahanhopdong,
+           java.util.Calendar ngayketthuchopdong,
+           java.util.Calendar ngaykyhopdong,
+           java.util.Calendar ngaynghi,
+           java.util.Calendar ngaysinh,
+           java.util.Calendar ngayvao,
+           java.lang.String noicap,
+           java.lang.String noisinh,
+           java.lang.String phai,
+           java.lang.String phep,
+           java.lang.String phucap,
+           java.lang.String sobaohiem,
+           java.lang.String sochungminh,
+           java.lang.String sodienthoai,
+           java.lang.String sotuoi,
+           java.lang.String tenkhoi,
+           java.lang.String thamnien,
+           java.lang.String trinhdo) {
+        super(
+            createdDate,
+            createdUser,
+            id,
+            modifiedDate,
+            note,
+            select);
+        this.congviec = congviec;
+        this.daotao = daotao;
+        this.diachi = diachi;
+        this.dienbienluong = dienbienluong;
+        this.hopdong = hopdong;
+        this.mahoso = mahoso;
+        this.masothue = masothue;
+        this.ngaycap = ngaycap;
+        this.ngaygiahanhopdong = ngaygiahanhopdong;
+        this.ngayketthuchopdong = ngayketthuchopdong;
+        this.ngaykyhopdong = ngaykyhopdong;
+        this.ngaynghi = ngaynghi;
+        this.ngaysinh = ngaysinh;
+        this.ngayvao = ngayvao;
+        this.noicap = noicap;
+        this.noisinh = noisinh;
+        this.phai = phai;
+        this.phep = phep;
+        this.phucap = phucap;
+        this.sobaohiem = sobaohiem;
+        this.sochungminh = sochungminh;
+        this.sodienthoai = sodienthoai;
+        this.sotuoi = sotuoi;
+        this.tenkhoi = tenkhoi;
+        this.thamnien = thamnien;
+        this.trinhdo = trinhdo;
+    }
+
+
+    /**
+     * Gets the congviec value for this MemberDetail.
+     * 
+     * @return congviec
+     */
+    public java.lang.String getCongviec() {
+        return congviec;
+    }
+
+
+    /**
+     * Sets the congviec value for this MemberDetail.
+     * 
+     * @param congviec
+     */
+    public void setCongviec(java.lang.String congviec) {
+        this.congviec = congviec;
+    }
+
+
+    /**
+     * Gets the daotao value for this MemberDetail.
+     * 
+     * @return daotao
+     */
+    public java.lang.String getDaotao() {
+        return daotao;
+    }
+
+
+    /**
+     * Sets the daotao value for this MemberDetail.
+     * 
+     * @param daotao
+     */
+    public void setDaotao(java.lang.String daotao) {
+        this.daotao = daotao;
+    }
+
+
+    /**
+     * Gets the diachi value for this MemberDetail.
+     * 
+     * @return diachi
+     */
+    public java.lang.String getDiachi() {
+        return diachi;
+    }
+
+
+    /**
+     * Sets the diachi value for this MemberDetail.
+     * 
+     * @param diachi
+     */
+    public void setDiachi(java.lang.String diachi) {
+        this.diachi = diachi;
+    }
+
+
+    /**
+     * Gets the dienbienluong value for this MemberDetail.
+     * 
+     * @return dienbienluong
+     */
+    public java.lang.String getDienbienluong() {
+        return dienbienluong;
+    }
+
+
+    /**
+     * Sets the dienbienluong value for this MemberDetail.
+     * 
+     * @param dienbienluong
+     */
+    public void setDienbienluong(java.lang.String dienbienluong) {
+        this.dienbienluong = dienbienluong;
+    }
+
+
+    /**
+     * Gets the hopdong value for this MemberDetail.
+     * 
+     * @return hopdong
+     */
+    public java.lang.String getHopdong() {
+        return hopdong;
+    }
+
+
+    /**
+     * Sets the hopdong value for this MemberDetail.
+     * 
+     * @param hopdong
+     */
+    public void setHopdong(java.lang.String hopdong) {
+        this.hopdong = hopdong;
+    }
+
+
+    /**
+     * Gets the mahoso value for this MemberDetail.
+     * 
+     * @return mahoso
+     */
+    public java.lang.String getMahoso() {
+        return mahoso;
+    }
+
+
+    /**
+     * Sets the mahoso value for this MemberDetail.
+     * 
+     * @param mahoso
+     */
+    public void setMahoso(java.lang.String mahoso) {
+        this.mahoso = mahoso;
+    }
+
+
+    /**
+     * Gets the masothue value for this MemberDetail.
+     * 
+     * @return masothue
+     */
+    public java.lang.String getMasothue() {
+        return masothue;
+    }
+
+
+    /**
+     * Sets the masothue value for this MemberDetail.
+     * 
+     * @param masothue
+     */
+    public void setMasothue(java.lang.String masothue) {
+        this.masothue = masothue;
+    }
+
+
+    /**
+     * Gets the ngaycap value for this MemberDetail.
+     * 
+     * @return ngaycap
+     */
+    public java.util.Calendar getNgaycap() {
+        return ngaycap;
+    }
+
+
+    /**
+     * Sets the ngaycap value for this MemberDetail.
+     * 
+     * @param ngaycap
+     */
+    public void setNgaycap(java.util.Calendar ngaycap) {
+        this.ngaycap = ngaycap;
+    }
+
+
+    /**
+     * Gets the ngaygiahanhopdong value for this MemberDetail.
+     * 
+     * @return ngaygiahanhopdong
+     */
+    public java.util.Calendar getNgaygiahanhopdong() {
+        return ngaygiahanhopdong;
+    }
+
+
+    /**
+     * Sets the ngaygiahanhopdong value for this MemberDetail.
+     * 
+     * @param ngaygiahanhopdong
+     */
+    public void setNgaygiahanhopdong(java.util.Calendar ngaygiahanhopdong) {
+        this.ngaygiahanhopdong = ngaygiahanhopdong;
+    }
+
+
+    /**
+     * Gets the ngayketthuchopdong value for this MemberDetail.
+     * 
+     * @return ngayketthuchopdong
+     */
+    public java.util.Calendar getNgayketthuchopdong() {
+        return ngayketthuchopdong;
+    }
+
+
+    /**
+     * Sets the ngayketthuchopdong value for this MemberDetail.
+     * 
+     * @param ngayketthuchopdong
+     */
+    public void setNgayketthuchopdong(java.util.Calendar ngayketthuchopdong) {
+        this.ngayketthuchopdong = ngayketthuchopdong;
+    }
+
+
+    /**
+     * Gets the ngaykyhopdong value for this MemberDetail.
+     * 
+     * @return ngaykyhopdong
+     */
+    public java.util.Calendar getNgaykyhopdong() {
+        return ngaykyhopdong;
+    }
+
+
+    /**
+     * Sets the ngaykyhopdong value for this MemberDetail.
+     * 
+     * @param ngaykyhopdong
+     */
+    public void setNgaykyhopdong(java.util.Calendar ngaykyhopdong) {
+        this.ngaykyhopdong = ngaykyhopdong;
+    }
+
+
+    /**
+     * Gets the ngaynghi value for this MemberDetail.
+     * 
+     * @return ngaynghi
+     */
+    public java.util.Calendar getNgaynghi() {
+        return ngaynghi;
+    }
+
+
+    /**
+     * Sets the ngaynghi value for this MemberDetail.
+     * 
+     * @param ngaynghi
+     */
+    public void setNgaynghi(java.util.Calendar ngaynghi) {
+        this.ngaynghi = ngaynghi;
+    }
+
+
+    /**
+     * Gets the ngaysinh value for this MemberDetail.
+     * 
+     * @return ngaysinh
+     */
+    public java.util.Calendar getNgaysinh() {
+        return ngaysinh;
+    }
+
+
+    /**
+     * Sets the ngaysinh value for this MemberDetail.
+     * 
+     * @param ngaysinh
+     */
+    public void setNgaysinh(java.util.Calendar ngaysinh) {
+        this.ngaysinh = ngaysinh;
+    }
+
+
+    /**
+     * Gets the ngayvao value for this MemberDetail.
+     * 
+     * @return ngayvao
+     */
+    public java.util.Calendar getNgayvao() {
+        return ngayvao;
+    }
+
+
+    /**
+     * Sets the ngayvao value for this MemberDetail.
+     * 
+     * @param ngayvao
+     */
+    public void setNgayvao(java.util.Calendar ngayvao) {
+        this.ngayvao = ngayvao;
+    }
+
+
+    /**
+     * Gets the noicap value for this MemberDetail.
+     * 
+     * @return noicap
+     */
+    public java.lang.String getNoicap() {
+        return noicap;
+    }
+
+
+    /**
+     * Sets the noicap value for this MemberDetail.
+     * 
+     * @param noicap
+     */
+    public void setNoicap(java.lang.String noicap) {
+        this.noicap = noicap;
+    }
+
+
+    /**
+     * Gets the noisinh value for this MemberDetail.
+     * 
+     * @return noisinh
+     */
+    public java.lang.String getNoisinh() {
+        return noisinh;
+    }
+
+
+    /**
+     * Sets the noisinh value for this MemberDetail.
+     * 
+     * @param noisinh
+     */
+    public void setNoisinh(java.lang.String noisinh) {
+        this.noisinh = noisinh;
+    }
+
+
+    /**
+     * Gets the phai value for this MemberDetail.
+     * 
+     * @return phai
+     */
+    public java.lang.String getPhai() {
+        return phai;
+    }
+
+
+    /**
+     * Sets the phai value for this MemberDetail.
+     * 
+     * @param phai
+     */
+    public void setPhai(java.lang.String phai) {
+        this.phai = phai;
+    }
+
+
+    /**
+     * Gets the phep value for this MemberDetail.
+     * 
+     * @return phep
+     */
+    public java.lang.String getPhep() {
+        return phep;
+    }
+
+
+    /**
+     * Sets the phep value for this MemberDetail.
+     * 
+     * @param phep
+     */
+    public void setPhep(java.lang.String phep) {
+        this.phep = phep;
+    }
+
+
+    /**
+     * Gets the phucap value for this MemberDetail.
+     * 
+     * @return phucap
+     */
+    public java.lang.String getPhucap() {
+        return phucap;
+    }
+
+
+    /**
+     * Sets the phucap value for this MemberDetail.
+     * 
+     * @param phucap
+     */
+    public void setPhucap(java.lang.String phucap) {
+        this.phucap = phucap;
+    }
+
+
+    /**
+     * Gets the sobaohiem value for this MemberDetail.
+     * 
+     * @return sobaohiem
+     */
+    public java.lang.String getSobaohiem() {
+        return sobaohiem;
+    }
+
+
+    /**
+     * Sets the sobaohiem value for this MemberDetail.
+     * 
+     * @param sobaohiem
+     */
+    public void setSobaohiem(java.lang.String sobaohiem) {
+        this.sobaohiem = sobaohiem;
+    }
+
+
+    /**
+     * Gets the sochungminh value for this MemberDetail.
+     * 
+     * @return sochungminh
+     */
+    public java.lang.String getSochungminh() {
+        return sochungminh;
+    }
+
+
+    /**
+     * Sets the sochungminh value for this MemberDetail.
+     * 
+     * @param sochungminh
+     */
+    public void setSochungminh(java.lang.String sochungminh) {
+        this.sochungminh = sochungminh;
+    }
+
+
+    /**
+     * Gets the sodienthoai value for this MemberDetail.
+     * 
+     * @return sodienthoai
+     */
+    public java.lang.String getSodienthoai() {
+        return sodienthoai;
+    }
+
+
+    /**
+     * Sets the sodienthoai value for this MemberDetail.
+     * 
+     * @param sodienthoai
+     */
+    public void setSodienthoai(java.lang.String sodienthoai) {
+        this.sodienthoai = sodienthoai;
+    }
+
+
+    /**
+     * Gets the sotuoi value for this MemberDetail.
+     * 
+     * @return sotuoi
+     */
+    public java.lang.String getSotuoi() {
+        return sotuoi;
+    }
+
+
+    /**
+     * Sets the sotuoi value for this MemberDetail.
+     * 
+     * @param sotuoi
+     */
+    public void setSotuoi(java.lang.String sotuoi) {
+        this.sotuoi = sotuoi;
+    }
+
+
+    /**
+     * Gets the tenkhoi value for this MemberDetail.
+     * 
+     * @return tenkhoi
+     */
+    public java.lang.String getTenkhoi() {
+        return tenkhoi;
+    }
+
+
+    /**
+     * Sets the tenkhoi value for this MemberDetail.
+     * 
+     * @param tenkhoi
+     */
+    public void setTenkhoi(java.lang.String tenkhoi) {
+        this.tenkhoi = tenkhoi;
+    }
+
+
+    /**
+     * Gets the thamnien value for this MemberDetail.
+     * 
+     * @return thamnien
+     */
+    public java.lang.String getThamnien() {
+        return thamnien;
+    }
+
+
+    /**
+     * Sets the thamnien value for this MemberDetail.
+     * 
+     * @param thamnien
+     */
+    public void setThamnien(java.lang.String thamnien) {
+        this.thamnien = thamnien;
+    }
+
+
+    /**
+     * Gets the trinhdo value for this MemberDetail.
+     * 
+     * @return trinhdo
+     */
+    public java.lang.String getTrinhdo() {
+        return trinhdo;
+    }
+
+
+    /**
+     * Sets the trinhdo value for this MemberDetail.
+     * 
+     * @param trinhdo
+     */
+    public void setTrinhdo(java.lang.String trinhdo) {
+        this.trinhdo = trinhdo;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof MemberDetail)) return false;
+        MemberDetail other = (MemberDetail) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = super.equals(obj) && 
+            ((this.congviec==null && other.getCongviec()==null) || 
+             (this.congviec!=null &&
+              this.congviec.equals(other.getCongviec()))) &&
+            ((this.daotao==null && other.getDaotao()==null) || 
+             (this.daotao!=null &&
+              this.daotao.equals(other.getDaotao()))) &&
+            ((this.diachi==null && other.getDiachi()==null) || 
+             (this.diachi!=null &&
+              this.diachi.equals(other.getDiachi()))) &&
+            ((this.dienbienluong==null && other.getDienbienluong()==null) || 
+             (this.dienbienluong!=null &&
+              this.dienbienluong.equals(other.getDienbienluong()))) &&
+            ((this.hopdong==null && other.getHopdong()==null) || 
+             (this.hopdong!=null &&
+              this.hopdong.equals(other.getHopdong()))) &&
+            ((this.mahoso==null && other.getMahoso()==null) || 
+             (this.mahoso!=null &&
+              this.mahoso.equals(other.getMahoso()))) &&
+            ((this.masothue==null && other.getMasothue()==null) || 
+             (this.masothue!=null &&
+              this.masothue.equals(other.getMasothue()))) &&
+            ((this.ngaycap==null && other.getNgaycap()==null) || 
+             (this.ngaycap!=null &&
+              this.ngaycap.equals(other.getNgaycap()))) &&
+            ((this.ngaygiahanhopdong==null && other.getNgaygiahanhopdong()==null) || 
+             (this.ngaygiahanhopdong!=null &&
+              this.ngaygiahanhopdong.equals(other.getNgaygiahanhopdong()))) &&
+            ((this.ngayketthuchopdong==null && other.getNgayketthuchopdong()==null) || 
+             (this.ngayketthuchopdong!=null &&
+              this.ngayketthuchopdong.equals(other.getNgayketthuchopdong()))) &&
+            ((this.ngaykyhopdong==null && other.getNgaykyhopdong()==null) || 
+             (this.ngaykyhopdong!=null &&
+              this.ngaykyhopdong.equals(other.getNgaykyhopdong()))) &&
+            ((this.ngaynghi==null && other.getNgaynghi()==null) || 
+             (this.ngaynghi!=null &&
+              this.ngaynghi.equals(other.getNgaynghi()))) &&
+            ((this.ngaysinh==null && other.getNgaysinh()==null) || 
+             (this.ngaysinh!=null &&
+              this.ngaysinh.equals(other.getNgaysinh()))) &&
+            ((this.ngayvao==null && other.getNgayvao()==null) || 
+             (this.ngayvao!=null &&
+              this.ngayvao.equals(other.getNgayvao()))) &&
+            ((this.noicap==null && other.getNoicap()==null) || 
+             (this.noicap!=null &&
+              this.noicap.equals(other.getNoicap()))) &&
+            ((this.noisinh==null && other.getNoisinh()==null) || 
+             (this.noisinh!=null &&
+              this.noisinh.equals(other.getNoisinh()))) &&
+            ((this.phai==null && other.getPhai()==null) || 
+             (this.phai!=null &&
+              this.phai.equals(other.getPhai()))) &&
+            ((this.phep==null && other.getPhep()==null) || 
+             (this.phep!=null &&
+              this.phep.equals(other.getPhep()))) &&
+            ((this.phucap==null && other.getPhucap()==null) || 
+             (this.phucap!=null &&
+              this.phucap.equals(other.getPhucap()))) &&
+            ((this.sobaohiem==null && other.getSobaohiem()==null) || 
+             (this.sobaohiem!=null &&
+              this.sobaohiem.equals(other.getSobaohiem()))) &&
+            ((this.sochungminh==null && other.getSochungminh()==null) || 
+             (this.sochungminh!=null &&
+              this.sochungminh.equals(other.getSochungminh()))) &&
+            ((this.sodienthoai==null && other.getSodienthoai()==null) || 
+             (this.sodienthoai!=null &&
+              this.sodienthoai.equals(other.getSodienthoai()))) &&
+            ((this.sotuoi==null && other.getSotuoi()==null) || 
+             (this.sotuoi!=null &&
+              this.sotuoi.equals(other.getSotuoi()))) &&
+            ((this.tenkhoi==null && other.getTenkhoi()==null) || 
+             (this.tenkhoi!=null &&
+              this.tenkhoi.equals(other.getTenkhoi()))) &&
+            ((this.thamnien==null && other.getThamnien()==null) || 
+             (this.thamnien!=null &&
+              this.thamnien.equals(other.getThamnien()))) &&
+            ((this.trinhdo==null && other.getTrinhdo()==null) || 
+             (this.trinhdo!=null &&
+              this.trinhdo.equals(other.getTrinhdo())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = super.hashCode();
+        if (getCongviec() != null) {
+            _hashCode += getCongviec().hashCode();
+        }
+        if (getDaotao() != null) {
+            _hashCode += getDaotao().hashCode();
+        }
+        if (getDiachi() != null) {
+            _hashCode += getDiachi().hashCode();
+        }
+        if (getDienbienluong() != null) {
+            _hashCode += getDienbienluong().hashCode();
+        }
+        if (getHopdong() != null) {
+            _hashCode += getHopdong().hashCode();
+        }
+        if (getMahoso() != null) {
+            _hashCode += getMahoso().hashCode();
+        }
+        if (getMasothue() != null) {
+            _hashCode += getMasothue().hashCode();
+        }
+        if (getNgaycap() != null) {
+            _hashCode += getNgaycap().hashCode();
+        }
+        if (getNgaygiahanhopdong() != null) {
+            _hashCode += getNgaygiahanhopdong().hashCode();
+        }
+        if (getNgayketthuchopdong() != null) {
+            _hashCode += getNgayketthuchopdong().hashCode();
+        }
+        if (getNgaykyhopdong() != null) {
+            _hashCode += getNgaykyhopdong().hashCode();
+        }
+        if (getNgaynghi() != null) {
+            _hashCode += getNgaynghi().hashCode();
+        }
+        if (getNgaysinh() != null) {
+            _hashCode += getNgaysinh().hashCode();
+        }
+        if (getNgayvao() != null) {
+            _hashCode += getNgayvao().hashCode();
+        }
+        if (getNoicap() != null) {
+            _hashCode += getNoicap().hashCode();
+        }
+        if (getNoisinh() != null) {
+            _hashCode += getNoisinh().hashCode();
+        }
+        if (getPhai() != null) {
+            _hashCode += getPhai().hashCode();
+        }
+        if (getPhep() != null) {
+            _hashCode += getPhep().hashCode();
+        }
+        if (getPhucap() != null) {
+            _hashCode += getPhucap().hashCode();
+        }
+        if (getSobaohiem() != null) {
+            _hashCode += getSobaohiem().hashCode();
+        }
+        if (getSochungminh() != null) {
+            _hashCode += getSochungminh().hashCode();
+        }
+        if (getSodienthoai() != null) {
+            _hashCode += getSodienthoai().hashCode();
+        }
+        if (getSotuoi() != null) {
+            _hashCode += getSotuoi().hashCode();
+        }
+        if (getTenkhoi() != null) {
+            _hashCode += getTenkhoi().hashCode();
+        }
+        if (getThamnien() != null) {
+            _hashCode += getThamnien().hashCode();
+        }
+        if (getTrinhdo() != null) {
+            _hashCode += getTrinhdo().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+    // Type metadata
+    private static org.apache.axis.description.TypeDesc typeDesc =
+        new org.apache.axis.description.TypeDesc(MemberDetail.class, true);
+
+    static {
+        typeDesc.setXmlType(new javax.xml.namespace.QName("http://publics.service.com.lixco.trong/", "memberDetail"));
+        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("congviec");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "congviec"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("daotao");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "daotao"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("diachi");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "diachi"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dienbienluong");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dienbienluong"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("hopdong");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "hopdong"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("mahoso");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "mahoso"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("masothue");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "masothue"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("ngaycap");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "ngaycap"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("ngaygiahanhopdong");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "ngaygiahanhopdong"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("ngayketthuchopdong");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "ngayketthuchopdong"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("ngaykyhopdong");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "ngaykyhopdong"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("ngaynghi");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "ngaynghi"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("ngaysinh");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "ngaysinh"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("ngayvao");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "ngayvao"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("noicap");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "noicap"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("noisinh");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "noisinh"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("phai");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "phai"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("phep");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "phep"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("phucap");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "phucap"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("sobaohiem");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "sobaohiem"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("sochungminh");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "sochungminh"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("sodienthoai");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "sodienthoai"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("sotuoi");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "sotuoi"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("tenkhoi");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "tenkhoi"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("thamnien");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "thamnien"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("trinhdo");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "trinhdo"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+    }
+
+    /**
+     * Return type metadata object
+     */
+    public static org.apache.axis.description.TypeDesc getTypeDesc() {
+        return typeDesc;
+    }
+
+    /**
+     * Get Custom Serializer
+     */
+    public static org.apache.axis.encoding.Serializer getSerializer(
+           java.lang.String mechType, 
+           java.lang.Class _javaType,  
+           javax.xml.namespace.QName _xmlType) {
+        return 
+          new  org.apache.axis.encoding.ser.BeanSerializer(
+            _javaType, _xmlType, typeDesc);
+    }
+
+    /**
+     * Get Custom Deserializer
+     */
+    public static org.apache.axis.encoding.Deserializer getDeserializer(
+           java.lang.String mechType, 
+           java.lang.Class _javaType,  
+           javax.xml.namespace.QName _xmlType) {
+        return 
+          new  org.apache.axis.encoding.ser.BeanDeserializer(
+            _javaType, _xmlType, typeDesc);
+    }
+
+}

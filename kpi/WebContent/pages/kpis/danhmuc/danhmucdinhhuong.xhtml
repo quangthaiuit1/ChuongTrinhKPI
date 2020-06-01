@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<h3 style="margin: 0px">Danh mục định hướng KPI cá nhân</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60"
+				styleClass="panelthreeColumn">
+				<p:panel header="Thông tin" styleClass="panelw100">
+					<h:panelGrid id="info">
+						<p:outputLabel value="Phòng ban - Vị trí/Chức vụ công việc (KPI)*" />
+						<p:panelGrid columns="2" columnClasses="w95, w5" id="ifjobdep"
+							style="width:100%">
+							<h:panelGrid columns="1">
+								<h:outputText
+									value="#{orientationPersonBean.positionJob.codeDepart}" />
+								<h:outputText value="#{orientationPersonBean.positionJob.name}" />
+							</h:panelGrid>
+							<p:commandLink oncomplete="PF('widchucvu').show();"
+								update="listpos">
+								<h:outputText class="fa fa-fw fa-edit" />
+							</p:commandLink>
+						</p:panelGrid>
+						<p:dialog widgetVar="widchucvu" resizable="false"
+							closeOnEscape="true" header="Vị trí/chức vụ công việc">
+							<h:form id="listpos">
+								<h:panelGrid>
+									<p:outputLabel value="Phòng ban" />
+									<p:selectOneMenu value="#{orientationPersonBean.department}"
+										style="width:95%" converter="abstractConverter" effect="fade"
+										var="t" id="depid" filter="true" filterMatchMode="custom"
+										filterFunction="customFilter">
+										<f:selectItems value="#{orientationPersonBean.departments}"
+											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+										<p:ajax event="change" update="positionid"
+											listener="#{orientationPersonBean.ajaxSelectDep()}" />
+										<p:column>
+											<h:outputText value="#{t.code}" />
+										</p:column>
+										<p:column>
+											<h:outputText value="#{t.name}" />
+										</p:column>
+									</p:selectOneMenu>
+									<p:outputLabel value="Vị trí/Chức vụ công việc" />
+									<p:selectOneMenu value="#{orientationPersonBean.positionJob}"
+										style="width:95%" converter="abstractConverter" effect="fade"
+										var="t" id="positionid" showCheckbox="true" filter="true"
+										filterMatchMode="custom" filterFunction="customFilter">
+										<f:selectItems value="#{orientationPersonBean.positionJobs}"
+											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+										<p:ajax process="@this" />
+										<p:column>
+											<h:outputText value="#{t.code}" />
+										</p:column>
+										<p:column>
+											<h:outputText value="#{t.name}" />
+										</p:column>
+									</p:selectOneMenu>
+								</h:panelGrid>
+								<p:separator />
+								<p:commandButton value="Lưu/Cập nhật" process="@form"
+									update="menuformid:ifjobdep"
+									oncomplete="PF('widchucvu').hide();" />
+							</h:form>
+						</p:dialog>
+						<p:outputLabel value="Là tiêu đề:" />
+						<p:selectBooleanCheckbox
+							value="#{orientationPersonBean.orientationPerson.header}" />
+						<p:outputLabel value="Số thứ tự" />
+						<p:inputText
+							value="#{orientationPersonBean.orientationPerson.code}" />
+						<p:outputLabel value="Nội dung*:" />
+						<p:inputTextarea rows="3"
+							value="#{orientationPersonBean.orientationPerson.content}" />
+						<p:outputLabel value="Công thức" />
+						<p:commandButton value="Cài đặt công thức tính"
+							actionListener="#{orientationPersonBean.showListFormula()}"
+							update=":dialogeaccountid" onstart="PF('dialogFormula').show();" />
+						<p:outputLabel value="Ghi chú:" />
+						<p:inputTextarea cols="24" rows="4" styleClass="upper"
+							value="#{orientationPersonBean.orientationPerson.note}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Lưu/Cập nhật"
+						action="#{orientationPersonBean.createOrUpdate()}"
+						update=":messages,:menuformid" />
+					<p:commandButton value="Tạo mới"
+						action="#{orientationPersonBean.reset()}" update=":menuformid" />
+					<p:tooltip for="xoact" value="Xoá form" />
+					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
+						update=":messages,:menuformid"
+						action="#{orientationPersonBean.delete()}">
+						<p:confirm icon="ui-icon-alert" />
+					</p:commandButton>
+				</p:panel>
+				<p:panel header="Danh sách" id="preview">
+					<h:panelGrid id="mainGrid" columns="6"
+						style="float:left; margin-bottom:5px">
+						<p:selectOneMenu value="#{orientationPersonBean.departmentSearch}"
+							style="width:95%" converter="abstractConverter" effect="fade"
+							var="t" id="depid" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<f:selectItems value="#{orientationPersonBean.departments}"
+								var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.name}" />
+							</p:column>
+						</p:selectOneMenu>
+						<p:commandButton value="Áp bộ lọc" process="@this"
+							update=":messages,:menuformid"
+							action="#{orientationPersonBean.searchItem()}">
+						</p:commandButton>
+					</h:panelGrid>
+					<div style="clear: both" />
+					<p:dataTable value="#{orientationInfoBean.orienInfoEmpls}"
+						id="tableid" expandableRowGroups="true" widgetVar="datatb"
+						paginatorPosition="bottom" paginator="true" scrollable="true"
+						scrollHeight="500" resizableColumns="true" var="item">
+						<p:column style="width:30px">
+							<p:rowToggler />
+						</p:column>
+						<p:column headerText="Vị trí/chức vụ công việc">
+							<h:outputText value="#{item.namePos}" />
+						</p:column>
+						<p:rowExpansion>
+							<p:dataTable value="#{item.orientationPersons}"
+								rowKey="#{car.id}"
+								selection="#{orientationPersonBean.orientationPersonEdit}"
+								selectionMode="single" expandableRowGroups="true" var="car">
+								<p:ajax event="rowSelect"
+									listener="#{orientationPersonBean.showEdit()}"
+									update=":menuformid:info" />
+								<p:column headerText="STT" style="width:20px">
+									<p:outputLabel value="#{car.code}"
+										styleClass="#{car.header==true?'textboldoutput':''}" />
+								</p:column>
+								<p:column headerText="Nội dung" style="text-align:left">
+									<p:outputLabel value="#{car.content}"
+										styleClass="#{car.header==true?'textboldoutput':''}" />
+								</p:column>
+								<p:column headerText="Công thức" style="text-align:left">
+									<p:outputLabel value="#{car.formulaKPI.code}" />
+								</p:column>
+							</p:dataTable>
+						</p:rowExpansion>
+					</p:dataTable>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+		<p:dialog widgetVar="dialogFormula" resizable="false" width="300"
+			closeOnEscape="true" header="Công thức tính">
+			<h:form id="dialogeaccountid">
+				<p:dataTable value="#{orientationPersonBean.formulaKPIs}"
+					lazy="true" paginatorPosition="bottom"
+					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+					rowKey="#{item.id}" scrollable="true" scrollHeight="370"
+					selection="#{orientationPersonBean.formulaKPISelect}"
+					selectionMode="single" id="tableid" resizableColumns="true"
+					var="item">
+					<p:column headerText="ID" width="20">
+						<h:outputText value="#{item.id}" />
+					</p:column>
+					<p:column headerText="Mô tả công thức">
+						<h:outputText value="#{item.code}" />
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+				<p:separator />
+				<p:commandButton value="Đặt công thức"
+					oncomplete="PF('dialogFormula').hide()"
+					action="#{orientationPersonBean.updateFormula()}"
+					update=":messages,:menuformid" />
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

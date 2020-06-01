@@ -1,0 +1,67 @@
+package trong.lixco.com.ejb.servicepublics;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.jws.WebService;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+import trong.lixco.com.ejb.service.AbstractService;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entity.Employee;
+
+@Stateless
+@WebService
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class DepartmentParentServicePublic extends AbstractService<DepartmentParent> {
+@Inject
+	private EntityManager em;
+	@Resource
+	private SessionContext ct;
+	
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+	
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+	
+	@Override
+	protected Class<DepartmentParent> getEntityClass() {
+		return DepartmentParent.class;
+	}
+	public DepartmentParent findByCode(String code) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<DepartmentParent> cq = cb.createQuery(DepartmentParent.class);
+		Root<DepartmentParent> root = cq.from(DepartmentParent.class);
+		cq.select(root).where(cb.equal(root.get("code"), code));
+		TypedQuery<DepartmentParent> query = em.createQuery(cq);
+		List<DepartmentParent> results = query.getResultList();
+		if (results.size() != 0) {
+			return results.get(0);
+		} else {
+			return null;
+		}
+	}
+	public List<DepartmentParent> findByEmpMana(Employee employee) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<DepartmentParent> cq = cb.createQuery(DepartmentParent.class);
+		Root<DepartmentParent> root = cq.from(DepartmentParent.class);
+		cq.select(root).where(cb.equal(root.get("managerEmployee"), employee));
+		TypedQuery<DepartmentParent> query = em.createQuery(cq);
+		List<DepartmentParent> results = query.getResultList();
+		return results;
+	}
+}

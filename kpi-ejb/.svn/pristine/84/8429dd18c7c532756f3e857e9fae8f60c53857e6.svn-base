@@ -1,0 +1,191 @@
+package trong.lixco.com.ejb.servicekpi;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import trong.lixco.com.ejb.service.AbstractService;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
+import trong.lixco.com.jpa.entitykpi.KPIDepOfMonth;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
+@Inject
+	private EntityManager em;
+	@Resource
+	private SessionContext ct;
+	
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+	
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+	
+	@Override
+	protected Class<KPIDepMonth> getEntityClass() {
+		return KPIDepMonth.class;
+	}
+	public KPIDepMonth findByIdAll(long id) {
+		try {
+			KPIDepMonth wf = em.find(getEntityClass(), id);
+			List<KPIDepOfMonth> KPIDepOfMonths=loadListOrderBy(wf);
+			for (int i = 0; i < KPIDepOfMonths.size(); i++) {
+				KPIDepOfMonths.get(i).setIndex(i);
+			}
+			wf.setKpiDepOfMonths(KPIDepOfMonths);
+			return wf;
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+	public List<KPIDepOfMonth> loadListOrderBy(KPIDepMonth kPIDepMonth) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepOfMonth> cq = cb.createQuery(KPIDepOfMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDepOfMonth> root = cq.from(KPIDepOfMonth.class);
+		predicates.add(cb.equal(root.get("kpiDepMonth"),kPIDepMonth));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.asc(root.get("no")));
+		TypedQuery<KPIDepOfMonth> query = em.createQuery(cq);
+		List<KPIDepOfMonth> results = query.getResultList();
+		return results;
+	}
+	
+	public List<KPIDepMonth> findKPIDepMonth(int month,int year,DepartmentParent departmentParent) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepMonth> cq = cb.createQuery(KPIDepMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDepMonth> root = cq.from(KPIDepMonth.class);
+		predicates.add(cb.equal(root.get("month"),month));
+		predicates.add(cb.equal(root.get("year"),year));
+		predicates.add(cb.equal(root.get("departmentParent"),departmentParent));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<KPIDepMonth> query = em.createQuery(cq);
+		List<KPIDepMonth> results = query.getResultList();
+		return results;
+	}
+	public List<KPIDepMonth> findKPIDepMonth(List<DepartmentParent> departmentParents) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepMonth> cq = cb.createQuery(KPIDepMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDepMonth> root = cq.from(KPIDepMonth.class);
+		
+		if(departmentParents!=null){
+			Predicate pd=cb.in(root.get("departmentParent")).value(departmentParents);
+			predicates.add(pd);
+		}
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.desc(root.get("year")),cb.desc(root.get("month")));
+		TypedQuery<KPIDepMonth> query = em.createQuery(cq);
+		List<KPIDepMonth> results = query.getResultList();
+		return results;
+	}
+	public List<KPIDepMonth> findKPIDepMonth(List<DepartmentParent> departmentParents, int month, int year) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepMonth> cq = cb.createQuery(KPIDepMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDepMonth> root = cq.from(KPIDepMonth.class);
+		
+		if(departmentParents!=null){
+			Predicate pd=cb.in(root.get("departmentParent")).value(departmentParents);
+			predicates.add(pd);
+		}
+		Predicate pdmonth=cb.equal(root.get("month"),month);
+		predicates.add(pdmonth);
+		Predicate pdyear=cb.equal(root.get("year"),year);
+		predicates.add(pdyear);
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.desc(root.get("year")),cb.desc(root.get("month")));
+		TypedQuery<KPIDepMonth> query = em.createQuery(cq);
+		List<KPIDepMonth> results = query.getResultList();
+		return results;
+	}
+	public void removeKPIDepOfyear(KPIDepMonth kpiDepMonth) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepOfMonth> cq = cb.createQuery(KPIDepOfMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDepOfMonth> root = cq.from(KPIDepOfMonth.class);
+		predicates.add(cb.equal(root.get("kpiDepMonth"),kpiDepMonth));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<KPIDepOfMonth> query = em.createQuery(cq);
+		List<KPIDepOfMonth> results = query.getResultList();
+		for (int i = 0; i < results.size(); i++) {
+			em.remove(results.get(i));
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public KPIDepMonth saveOrUpdate(KPIDepMonth kpiDepMonth, List<KPIDepOfMonth> kpiDepOfMonths) {
+		try {
+			if (kpiDepMonth.getId() == null) {
+				List<KPIDepOfMonth> detailLixs = kpiDepMonth.getKpiDepOfMonths();
+				kpiDepMonth.setKpiDepOfMonths(null);
+				em.persist(kpiDepMonth);
+				kpiDepMonth = em.merge(kpiDepMonth);
+
+				if (detailLixs != null) {
+					for (int i = 0; i < detailLixs.size(); i++) {
+						KPIDepOfMonth odd = detailLixs.get(i);
+						if (odd.getId() == null) {
+							odd.setKpiDepMonth(kpiDepMonth);
+							em.persist(odd);
+						} else {
+							odd.setKpiDepMonth(kpiDepMonth);
+							em.merge(odd);
+						}
+					}
+				}
+			} else {
+				removeKPIDepOfyear(kpiDepMonth);
+				List<KPIDepOfMonth> detailLixs = kpiDepMonth.getKpiDepOfMonths();
+				kpiDepMonth.setKpiDepOfMonths(null);
+				kpiDepMonth = em.merge(kpiDepMonth);
+				if (detailLixs != null) {
+					for (int i = 0; i < detailLixs.size(); i++) {
+						KPIDepOfMonth odd = detailLixs.get(i);
+						if (odd.getId() == null) {
+							odd.setKpiDepMonth(kpiDepMonth);
+							em.persist(odd);
+						} else {
+							odd.setKpiDepMonth(kpiDepMonth);
+							em.merge(odd);
+						}
+					}
+				}
+
+			}
+			if (kpiDepOfMonths != null) {
+				for (int i = 0; i < kpiDepOfMonths.size(); i++) {
+					KPIDepOfMonth odd = kpiDepOfMonths.get(i);
+					em.remove(em.contains(odd) ? odd : em.merge(odd));
+				}
+			}
+			em.flush();
+			return kpiDepMonth;
+		} catch (Exception e) {
+			e.printStackTrace();
+			ct.setRollbackOnly();
+			return null;
+		}
+
+	}
+	
+}

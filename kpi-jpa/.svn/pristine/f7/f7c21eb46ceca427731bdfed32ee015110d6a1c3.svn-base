@@ -1,0 +1,59 @@
+package trong.lixco.com.jpa.util;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+@ApplicationScoped
+public class Configuage {
+	@PersistenceContext(unitName = "nhansu_jpa")
+	private EntityManager em;
+	@PersistenceContext(unitName = "nhansu_jpa_bd")
+	private EntityManager em_bd;
+	@PersistenceContext(unitName = "nhansu_jpa_bn")
+	private EntityManager em_bn;
+	
+	private String chonchinhanh = "em";
+
+	@Produces
+	@RequestScoped
+	public EntityManager getEntityManager() {
+		if (chonchinhanh.equals("em")) {
+			return em;
+		} else if (chonchinhanh.equals("em_bd")) {
+			return em_bd;
+		} else {
+			return em_bn;
+		}
+	}
+	public EntityManager getEm() {
+		return em;
+	}
+
+	public void setEm(EntityManager em) {
+		this.em = em;
+	}
+
+	public EntityManager getEm_bd() {
+		return em_bd;
+	}
+	public void setEm_bd(EntityManager em_bd) {
+		this.em_bd = em_bd;
+	}
+	public EntityManager getEm_bn() {
+		return em_bn;
+	}
+	public void setEm_bn(EntityManager em_bn) {
+		this.em_bn = em_bn;
+	}
+	public String getChonchinhanh() {
+		return chonchinhanh;
+	}
+
+	public void setChonchinhanh(String chonchinhanh) {
+		this.chonchinhanh = chonchinhanh;
+	}
+
+}

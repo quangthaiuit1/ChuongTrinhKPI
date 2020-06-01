@@ -1,0 +1,55 @@
+package trong.lixco.com.jpa.entity;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+/**
+ * @author vantrong
+ * @Time 16-04-2018 12:08:21
+ * phuong xa
+ */
+@Entity
+public class Wards extends AbstractEntity {
+
+	private String code;//ma phuong/xa
+	private String name; // ten phuong/xa
+	@ManyToOne
+	private Distrist distrist;
+	
+	private String codeT;// ma phuong xa (Thue)
+	private String codeBH;//ma phuong xa (bao hiem)
+	
+	
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Distrist getDistrist() {
+		return distrist;
+	}
+	public void setDistrist(Distrist distrist) {
+		this.distrist = distrist;
+	}
+	public String getCodeT() {
+		return codeT;
+	}
+	public void setCodeT(String codeT) {
+		this.codeT = codeT;
+	}
+	public String getCodeBH() {
+		return codeBH;
+	}
+	public void setCodeBH(String codeBH) {
+		this.codeBH = codeBH;
+	}
+
+	
+	
+}

@@ -1,0 +1,55 @@
+package trong.lixco.com.jpa.entity;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import trong.lixco.com.jpa.entitykpi.Taget;
+import trong.lixco.com.jpa.entitykpi.TagetDepart;
+
+/**
+ * @author vantrong
+ * @Time 16-04-2018 12:08:21 
+ */
+@Entity
+public class RelaEmpTagetDepart {
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	protected Long id;
+	@ManyToOne
+	private Employee employee;
+
+	@ManyToOne
+	private TagetDepart tagetDepart;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
+	public TagetDepart getTagetDepart() {
+		return tagetDepart;
+	}
+
+	public void setTagetDepart(TagetDepart tagetDepart) {
+		this.tagetDepart = tagetDepart;
+	}
+
+	
+}

@@ -1,0 +1,72 @@
+package trong.lixco.com.service.publics;
+
+public class DepartNoticeRelaServicePublicProxy implements trong.lixco.com.service.publics.DepartNoticeRelaServicePublic {
+  private String _endpoint = null;
+  private trong.lixco.com.service.publics.DepartNoticeRelaServicePublic departNoticeRelaServicePublic = null;
+  
+  public DepartNoticeRelaServicePublicProxy() {
+    _initDepartNoticeRelaServicePublicProxy();
+  }
+  
+  public DepartNoticeRelaServicePublicProxy(String endpoint) {
+    _endpoint = endpoint;
+    _initDepartNoticeRelaServicePublicProxy();
+  }
+  
+  private void _initDepartNoticeRelaServicePublicProxy() {
+    try {
+      departNoticeRelaServicePublic = (new trong.lixco.com.service.publics.DepartNoticeRelaServicePublicServiceLocator()).getDepartNoticeRelaServicePublicPort();
+      if (departNoticeRelaServicePublic != null) {
+        if (_endpoint != null)
+          ((javax.xml.rpc.Stub)departNoticeRelaServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+        else
+          _endpoint = (String)((javax.xml.rpc.Stub)departNoticeRelaServicePublic)._getProperty("javax.xml.rpc.service.endpoint.address");
+      }
+      
+    }
+    catch (javax.xml.rpc.ServiceException serviceException) {}
+  }
+  
+  public String getEndpoint() {
+    return _endpoint;
+  }
+  
+  public void setEndpoint(String endpoint) {
+    _endpoint = endpoint;
+    if (departNoticeRelaServicePublic != null)
+      ((javax.xml.rpc.Stub)departNoticeRelaServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+    
+  }
+  
+  public trong.lixco.com.service.publics.DepartNoticeRelaServicePublic getDepartNoticeRelaServicePublic() {
+    if (departNoticeRelaServicePublic == null)
+      _initDepartNoticeRelaServicePublicProxy();
+    return departNoticeRelaServicePublic;
+  }
+  
+  public trong.lixco.com.service.publics.DepartNoticeRela[] findByDepartment(trong.lixco.com.service.publics.Department arg0) throws java.rmi.RemoteException{
+    if (departNoticeRelaServicePublic == null)
+      _initDepartNoticeRelaServicePublicProxy();
+    return departNoticeRelaServicePublic.findByDepartment(arg0);
+  }
+  
+  public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (departNoticeRelaServicePublic == null)
+      _initDepartNoticeRelaServicePublicProxy();
+    departNoticeRelaServicePublic.setDatabase(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.DepartNoticeRela[] findByNotice(trong.lixco.com.service.publics.NoticeSystem arg0) throws java.rmi.RemoteException{
+    if (departNoticeRelaServicePublic == null)
+      _initDepartNoticeRelaServicePublicProxy();
+    return departNoticeRelaServicePublic.findByNotice(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.DepartNoticeRela saveOrUpdater(trong.lixco.com.service.publics.DepartNoticeRela arg0) throws java.rmi.RemoteException{
+    if (departNoticeRelaServicePublic == null)
+      _initDepartNoticeRelaServicePublicProxy();
+    return departNoticeRelaServicePublic.saveOrUpdater(arg0);
+  }
+  
+  
+}

@@ -1,0 +1,96 @@
+package trong.lixco.com.service.publics;
+
+public class ProgramServicePublicProxy implements trong.lixco.com.service.publics.ProgramServicePublic {
+  private String _endpoint = null;
+  private trong.lixco.com.service.publics.ProgramServicePublic programServicePublic = null;
+  
+  public ProgramServicePublicProxy() {
+    _initProgramServicePublicProxy();
+  }
+  
+  public ProgramServicePublicProxy(String endpoint) {
+    _endpoint = endpoint;
+    _initProgramServicePublicProxy();
+  }
+  
+  private void _initProgramServicePublicProxy() {
+    try {
+      programServicePublic = (new trong.lixco.com.service.publics.ProgramServicePublicServiceLocator()).getProgramServicePublicPort();
+      if (programServicePublic != null) {
+        if (_endpoint != null)
+          ((javax.xml.rpc.Stub)programServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+        else
+          _endpoint = (String)((javax.xml.rpc.Stub)programServicePublic)._getProperty("javax.xml.rpc.service.endpoint.address");
+      }
+      
+    }
+    catch (javax.xml.rpc.ServiceException serviceException) {}
+  }
+  
+  public String getEndpoint() {
+    return _endpoint;
+  }
+  
+  public void setEndpoint(String endpoint) {
+    _endpoint = endpoint;
+    if (programServicePublic != null)
+      ((javax.xml.rpc.Stub)programServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+    
+  }
+  
+  public trong.lixco.com.service.publics.ProgramServicePublic getProgramServicePublic() {
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    return programServicePublic;
+  }
+  
+  public boolean delete(trong.lixco.com.service.publics.Program arg0) throws java.rmi.RemoteException{
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    return programServicePublic.delete(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Program[] findAll() throws java.rmi.RemoteException{
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    return programServicePublic.findAll();
+  }
+  
+  public trong.lixco.com.service.publics.Program findId(long arg0) throws java.rmi.RemoteException{
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    return programServicePublic.findId(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Program create(trong.lixco.com.service.publics.Program arg0) throws java.rmi.RemoteException{
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    return programServicePublic.create(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Program findByName(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    return programServicePublic.findByName(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Program update(trong.lixco.com.service.publics.Program arg0) throws java.rmi.RemoteException{
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    return programServicePublic.update(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Program getFirst() throws java.rmi.RemoteException{
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    return programServicePublic.getFirst();
+  }
+  
+  public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (programServicePublic == null)
+      _initProgramServicePublicProxy();
+    programServicePublic.setDatabase(arg0);
+  }
+  
+  
+}

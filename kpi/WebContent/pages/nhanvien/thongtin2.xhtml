@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/pages/home.xhtml">
+
+	<ui:define name="content">
+		<h3 style="margin: 0px">Nhân viên</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<p:commandButton  process="@this"
+				value="Bac luong"
+				actionListener="#{readExcelBean.bacluong()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Chuc vu"
+				actionListener="#{readExcelBean.chucvu()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Cong viec"
+				actionListener="#{readExcelBean.congviec()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Dan toc"
+				actionListener="#{readExcelBean.dantoc()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Tinh/TP"
+				actionListener="#{readExcelBean.tinh_tp()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Quan/Huyen"
+				actionListener="#{readExcelBean.quanhuyen()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Phuong/Xa"
+				actionListener="#{readExcelBean.phuongxa()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Benh vien"
+				actionListener="#{readExcelBean.benhvien()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Loai hop dong"
+				actionListener="#{readExcelBean.loaihopdong()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="trinhdo"
+				actionListener="#{readExcelBean.trinhdo()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="phanloaikhoi"
+				actionListener="#{readExcelBean.phanloaikhoi()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Ly do nghi"
+				actionListener="#{readExcelBean.lydonghi()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Don vi"
+				actionListener="#{readExcelBean.donvi()}"
+				update=":messages" />
+				<p:commandButton  process="@this"
+				value="Nhan vien"
+				actionListener="#{readExcelBean.nhanvien()}"
+				update=":messages" />
+		</h:form>
+
+	</ui:define>
+</ui:composition>

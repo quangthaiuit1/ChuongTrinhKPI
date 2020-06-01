@@ -1,0 +1,223 @@
+package trong.lixco.com.ejb.servicekpi;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import trong.lixco.com.ejb.service.AbstractService;
+import trong.lixco.com.jpa.entity.Department;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entity.Employee;
+import trong.lixco.com.jpa.entitykpi.KPIPerson;
+import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
+import trong.lixco.com.jpa.entitykpi.PositionJob;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class KPIPersonService extends AbstractService<KPIPerson> {
+	@Inject
+	private EntityManager em;
+	@Resource
+	private SessionContext ct;
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+
+	@Override
+	protected Class<KPIPerson> getEntityClass() {
+		return KPIPerson.class;
+	}
+
+	public KPIPerson findByIdAll(long id) {
+		try {
+			KPIPerson wf = em.find(getEntityClass(), id);
+			wf.setKpiPersonOfMonths(loadListDetailOrderBy(wf));;
+			return wf;
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+	public List<KPIPersonOfMonth> findListKPIPerson(List<KPIPerson> kpiPersons) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
+		predicates.add(cb.in(root.get("kpiPerson")).value(kpiPersons));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
+		List<KPIPersonOfMonth> results = query.getResultList();
+		return results;
+	}
+	public List<KPIPersonOfMonth> loadListDetailOrderBy(KPIPerson kpiPerson) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
+		predicates.add(cb.equal(root.get("kpiPerson"),kpiPerson));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.asc(root.get("no")));
+		TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
+		List<KPIPersonOfMonth> results = query.getResultList();
+		return results;
+	}
+	public List<KPIPersonOfMonth> findKPIPerson(KPIPerson kpiPerson) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
+		predicates.add(cb.equal(root.get("kpiPerson"),kpiPerson));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
+		List<KPIPersonOfMonth> results = query.getResultList();
+		return results;
+	}
+	public List<KPIPersonOfMonth> findOrientIsNull(KPIPerson kpiPerson) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
+		predicates.add(cb.isNull(root.get("orientationPerson")));
+		predicates.add(cb.equal(root.get("kpiPerson"),kpiPerson));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
+		List<KPIPersonOfMonth> results = query.getResultList();
+		return results;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public KPIPerson saveOrUpdate(KPIPerson kpiPerson, List<KPIPersonOfMonth> kpiPersonOfMonths) {
+		try {
+			if (kpiPerson.getId() == null) {
+				List<KPIPersonOfMonth> detailLixs = kpiPerson.getKpiPersonOfMonths();
+				kpiPerson.setKpiPersonOfMonths(null);
+				em.persist(kpiPerson);
+				kpiPerson = em.merge(kpiPerson);
+
+				if (detailLixs != null) {
+					for (int i = 0; i < detailLixs.size(); i++) {
+						KPIPersonOfMonth odd = detailLixs.get(i);
+						if (odd.getId() == null) {
+							odd.setKpiPerson(kpiPerson);
+							em.persist(odd);
+						} else {
+							odd.setKpiPerson(kpiPerson);
+							em.merge(odd);
+						}
+					}
+				}
+			} else {
+				// Xoa cac phiếu hành vi - trước đạo đức
+				List<KPIPersonOfMonth> detailLixAdds = findKPIPerson(kpiPerson);
+				if (detailLixAdds != null) {
+					for (int i = 0; i < detailLixAdds.size(); i++) {
+						KPIPersonOfMonth odd = detailLixAdds.get(i);
+						em.remove(odd);
+					}
+				}
+
+				List<KPIPersonOfMonth> detailLixs = kpiPerson.getKpiPersonOfMonths();
+				kpiPerson.setKpiPersonOfMonths(null);
+				kpiPerson = em.merge(kpiPerson);
+
+				if (detailLixs != null) {
+					for (int i = 0; i < detailLixs.size(); i++) {
+						KPIPersonOfMonth odd = detailLixs.get(i);
+						if (odd.getId() == null) {
+							odd.setKpiPerson(kpiPerson);
+							em.persist(odd);
+						} else {
+							odd.setKpiPerson(kpiPerson);
+							em.merge(odd);
+						}
+					}
+				}
+
+			}
+			if (kpiPersonOfMonths != null) {
+				for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
+					KPIPersonOfMonth odd = kpiPersonOfMonths.get(i);
+					em.remove(em.contains(odd) ? odd : em.merge(odd));
+				}
+			}
+			em.flush();
+			return kpiPerson;
+		} catch (Exception e) {
+			e.printStackTrace();
+			ct.setRollbackOnly();
+			return null;
+		}
+
+	}
+
+	public List<KPIPerson> findRange(List<Employee> employeeAccounts, DepartmentParent departmentParent, PositionJob positionJob, Employee employee, int month,
+			int year, Department department) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIPerson> root = cq.from(KPIPerson.class);
+
+		if (departmentParent != null) {
+			predicates.add(cb.equal(root.get("employee").get("department").get("departmentParent"), departmentParent));
+			if (positionJob != null)
+				predicates.add(cb.equal(root.get("employee").get("positionJob"), positionJob));
+		}
+		if (department != null) {
+			predicates.add(cb.equal(root.get("employee").get("department"), department));
+		}
+		if (employee != null) {
+			predicates.add(cb.equal(root.get("employee"), employee));
+		}
+		if (month != 0) {
+			predicates.add(cb.equal(root.get("kmonth"), month));
+		}
+		if (year != 0) {
+			predicates.add(cb.equal(root.get("kyear"), year));
+		}
+		if (employeeAccounts!=null&&employeeAccounts.size()!=0) {
+			predicates.add(cb.in(root.get("employee")).value(employeeAccounts));
+		}
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.desc(root.get("kyear")),cb.desc(root.get("kmonth")));
+		List<KPIPerson> result = em.createQuery(cq).getResultList();
+		return result;
+	}
+	public List<KPIPerson> findRange(Employee employee, int month,
+			int year) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIPerson> root = cq.from(KPIPerson.class);
+		if (employee != null) {
+			predicates.add(cb.equal(root.get("employee"), employee));
+		}
+		if (month != 0) {
+			predicates.add(cb.equal(root.get("kmonth"), month));
+		}
+		if (year != 0) {
+			predicates.add(cb.equal(root.get("kyear"), year));
+		}
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		List<KPIPerson> result = em.createQuery(cq).getResultList();
+		return result;
+	}
+}

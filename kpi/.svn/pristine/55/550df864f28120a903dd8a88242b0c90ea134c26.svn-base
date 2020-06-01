@@ -1,0 +1,78 @@
+package trong.lixco.com.service.publics;
+
+public class PrivateConfigServicePublicProxy implements trong.lixco.com.service.publics.PrivateConfigServicePublic {
+  private String _endpoint = null;
+  private trong.lixco.com.service.publics.PrivateConfigServicePublic privateConfigServicePublic = null;
+  
+  public PrivateConfigServicePublicProxy() {
+    _initPrivateConfigServicePublicProxy();
+  }
+  
+  public PrivateConfigServicePublicProxy(String endpoint) {
+    _endpoint = endpoint;
+    _initPrivateConfigServicePublicProxy();
+  }
+  
+  private void _initPrivateConfigServicePublicProxy() {
+    try {
+      privateConfigServicePublic = (new trong.lixco.com.service.publics.PrivateConfigServicePublicServiceLocator()).getPrivateConfigServicePublicPort();
+      if (privateConfigServicePublic != null) {
+        if (_endpoint != null)
+          ((javax.xml.rpc.Stub)privateConfigServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+        else
+          _endpoint = (String)((javax.xml.rpc.Stub)privateConfigServicePublic)._getProperty("javax.xml.rpc.service.endpoint.address");
+      }
+      
+    }
+    catch (javax.xml.rpc.ServiceException serviceException) {}
+  }
+  
+  public String getEndpoint() {
+    return _endpoint;
+  }
+  
+  public void setEndpoint(String endpoint) {
+    _endpoint = endpoint;
+    if (privateConfigServicePublic != null)
+      ((javax.xml.rpc.Stub)privateConfigServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+    
+  }
+  
+  public trong.lixco.com.service.publics.PrivateConfigServicePublic getPrivateConfigServicePublic() {
+    if (privateConfigServicePublic == null)
+      _initPrivateConfigServicePublicProxy();
+    return privateConfigServicePublic;
+  }
+  
+  public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (privateConfigServicePublic == null)
+      _initPrivateConfigServicePublicProxy();
+    privateConfigServicePublic.setDatabase(arg0);
+  }
+  
+  public boolean delete(trong.lixco.com.service.publics.PrivateConfig arg0) throws java.rmi.RemoteException{
+    if (privateConfigServicePublic == null)
+      _initPrivateConfigServicePublicProxy();
+    return privateConfigServicePublic.delete(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.PrivateConfig findId(long arg0) throws java.rmi.RemoteException{
+    if (privateConfigServicePublic == null)
+      _initPrivateConfigServicePublicProxy();
+    return privateConfigServicePublic.findId(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.PrivateConfig create(trong.lixco.com.service.publics.PrivateConfig arg0) throws java.rmi.RemoteException{
+    if (privateConfigServicePublic == null)
+      _initPrivateConfigServicePublicProxy();
+    return privateConfigServicePublic.create(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.PrivateConfig update(trong.lixco.com.service.publics.PrivateConfig arg0) throws java.rmi.RemoteException{
+    if (privateConfigServicePublic == null)
+      _initPrivateConfigServicePublicProxy();
+    return privateConfigServicePublic.update(arg0);
+  }
+  
+  
+}

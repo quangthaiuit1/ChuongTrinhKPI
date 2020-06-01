@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<style>
+.selectbllb .ui-chkbox-label {
+	font-size: 1.2em;
+	margin-left: 20px;
+	font-weight: bold;
+}
+</style>
+		<h3 style="margin: 0px">Biên bản cuộc họp</h3>
+		<p:separator />
+		<h:form id="infor">
+			<p:panelGrid columns="2" columnClasses="w60,w40">
+				<h:panelGrid columns="1">
+					<p:fieldset styleClass="noneformatfs">
+						<p:selectOneMenu
+							value="#{departmentMeetingViewBean.departmentMeeting.departmentParent}"
+							style="margin-right:20px;" converter="abstractConverter"
+							effect="fade" var="t" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<f:selectItems
+								value="#{departmentMeetingViewBean.departmentParents}"
+								var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.name}" />
+							</p:column>
+							<p:ajax event="change" process="@this" />
+						</p:selectOneMenu>
+						<h:outputLabel value="Tuần" style="margin-right:10px" />
+						<p:spinner size="1" min="1"
+							value="#{departmentMeetingViewBean.departmentMeeting.week}">
+							<p:ajax process="@this" />
+						</p:spinner>
+						<p:outputLabel value="Năm"
+							style="margin-right:10px;margin-left:20px" />
+						<p:spinner size="3" min="2017" max="2050"
+							style="margin-right:30px"
+							value="#{departmentMeetingViewBean.departmentMeeting.year}">
+							<p:ajax process="@this" />
+						</p:spinner>
+					</p:fieldset>
+					<p:editor id="editor" widgetVar="editorWidget" height="600"
+						value="#{departmentMeetingViewBean.departmentMeeting.content}" />
+					<p:separator />
+					<p:fieldset styleClass="noneformatfs">
+						<p:commandButton type="submit" value="Lưu/cập nhật"
+							action="#{departmentMeetingViewBean.createOrUpdate()}"
+							process="@form" update=":messages,:infor" icon="ui-icon-disk" />
+					</p:fieldset>
+				</h:panelGrid>
+				<h:panelGrid columns="1">
+					<p:fieldset styleClass="noneformat">
+						<p:commandButton value="Tìm kiếm " id="idorder"
+							styleClass="greenbutton" />
+						<p:overlayPanel id="imagePanel" for="idorder" hideEffect="fade"
+							modal="true" widgetVar="panelsearch">
+							<h:panelGrid columns="2" cellpadding="5" style="width:400px">
+								<p:outputLabel value="Phòng ban*" />
+								<p:selectOneMenu
+									value="#{departmentMeetingViewBean.departmentParentS}"
+									converter="abstractConverter" effect="fade" var="t"
+									styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+									filterFunction="customFilter">
+									<f:selectItem itemValue="#{null}" itemLabel="--SELECT--" />
+									<f:selectItems
+										value="#{departmentMeetingViewBean.departmentParents}"
+										var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+									<p:column>
+										<h:outputText value="#{t.code}" />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{t.name}" />
+									</p:column>
+								</p:selectOneMenu>
+								<p:outputLabel value="Tháng" />
+								<p:spinner size="3" min="1" max="12"
+									style="margin-right:30px"
+									value="#{departmentMeetingViewBean.monthS}">
+									<p:ajax process="@this" />
+								</p:spinner>
+								<p:outputLabel value="Năm" />
+								<p:spinner size="3" min="2017" max="2050"
+									style="margin-right:30px"
+									value="#{departmentMeetingViewBean.yearS}">
+									<p:ajax process="@this" />
+								</p:spinner>
+							</h:panelGrid>
+							<p:separator />
+							<p:commandButton value="Tìm" icon="ui-icon-search"
+								styleClass="greenbutton" oncomplete="PF('panelsearch').hide()"
+								actionListener="#{departmentMeetingViewBean.searchItem}"
+								update="tableid" />
+						</p:overlayPanel>
+					</p:fieldset>
+					<p:dataTable
+						value="#{departmentMeetingViewBean.departmentMeetings}"
+						styleClass="tableparent" rowKey="#{item.id}" scrollHeight="650"
+						scrollable="true"
+						selection="#{departmentMeetingViewBean.departmentMeetingEdit}"
+						selectionMode="single" id="tableid" var="item">
+						<p:ajax event="rowSelect" update=":infor"
+							listener="#{departmentMeetingViewBean.showEdit}" />
+						<p:column headerText="Tuần" style="width:30px;text-align:center">
+							<h:outputText value="#{item.week}" id="mlist" />
+						</p:column>
+						<p:column headerText="Năm" style="width:30px;text-align:center">
+							<h:outputText value="#{item.year}" />
+						</p:column>
+						<p:column headerText="Ngày tạo"
+							style="width:60px;text-align:center">
+							<h:outputText value="#{item.createdDate}">
+								<f:convertDateTime pattern="dd/MM/yyyy" timeZone="" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Phòng ban">
+							<h:outputText value="#{item.departmentParent.name}" />
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</h:panelGrid>
+			</p:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

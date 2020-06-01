@@ -1,0 +1,408 @@
+package trong.lixco.com.beankpi;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import org.jboss.logging.Logger;
+import org.omnifaces.cdi.ViewScoped;
+
+import trong.lixco.com.bean.AbstractBean;
+import trong.lixco.com.ejb.service.DepartmentParentService;
+import trong.lixco.com.ejb.service.EmployeeService;
+import trong.lixco.com.ejb.servicekpi.FormulaKPIService;
+import trong.lixco.com.ejb.servicekpi.OrientationPersonService;
+import trong.lixco.com.ejb.servicekpi.PositionJobService;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entity.Employee;
+import trong.lixco.com.jpa.entitykpi.FormulaKPI;
+import trong.lixco.com.jpa.entitykpi.OrientationPerson;
+import trong.lixco.com.jpa.entitykpi.PositionJob;
+import trong.lixco.com.nhansu.general.ApplicationBean;
+import trong.lixco.com.service.publics.Account;
+import trong.lixco.com.util.Notify;
+
+@Named
+@ViewScoped
+// Dinh huong KPI ca nhan
+public class OrientationPersonBean extends AbstractBean<OrientationPerson> {
+	private static final long serialVersionUID = 1L;
+	private Notify notify;
+	private List<OrientationPerson> orientationPersons;
+	private OrientationPerson orientationPerson;
+	private OrientationPerson orientationPersonEdit;
+
+	private DepartmentParent departmentParent, departmentParentSearch;
+	private PositionJob positionJobSearch;
+	private List<PositionJob> positionJobs;
+	private List<DepartmentParent> departmentParents;
+
+	private List<PositionJob> positionJobSearchs;
+	private List<DepartmentParent> departmentSearchs;
+
+	private List<FormulaKPI> formulaKPIs;
+	private FormulaKPI formulaKPISelect;
+
+	@Inject
+	private DepartmentParentService departmentService;
+	@Inject
+	private FormulaKPIService formulaKPIService;
+	@Inject
+	private OrientationPersonService orientationPersonService;
+	@Inject
+	private PositionJobService positionJobService;
+	@Inject
+	private Logger logger;
+
+	@Override
+	protected Logger getLogger() {
+		return logger;
+	}
+
+	@Inject
+	ApplicationBean applicationBean;
+	@Inject
+	EmployeeService employeeService;
+	private Employee employee;
+	private Account account;
+
+	@Override
+	public void initItem() {
+		orientationPerson = new OrientationPerson();
+		orientationPersons = new ArrayList<OrientationPerson>();
+
+		try {
+			String employeeCode = applicationBean.getAccount().getMember().getCode();
+			employee = employeeService.findByCode(employeeCode);
+			departmentParent = employee.getDepartment().getDepartmentParent();
+			account = applicationBean.getAccount();
+			if (account.isAdmin()) {
+				departmentParents = departmentService.findAll();
+				if (departmentParents.size() != 0)
+					departmentParent = departmentParents.get(0);
+				departmentParentSearch = departmentParent;
+				departmentSearchs = departmentParents;
+				ajaxSelectDep();
+				ajaxSelectDepSearch();
+			} else if (employee.equals(departmentParent.getEmployee())) {
+				departmentParents = new ArrayList<DepartmentParent>();
+				departmentParents.add(employee.getDepartment().getDepartmentParent());
+				departmentSearchs = departmentParents;
+				if (departmentParents.size() != 0)
+					departmentParent = departmentParents.get(0);
+				departmentParentSearch = departmentParent;
+				ajaxSelectDep();
+				ajaxSelectDepSearch();
+			}else{
+				departmentParents = new ArrayList<DepartmentParent>();
+				departmentParents.add(employee.getDepartment().getDepartmentParent());
+				departmentSearchs = departmentParents;
+				if (departmentParents.size() != 0)
+					departmentParent = departmentParents.get(0);
+				departmentParentSearch = departmentParent;
+				ajaxSelectDep();
+				ajaxSelectDepSearch();
+			}
+		} catch (Exception e) {
+		}
+
+		try {
+			String employeeCode = applicationBean.getAccount().getMember().getCode();
+			Employee employee = employeeService.findByCode(employeeCode);
+
+			if (applicationBean.getAccount().isAdmin()) {
+				departmentParents = departmentService.findAll();
+				if (departmentParents.size() != 0)
+					departmentParent = departmentParents.get(0);
+				departmentSearchs = departmentParents;
+				ajaxSelectDep();
+			} else if (employee.equals(departmentParent.getEmployee())) {
+				departmentParents = new ArrayList<DepartmentParent>();
+				departmentParents.add(employee.getDepartment().getDepartmentParent());
+				departmentSearchs = departmentParents;
+				if (departmentParents.size() != 0)
+					departmentParent = departmentParents.get(0);
+				ajaxSelectDep();
+			}
+			departmentParent = employee.getDepartment().getDepartmentParent();
+		} catch (Exception e) {
+		}
+		searchItem();
+
+	}
+
+	public void showListFormula() {
+		formulaKPIs = formulaKPIService.findAll();
+	}
+
+	public void ajaxSelectDep() {
+		positionJobs = positionJobService.findByDepartmentP(departmentParent);
+	}
+
+	public void ajaxSelectDepSearch() {
+		positionJobSearchs = positionJobService.findByDepartmentP(departmentParentSearch);
+	}
+
+	public void createOrUpdate() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try {
+			if (orientationPerson != null) {
+				if (!"".equals(orientationPerson.getCode())) {
+					if (orientationPerson.getId() == null) {
+						if (allowSave(null)) {
+							orientationPerson = installSave(orientationPerson);
+							orientationPerson = orientationPersonService.create(orientationPerson);
+							orientationPersons.add(0, orientationPerson);
+							writeLogInfo("Tạo mới " + orientationPerson.toString());
+							notify.success();
+							reset();
+						} else {
+							orientationPersonEdit = new OrientationPerson();
+							notify.warningDetail();
+						}
+					} else {
+						if (allowUpdate(null)) {
+							orientationPerson = installUpdate(orientationPerson);
+							orientationPerson = orientationPersonService.update(orientationPerson);
+							int index = orientationPersons.indexOf(orientationPerson);
+							orientationPersons.set(index, orientationPerson);
+							writeLogInfo("Cập nhật " + orientationPerson.toString());
+							notify.success();
+						} else {
+							notify.warningDetail();
+						}
+					}
+					searchItem();
+				} else {
+					notify.warning("Điền đầy đủ thông tin!");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			writeLogError(e.getLocalizedMessage());
+			notify.warning("Xảy ra lỗi không lưu được!");
+		}
+	}
+
+	public void updateFormula() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try {
+			if (orientationPerson.getId() == null) {
+				notify.warning("Lưu định hướng cá nhân trước khi cài đặt công thức!");
+			} else {
+				orientationPerson.setFormulaKPI(formulaKPISelect);
+				orientationPerson = installUpdate(orientationPerson);
+				orientationPerson = orientationPersonService.update(orientationPerson);
+				int index = orientationPersons.indexOf(orientationPerson);
+				orientationPersons.set(index, orientationPerson);
+				writeLogInfo("Cập nhật " + orientationPerson.toString());
+				notify.success();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			writeLogError(e.getLocalizedMessage());
+			notify.warning("Xảy ra lỗi không lưu được!");
+		}
+	}
+
+	public void reset() {
+		PositionJob temp = orientationPerson.getPositionJob();
+		orientationPerson = new OrientationPerson();
+		orientationPerson.setPositionJob(temp);
+
+	}
+
+	public void showEdit() {
+		this.orientationPerson = orientationPersonEdit;
+		departmentParent = orientationPerson.getPositionJob().getDepartmentParent();
+		ajaxSelectDep();
+
+		if (orientationPerson.getFormulaKPI() != null) {
+			formulaKPISelect = orientationPerson.getFormulaKPI();
+		} else {
+			formulaKPISelect = null;
+		}
+
+	}
+
+	public void delete() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		if (orientationPerson.getId() != null) {
+			if (allowDelete(null)) {
+				boolean status = orientationPersonService.delete(orientationPerson);
+				if (status) {
+					orientationPersons.remove(orientationPerson);
+					writeLogInfo("Xoá " + orientationPerson.toString());
+					reset();
+					notify.success();
+				} else {
+					writeLogError("Lỗi khi xoá " + orientationPerson.toString());
+					notify.error();
+				}
+			} else {
+				notify.warningDetail();
+			}
+		} else {
+			notify.warning("Chưa chọn trong danh sách!");
+		}
+	}
+
+	public static void main(String[] args) throws ScriptException {
+		ScriptEngineManager mgr = new ScriptEngineManager();
+		ScriptEngine engine = mgr.getEngineByName("JavaScript");
+		String foo = "100-((40+2)*5)";
+		System.out.println(engine.eval(foo));
+	}
+
+	public void searchItem() {
+		if (departmentSearchs != null && departmentSearchs.size() != 0) {
+			orientationPersons = orientationPersonService.findSearch(departmentParentSearch, positionJobSearch);
+			orientationPersons.sort((p1, p2) -> {
+				String pcode1 = p1.getPositionJob().getCode();
+				String pcode2 = p2.getPositionJob().getCode();
+
+				if (pcode1.compareTo(pcode2) == 0) {
+
+					String s1 = "";
+					String s2 = "";
+					try {
+						String a = p1.getCode();
+						s1 = a.substring(0, 1);
+					} catch (Exception e) {
+					}
+					try {
+						String a = p2.getCode();
+						s2 = a.substring(0, 1);
+					} catch (Exception e) {
+					}
+					if (s1.compareTo(s2) == 0) {
+						int n1 = 0;
+						int n2 = 0;
+						try {
+							String a = p1.getCode();
+							a.replace(".", "");
+							n1 = Integer.parseInt(a.substring(2, a.length()));
+
+						} catch (Exception e) {
+						}
+						try {
+							String a = p2.getCode();
+							a.replace(".", "");
+							n2 = Integer.parseInt(a.substring(2, a.length()));
+						} catch (Exception e) {
+						}
+						return n1 - n2;
+					} else {
+						return s1.compareTo(s2);
+					}
+				} else {
+					return pcode1.compareTo(pcode2);
+				}
+			});
+
+		}
+	}
+
+	public List<OrientationPerson> getOrientationPersons() {
+		return orientationPersons;
+	}
+
+	public void setOrientationPersons(List<OrientationPerson> OrientationPersons) {
+		this.orientationPersons = OrientationPersons;
+	}
+
+	public OrientationPerson getOrientationPerson() {
+		return orientationPerson;
+	}
+
+	public void setOrientationPerson(OrientationPerson OrientationPerson) {
+		this.orientationPerson = OrientationPerson;
+	}
+
+	public OrientationPerson getOrientationPersonEdit() {
+		return orientationPersonEdit;
+	}
+
+	public void setOrientationPersonEdit(OrientationPerson OrientationPersonEdit) {
+		this.orientationPersonEdit = OrientationPersonEdit;
+	}
+
+	public DepartmentParent getDepartment() {
+		return departmentParent;
+	}
+
+	public void setDepartment(DepartmentParent department) {
+		this.departmentParent = department;
+	}
+
+	public List<PositionJob> getPositionJobs() {
+		return positionJobs;
+	}
+
+	public void setPositionJobs(List<PositionJob> positionJobs) {
+		this.positionJobs = positionJobs;
+	}
+
+	public List<DepartmentParent> getDepartments() {
+		return departmentParents;
+	}
+
+	public void setDepartments(List<DepartmentParent> departments) {
+		this.departmentParents = departments;
+	}
+
+	public DepartmentParent getDepartmentSearch() {
+		return departmentParentSearch;
+	}
+
+	public void setDepartmentSearch(DepartmentParent departmentSearch) {
+		this.departmentParentSearch = departmentSearch;
+	}
+
+	public PositionJob getPositionJobSearch() {
+		return positionJobSearch;
+	}
+
+	public void setPositionJobSearch(PositionJob positionJobSearch) {
+		this.positionJobSearch = positionJobSearch;
+	}
+
+	public List<PositionJob> getPositionJobSearchs() {
+		return positionJobSearchs;
+	}
+
+	public void setPositionJobSearchs(List<PositionJob> positionJobSearchs) {
+		this.positionJobSearchs = positionJobSearchs;
+	}
+
+	public List<DepartmentParent> getDepartmentSearchs() {
+		return departmentSearchs;
+	}
+
+	public void setDepartmentSearchs(List<DepartmentParent> departmentSearchs) {
+		this.departmentSearchs = departmentSearchs;
+	}
+
+	public List<FormulaKPI> getFormulaKPIs() {
+		return formulaKPIs;
+	}
+
+	public void setFormulaKPIs(List<FormulaKPI> formulaKPIs) {
+		this.formulaKPIs = formulaKPIs;
+	}
+
+	public FormulaKPI getFormulaKPISelect() {
+		return formulaKPISelect;
+	}
+
+	public void setFormulaKPISelect(FormulaKPI formulaKPISelect) {
+		this.formulaKPISelect = formulaKPISelect;
+	}
+
+}

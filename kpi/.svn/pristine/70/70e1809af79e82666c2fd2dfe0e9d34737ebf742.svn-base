@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<h3 style="margin: 0px">Phòng ban (theo KPI)</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60"
+				styleClass="panelthreeColumn">
+				<p:panel header="Thông tin" styleClass="panelw100">
+					<h:panelGrid id="info">
+						<p:outputLabel value="Mã phòng ban*" />
+						<p:inputText
+							value="#{departmentParentBean.departmentParent.code}" />
+						<p:outputLabel value="Tên phòng ban*" />
+						<p:inputTextarea rows="3"
+							value="#{departmentParentBean.departmentParent.name}" />
+						<p:outputLabel value="Trưởng phòng" />
+						<p:autoComplete style="width:100%;" id="membName"
+							value="#{departmentParentBean.departmentParent.employee}"
+							converter="abstractConverter" minQueryLength="3"
+							placeholder="Mã nhân viên, tên nhân viên"
+							completeMethod="#{abstractAutoComplete.completeEmployeeKPI}"
+							var="p" itemLabel="#{p.employeeName}" itemValue="#{p}"
+							forceSelection="true">
+							<f:attribute name="filters" value="employeeName,employeeCode"></f:attribute>
+							<p:column style="width:50px">
+									   #{p.employeeCode}
+										</p:column>
+							<p:column style="width:150px">
+									   #{p.employeeName}
+									   <br />
+									   #{p.department.name}
+										</p:column>
+						</p:autoComplete>
+						<p:outputLabel value="Quản lý phòng" />
+						<p:autoComplete style="width:100%;"
+							value="#{departmentParentBean.departmentParent.managerEmployee}"
+							converter="abstractConverter" minQueryLength="3"
+							placeholder="Mã nhân viên, tên nhân viên"
+							completeMethod="#{abstractAutoComplete.completeEmployeeKPI}"
+							var="p" itemLabel="#{p.employeeName}" itemValue="#{p}"
+							forceSelection="true">
+							<f:attribute name="filters" value="employeeName,employeeCode"></f:attribute>
+							<p:column style="width:50px">
+									   #{p.employeeCode}
+										</p:column>
+							<p:column style="width:150px">
+									   #{p.employeeName}
+									   <br />
+									   #{p.department.name}
+										</p:column>
+						</p:autoComplete>
+						<p:outputLabel value="Ghi chú" />
+						<p:inputTextarea cols="24" rows="4" styleClass="upper"
+							value="#{departmentParentBean.departmentParent.note}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Lưu/Cập nhật"
+						action="#{departmentParentBean.createOrUpdate()}"
+						update=":messages,:menuformid" />
+					<p:commandButton value="Tạo mới"
+						action="#{departmentParentBean.reset()}" update=":menuformid" />
+				</p:panel>
+				<p:panel header="Danh sách" id="preview">
+					<h:panelGrid id="mainGrid" columns="6"
+						style="float:left; margin-bottom:5px">
+						<p:tooltip for="tailaict" value="Tải lại danh sách" />
+							<p:commandButton icon="fa fa-refresh" id="tailaict"
+								process="@this" value="Tải lại" update=":menuformid"
+								action="#{departmentParentBean.searchItem()}">
+							</p:commandButton>
+					</h:panelGrid>
+					<div style="clear: both" />
+					<p:dataTable value="#{departmentParentBean.departmentParents}"
+						lazy="true" paginatorPosition="bottom"
+						rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+						rowKey="#{item.id}"
+						selection="#{departmentParentBean.departmentParentEdit}"
+						scrollable="true" selectionMode="single" scrollWidth="670"
+						id="tableid" scrollHeight="370" widgetVar="datatb"
+						resizableColumns="true" var="item">
+						<p:ajax event="rowSelect"
+							listener="#{departmentParentBean.showEdit()}"
+							update=":menuformid" />
+						<p:column headerText="ID" style="width:30px">
+							<h:outputText value="#{item.id}" />
+						</p:column>
+						<p:column headerText="Mã phòng"  width="60">
+							<h:outputText value="#{item.code}"/>
+						</p:column>
+						<p:column headerText="Tên phòng ban"  width="220">
+							<h:outputText value="#{item.name}"/>
+						</p:column>
+						<p:column headerText="Trưởng phòng"  width="150">
+							<h:outputText value="#{item.employee.employeeName}"/>
+						</p:column>
+						<p:column headerText="TQL phòng"  width="150">
+							<h:outputText value="#{item.managerEmployee.employeeName}"/>
+						</p:column>
+						<p:column headerText="Chi chú" width="200">
+							<h:outputText value="#{item.note}"/>
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

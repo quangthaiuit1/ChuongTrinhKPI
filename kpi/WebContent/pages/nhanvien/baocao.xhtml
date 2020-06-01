@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition>
+	<p:dialog widgetVar="baocao" id="reportDialogId" modal="true"
+		resizable="false" header="In báo cáo">
+		<h:form id="detailreport">
+			<h:panelGrid columns="1">
+				<p:fieldset>
+					<p:selectOneRadio value="#{importMaterDetailBean.selectReport}"
+						columns="2" layout="grid">
+						<f:selectItem itemLabel="Phiếu nhập" itemValue="nhap" />
+					</p:selectOneRadio>
+				</p:fieldset>
+				<h:panelGrid columns="2" styleClass="noneformat">
+					<p:selectBooleanCheckbox
+						value="#{importMaterDetailBean.mergerDetail}">
+						<p:ajax process="@this" />
+					</p:selectBooleanCheckbox>
+					<p:outputLabel value="Gộp phiếu:" />
+				</h:panelGrid>
+			</h:panelGrid>
+			<br />
+
+			<p:commandButton styleClass="graybutton" id="remote"
+				icon="ui-icon-print" value="In báo cáo" style="float:right"
+				action="#{importMaterDetailBean.installReport('detailreport:report')}" />
+			<p:commandButton styleClass="graybutton " id="report"
+				style="display:none"
+				onclick="target='_blank';monitorDownload( showStatus , hideStatus)"
+				action="#{importMaterDetailBean.report()}" />
+
+		</h:form>
+	</p:dialog>
+</ui:composition>
+</html>

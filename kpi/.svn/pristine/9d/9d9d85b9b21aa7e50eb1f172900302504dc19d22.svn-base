@@ -1,0 +1,95 @@
+package trong.lixco.com.beankpi;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jboss.logging.Logger;
+import org.joda.time.DateTime;
+import org.omnifaces.cdi.ViewScoped;
+
+import trong.lixco.com.bean.AbstractBean;
+import trong.lixco.com.ejb.service.EmployeeService;
+import trong.lixco.com.ejb.servicekpi.KPIPersonService;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entity.Employee;
+import trong.lixco.com.jpa.entitykpi.KPIPerson;
+import trong.lixco.com.nhansu.general.ApplicationBean;
+
+@Named
+@ViewScoped
+// KPI ca nhan
+public class KPIPersonResultBean extends AbstractBean<KPIPerson> {
+	private static final long serialVersionUID = 1L;
+	private List<KPIPerson> kPIPersons;
+	private int monthSearch = 0;
+	private int yearSearch = 0;
+
+	@Inject
+	private ApplicationBean applicationBean;
+	@Inject
+	private EmployeeService employeeService;
+
+	@Inject
+	private KPIPersonService kPIPersonService;
+	@Inject
+	private Logger logger;
+
+	@Override
+	protected Logger getLogger() {
+		return logger;
+	}
+
+	@Override
+	public void initItem() {
+		kPIPersons = new ArrayList<KPIPerson>();
+		DateTime dt = new DateTime();
+		monthSearch = dt.getMonthOfYear();
+		yearSearch = dt.getYear();
+
+		searchItem();
+	}
+
+	public void searchItem() {
+		Employee employeeAccount = null;
+		try {
+			String employeeCode = applicationBean.getAccount().getMember().getCode();
+			employeeAccount = employeeService.findByCode(employeeCode);
+			if (employeeAccount != null) {
+				DepartmentParent departmentParent = employeeAccount.getDepartment().getDepartmentParent();
+				kPIPersons = kPIPersonService.findRange(null, departmentParent, null, null, monthSearch, yearSearch);
+			}
+		} catch (Exception e) {
+
+		}
+	}
+
+	public List<KPIPerson> getkPIPersons() {
+		return kPIPersons;
+	}
+
+	public void setkPIPersons(List<KPIPerson> kPIPersons) {
+		this.kPIPersons = kPIPersons;
+	}
+
+	public int getMonthSearch() {
+		return monthSearch;
+	}
+
+	public void setMonthSearch(int monthSearch) {
+		this.monthSearch = monthSearch;
+	}
+
+	public int getYearSearch() {
+		return yearSearch;
+	}
+
+	public void setYearSearch(int yearSearch) {
+		this.yearSearch = yearSearch;
+	}
+
+}

@@ -1,0 +1,96 @@
+package trong.lixco.com.service.publics;
+
+public class DepartmentServicePublicProxy implements trong.lixco.com.service.publics.DepartmentServicePublic {
+  private String _endpoint = null;
+  private trong.lixco.com.service.publics.DepartmentServicePublic departmentServicePublic = null;
+  
+  public DepartmentServicePublicProxy() {
+    _initDepartmentServicePublicProxy();
+  }
+  
+  public DepartmentServicePublicProxy(String endpoint) {
+    _endpoint = endpoint;
+    _initDepartmentServicePublicProxy();
+  }
+  
+  private void _initDepartmentServicePublicProxy() {
+    try {
+      departmentServicePublic = (new trong.lixco.com.service.publics.DepartmentServicePublicServiceLocator()).getDepartmentServicePublicPort();
+      if (departmentServicePublic != null) {
+        if (_endpoint != null)
+          ((javax.xml.rpc.Stub)departmentServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+        else
+          _endpoint = (String)((javax.xml.rpc.Stub)departmentServicePublic)._getProperty("javax.xml.rpc.service.endpoint.address");
+      }
+      
+    }
+    catch (javax.xml.rpc.ServiceException serviceException) {}
+  }
+  
+  public String getEndpoint() {
+    return _endpoint;
+  }
+  
+  public void setEndpoint(String endpoint) {
+    _endpoint = endpoint;
+    if (departmentServicePublic != null)
+      ((javax.xml.rpc.Stub)departmentServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+    
+  }
+  
+  public trong.lixco.com.service.publics.DepartmentServicePublic getDepartmentServicePublic() {
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    return departmentServicePublic;
+  }
+  
+  public trong.lixco.com.service.publics.Department findId(java.lang.String arg0, long arg1) throws java.rmi.RemoteException{
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    return departmentServicePublic.findId(arg0, arg1);
+  }
+  
+  public trong.lixco.com.service.publics.Department[] findAll(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    return departmentServicePublic.findAll(arg0);
+  }
+  
+  public boolean delete(java.lang.String arg0, trong.lixco.com.service.publics.Department arg1) throws java.rmi.RemoteException{
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    return departmentServicePublic.delete(arg0, arg1);
+  }
+  
+  public trong.lixco.com.service.publics.Department create(java.lang.String arg0, trong.lixco.com.service.publics.Department arg1) throws java.rmi.RemoteException{
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    return departmentServicePublic.create(arg0, arg1);
+  }
+  
+  public trong.lixco.com.service.publics.Department update(java.lang.String arg0, trong.lixco.com.service.publics.Department arg1) throws java.rmi.RemoteException{
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    return departmentServicePublic.update(arg0, arg1);
+  }
+  
+  public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    departmentServicePublic.setDatabase(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Department[] findSearch(java.lang.String arg0, java.lang.String arg1, java.lang.String[] arg2) throws java.rmi.RemoteException{
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    return departmentServicePublic.findSearch(arg0, arg1, arg2);
+  }
+  
+  public trong.lixco.com.service.publics.Department findByCode(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2) throws java.rmi.RemoteException{
+    if (departmentServicePublic == null)
+      _initDepartmentServicePublicProxy();
+    return departmentServicePublic.findByCode(arg0, arg1, arg2);
+  }
+  
+  
+}

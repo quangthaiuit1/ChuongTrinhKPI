@@ -1,0 +1,184 @@
+package trong.lixco.com.ejb.servicekpi;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import trong.lixco.com.ejb.service.AbstractService;
+import trong.lixco.com.jpa.entitykpi.KPIDep;
+import trong.lixco.com.jpa.entitykpi.KPIDepOfYear;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class KPIDepService extends AbstractService<KPIDep> {
+	@Inject
+	private EntityManager em;
+	@Resource
+	private SessionContext ct;
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+
+	@Override
+	protected Class<KPIDep> getEntityClass() {
+		return KPIDep.class;
+	}
+
+	public KPIDep findByIdAll(long id) {
+		try {
+			KPIDep wf = em.find(getEntityClass(), id);
+			wf.setKpiDepOfYears(loadDetailsOrderBy(wf));
+			return wf;
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+
+	public List<KPIDep> findKPIDep(String codeDepart, int year) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDep> cq = cb.createQuery(KPIDep.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDep> root = cq.from(KPIDep.class);
+		if (codeDepart != null)
+			predicates.add(cb.equal(root.get("codeDepart"), codeDepart));
+		predicates.add(cb.equal(root.get("year"), year));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.asc(root.get("year")));
+		TypedQuery<KPIDep> query = em.createQuery(cq);
+		List<KPIDep> results = query.getResultList();
+		return results;
+	}
+
+	public KPIDep findKPIDep(int year, String codeDepart) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDep> cq = cb.createQuery(KPIDep.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDep> root = cq.from(KPIDep.class);
+		predicates.add(cb.equal(root.get("year"), year));
+		predicates.add(cb.equal(root.get("codeDepart"), codeDepart));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<KPIDep> query = em.createQuery(cq);
+		List<KPIDep> results = query.getResultList();
+		if(results.size()!=0)
+			return results.get(0);
+		return null;
+	}
+
+	public List<KPIDepOfYear> findKPIDepOfYear(int year, String codeDepart) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepOfYear> cq = cb.createQuery(KPIDepOfYear.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDepOfYear> root = cq.from(KPIDepOfYear.class);
+		predicates.add(cb.equal(root.get("kpiDep").get("year"), year));
+		predicates.add(cb.equal(root.get("kpiDep").get("codeDepart"), codeDepart));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<KPIDepOfYear> query = em.createQuery(cq);
+		List<KPIDepOfYear> results = query.getResultList();
+		return results;
+	}
+
+	public List<KPIDepOfYear> loadDetailsOrderBy(KPIDep kpiDep) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepOfYear> cq = cb.createQuery(KPIDepOfYear.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDepOfYear> root = cq.from(KPIDepOfYear.class);
+		predicates.add(cb.equal(root.get("kpiDep"), kpiDep));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.asc(root.get("no")));
+		TypedQuery<KPIDepOfYear> query = em.createQuery(cq);
+		List<KPIDepOfYear> results = query.getResultList();
+		return results;
+	}
+
+	public void removeKPIDepOfyear(KPIDep kpiDep) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepOfYear> cq = cb.createQuery(KPIDepOfYear.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIDepOfYear> root = cq.from(KPIDepOfYear.class);
+		predicates.add(cb.equal(root.get("kpiDep"), kpiDep));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<KPIDepOfYear> query = em.createQuery(cq);
+		List<KPIDepOfYear> results = query.getResultList();
+		for (int i = 0; i < results.size(); i++) {
+			em.remove(results.get(i));
+		}
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public KPIDep saveOrUpdate(KPIDep kpiDep, List<KPIDepOfYear> kpiDepOfYears) {
+		try {
+			if (kpiDep.getId() == null) {
+				List<KPIDepOfYear> detailLixs = kpiDep.getKpiDepOfYears();
+				kpiDep.setKpiDepOfYears(null);
+				em.persist(kpiDep);
+				kpiDep = em.merge(kpiDep);
+
+				if (detailLixs != null) {
+					for (int i = 0; i < detailLixs.size(); i++) {
+						KPIDepOfYear odd = detailLixs.get(i);
+						odd.setWeightedParent(odd.getTagetDepart().getkTagetDepartCate().getWeight());
+						if (odd.getId() == null) {
+							odd.setKpiDep(kpiDep);
+							em.persist(odd);
+						} else {
+							odd.setKpiDep(kpiDep);
+							em.merge(odd);
+						}
+					}
+				}
+			} else {
+				removeKPIDepOfyear(kpiDep);
+				List<KPIDepOfYear> detailLixs = kpiDep.getKpiDepOfYears();
+				kpiDep.setKpiDepOfYears(null);
+				kpiDep = em.merge(kpiDep);
+				if (detailLixs != null) {
+					for (int i = 0; i < detailLixs.size(); i++) {
+						KPIDepOfYear odd = detailLixs.get(i);
+						if (odd.getId() == null) {
+							odd.setKpiDep(kpiDep);
+							em.persist(odd);
+						} else {
+							odd.setKpiDep(kpiDep);
+							em.merge(odd);
+						}
+					}
+				}
+
+			}
+			if (kpiDepOfYears != null) {
+				for (int i = 0; i < kpiDepOfYears.size(); i++) {
+					KPIDepOfYear odd = kpiDepOfYears.get(i);
+					em.remove(em.contains(odd) ? odd : em.merge(odd));
+				}
+			}
+			em.flush();
+			return kpiDep;
+		} catch (Exception e) {
+			e.printStackTrace();
+			ct.setRollbackOnly();
+			return null;
+		}
+
+	}
+
+}

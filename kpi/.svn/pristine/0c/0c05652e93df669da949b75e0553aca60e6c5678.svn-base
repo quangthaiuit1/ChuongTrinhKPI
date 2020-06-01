@@ -1,0 +1,885 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/pages/home.xhtml">
+
+	<ui:define name="content">
+		<h3 style="margin: 0px">Nhân viên</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<p:tabView id="tv" widgetVar="myTab"
+				activeIndex="#{employeeBean.tabindex}">
+				<p:ajax event="tabChange"/>
+				<p:tab title="Danh sách nhân viên">
+					<h:form id="list">
+						<h:panelGrid id="mainGrid" columns="6"
+							style="float:left; margin-bottom:5px">
+							<p:tooltip for="xoact" value="Xoá phiếu xuất" />
+							<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
+								update=":messages,:menuformid" action="#{employeeBean.delete()}">
+								<p:confirm header="Xác nhận"
+									message="Bạn có chắc muốn xoá không?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton value="Tìm kiếm " id="idorder" />
+							<p:overlayPanel id="imagePanel" for="idorder" hideEffect="fade"
+								dismissable="false" widgetVar="panelsearch">
+								<p:panelGrid columns="2">
+									<p:outputLabel value="Phòng ban" />
+									<p:selectOneMenu value="#{employeeBean.departmentParentSearch}"
+										converter="abstractConverter" effect="fade" var="t"
+										styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+										filterFunction="customFilter">
+										<f:selectItem value="#{null}" itemLabel="--PHÒNG BAN--" />
+										<f:selectItems value="#{employeeBean.departmentParents}"
+											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+										<p:column>
+											<h:outputText value="#{t.code}" />
+										</p:column>
+										<p:column>
+											<h:outputText value="#{t.name}" />
+										</p:column>
+									</p:selectOneMenu>
+									<p:outputLabel value="Đơn vị" />
+									<p:selectOneMenu value="#{employeeBean.departmentSearch}"
+										converter="abstractConverter" effect="fade" var="t"
+										styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+										filterFunction="customFilter">
+										<f:selectItem value="#{null}" itemLabel="--ĐƠN VỊ--" />
+										<f:selectItems value="#{employeeBean.departments}" var="item"
+											itemLabel="#{item.name}" itemValue="#{item}" />
+										<p:column>
+											<h:outputText value="#{t.code}" />
+										</p:column>
+										<p:column>
+											<h:outputText value="#{t.name}" />
+										</p:column>
+									</p:selectOneMenu>
+									<p:outputLabel value="Nhân viên" />
+									<p:autoComplete style="width:100%;" id="membName"
+										value="#{employeeBean.employeeSearch}"
+										converter="abstractConverter" minQueryLength="3"
+										placeholder="Mã nhân viên, tên nhân viên"
+										completeMethod="#{abstractAutoComplete.completeEmployeeKPI}"
+										var="p" itemLabel="#{p.employeeName}" itemValue="#{p}"
+										forceSelection="true">
+										<f:attribute name="filters" value="employeeName,employeeCode"></f:attribute>
+										<p:column style="width:50px">
+									   #{p.employeeCode}
+										</p:column>
+										<p:column style="width:150px">
+									   #{p.employeeName}
+									   <br />
+									   #{p.department.name}
+										</p:column>
+									</p:autoComplete>
+									<p:outputLabel value="Hiển thị nhân viên đã nghĩ" />
+									<p:selectBooleanCheckbox value="#{employeeBean.showlayoff}" />
+								</p:panelGrid>
+								<br />
+								<p:commandButton value="Tìm" style="float:right;"
+									icon="ui-icon-search" oncomplete="PF('panelsearch').hide()"
+									actionListener="#{employeeBean.search()}" update="tableid" />
+								<div style="clear: both" />
+								<p:separator />
+							</p:overlayPanel>
+						</h:panelGrid>
+						<div style="clear: both" />
+						<p:dataTable value="#{employeeBean.employees}"
+							styleClass="tableparent" rowKey="#{item.id}" lazy="true"
+							paginatorPosition="bottom" rowsPerPageTemplate="20,30,40,50"
+							rows="30" paginator="true"
+							selection="#{employeeBean.employeeEdit}" selectionMode="single"
+							id="tableid" var="item">
+							<p:ajax event="rowSelect" listener="#{employeeBean.showEdit}"
+								update=":menuformid:tv:infor" process="@this" />
+							<p:column headerText="Mã nhân viên"
+								style="width:60px; text-align:center">
+								<h:outputText value="#{item.employeeCode}" />
+							</p:column>
+							<p:column headerText="Tên nhân viên" style="width:130px">
+								<h:outputText value="#{item.employeeName}" />
+							</p:column>
+							<p:column headerText="Phòng ban" style="width:330px">
+								<h:outputText value="#{item.department.name}"
+									style="font-size:1.1em;font-weight: bold;" />
+							</p:column>
+							<f:facet name="footer">
+								<div style="clear: both;" />
+							</f:facet>
+						</p:dataTable>
+					</h:form>
+				</p:tab>
+				<p:tab title="Thông tin chi tiết">
+					<h:form id="infor">
+						<p:panel
+							style="float:right; border:0px; margin-top:-57px !important">
+							<p:tooltip for="bsave"
+								value="Lưu dữ liệu trên form xuống cơ sở dữ liệu" />
+							<p:commandButton id="bsave" icon="ui-icon-disk" type="submit"
+								process="@form" value="lưu/Cập nhật"
+								action="#{employeeBean.createOrUpdate()}"
+								update="menuformid:tv:infor,:messages" />
+							<p:tooltip for="bnew"
+								value="Làm trống dữ liệu trên form để tạo mới" />
+							<p:commandButton icon="ui-icon-document" id="bnew"
+								process="@this" value="Tạo mới"
+								actionListener="#{employeeBean.reset()}" update=":menuformid" />
+							<p:tooltip for="truoc" value="Nhân viên trước đó" />
+							<p:commandButton id="truoc" icon="ui-icon-triangle-1-w"
+								process="@this"
+								actionListener="#{employeeBean.navigation('next')}"
+								update=":menuformid:tv:infor:group1,:menuformid:tv:infor:group2,:menuformid:tv:infor:group3" />
+							<p:tooltip for="tiep" value="Nhân viên tiếp theo" />
+							<p:commandButton icon="ui-icon-triangle-1-e" id="tiep"
+								process="@this"
+								actionListener="#{employeeBean.navigation('pre')}"
+								update=":menuformid:tv:infor:group1,:menuformid:tv:infor:group2,:menuformid:tv:infor:group3" />
+						</p:panel>
+
+						<p:fieldset>
+							<h:panelGrid columns="3" cellspacing="2" style="width:100%;"
+								styleClass="panelthreeColumn">
+								<h:panelGrid id="group1">
+									<p:fieldset legend="Số thẻ" styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											cellspacing="5" columnClasses="w50">
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w30,w70">
+												<p:outputLabel value="Mã thẻ" />
+												<p:inputText value="#{employeeBean.employee.code}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w40,w60">
+												<p:outputLabel value="Mã thẻ (cũ)" />
+												<p:inputText value="#{employeeBean.employee.codeOld}" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</p:fieldset>
+									<h:panelGrid columns="2" styleClass="panelSub2"
+										columnClasses="w40,w60">
+										<p:fieldset legend="Mã hồ sơ" styleClass="noneformatfs"
+											style="padding:3px">
+											<p:inputText value="#{employeeBean.employee.codeInfor}"
+												style="width:90% important" />
+										</p:fieldset>
+										<p:fieldset legend="Đơn vị" styleClass="noneformatfs">
+											<p:selectOneMenu value="#{employeeBean.employee.department}"
+												converter="abstractConverter" effect="fade" var="t"
+												style="width: 80% !important;" styleClass="seOnMe95"
+												filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItems value="#{employeeBean.departments}"
+													var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:ajax event="valueChange" process="@this"
+													listener="#{employeeBean.installPositonJob()}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+										</p:fieldset>
+									</h:panelGrid>
+									<p:fieldset legend="Vị trí- chức vụ công việc"
+										styleClass="noneformatfs">
+										<p:panelGrid columns="2" columnClasses="w80, w20" style="width:100%">
+											<p:repeat value="#{employeeBean.positionJobSaves}" var="item">
+												<h:outputText value="#{item.name}" />
+												<br />
+											</p:repeat>
+											<p:commandButton value="..."
+												oncomplete="PF('dschucvu').show();" update="listpos" />
+										</p:panelGrid>
+
+										<p:dialog widgetVar="dschucvu" resizable="false"
+											header="Danh sách vị trí - chức vụ công việc">
+											<h:form id="listpos">
+												<p:selectManyMenu value="#{employeeBean.positionJobSaves}"
+													converter="abstractConverter" effect="fade" var="t"
+													id="positionid" showCheckbox="true" styleClass="seOnMe95"
+													filter="true" filterMatchMode="custom"
+													filterFunction="customFilter">
+													<f:selectItems value="#{employeeBean.positionJobs}"
+														var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+													<p:ajax process="@this" event="valueChange" />
+													<p:column>
+														<h:outputText value="#{t.code}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{t.name}" />
+													</p:column>
+												</p:selectManyMenu>
+												<br />
+												<p:separator />
+												<!-- 												Sau khi chon luu/cap nhật thông tin -->
+												<p:commandButton value="Lưu"
+													oncomplete="PF('dschucvu').hide();" />
+											</h:form>
+										</p:dialog>
+									</p:fieldset>
+									<p:fieldset legend="Mã NV - Họ tên - Chức danh quản lý"
+										styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w20,w80">
+											<p:outputLabel value="Mã thẻ" />
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w60,w40">
+												<p:inputText value="#{employeeBean.employee.employeeCode}" />
+												<h:panelGrid columns="2" styleClass="noneformat"
+													style="margin-right:20px;" columnClasses="w50">
+													<p:outputLabel value="CBQL" />
+													<p:selectBooleanCheckbox
+														value="#{employeeBean.employee.manager}" />
+												</h:panelGrid>
+											</h:panelGrid>
+										</h:panelGrid>
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w20,w80">
+											<p:outputLabel value="Họ tên" />
+											<p:inputText value="#{employeeBean.employee.employeeName}" />
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="Địa chỉ thường trú"
+										styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w30,w70">
+											<p:outputLabel value="Số nhà, Đường, Thôn xóm,.." />
+											<p:inputTextarea rows="2"
+												value="#{employeeBean.employee.lAddress.addl}" />
+											<p:outputLabel value="Tỉnh/TP" />
+											<p:selectOneMenu
+												value="#{employeeBean.employee.lAddress.city}"
+												converter="abstractConverter" effect="fade" var="t"
+												filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItem itemLabel="--Thành phố--" itemValue="#{null}" />
+												<f:selectItems value="#{employeeBean.cities}" var="item"
+													itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:ajax update="distristid" event="valueChange"
+													listener="#{employeeBean.installDistrist()}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+											<p:outputLabel value="Quận/Huyện" />
+											<p:selectOneMenu
+												disabled="#{empty employeeBean.employee.lAddress.city}"
+												value="#{employeeBean.employee.lAddress.distrist}"
+												id="distristid" converter="abstractConverter" effect="fade"
+												var="t" filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItem itemLabel="--Quận/Huyện--" itemValue="#{null}" />
+												<f:selectItems value="#{employeeBean.distrists}" var="item"
+													itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:ajax update="wardsid" event="valueChange"
+													listener="#{employeeBean.installWard()}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+											<p:outputLabel value="Phường/Xã" />
+											<p:selectOneMenu
+												disabled="#{empty employeeBean.employee.lAddress.distrist}"
+												value="#{employeeBean.employee.lAddress.wards}" id="wardsid"
+												converter="abstractConverter" effect="fade" var="t"
+												filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<p:ajax process="@this" event="valueChange" />
+												<f:selectItem itemLabel="--Phường/Xã--" itemValue="#{null}" />
+												<f:selectItems value="#{employeeBean.wards}" var="item"
+													itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="Ngày sinh - Nơi sinh - Giới tính"
+										styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w60,w40">
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w40,w60">
+												<p:outputLabel value="Ngày sinh" />
+												<p:calendar styleClass="subw40" locale="vi"
+													value="#{employeeBean.employee.birthday}"
+													pattern="#{applicationBean.cf.formatDate}"
+													showButtonPanel="true" navigator="true" showOn="button"
+													mask="#{applicationBean.cf.maskDate}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w80,w20">
+												<p:outputLabel value="Chỉ có năm sinh" />
+												<p:selectBooleanCheckbox
+													value="#{employeeBean.employee.yearOfBirth}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w30,w70">
+												<p:outputLabel value="Nơi sinh"
+													style="font-weight: bolder;text-decoration: underline;" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w80,w20">
+												<p:outputLabel value="Phái nữ" />
+												<p:selectBooleanCheckbox />
+											</h:panelGrid>
+										</h:panelGrid>
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w20,w80 ">
+											<p:outputLabel value="Tỉnh/TP" />
+											<p:selectOneMenu value="#{employeeBean.employee.cityPlace}"
+												converter="abstractConverter" effect="fade" var="t"
+												filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItem itemLabel="--Thành phố--" itemValue="#{null}" />
+												<f:selectItems value="#{employeeBean.citiePlaces}"
+													var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:ajax update="distristplaceid" event="valueChange"
+													listener="#{employeeBean.installDistristPlace()}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+											<p:outputLabel value="Quận/Huyện." />
+											<p:selectOneMenu
+												disabled="#{empty employeeBean.employee.cityPlace}"
+												value="#{employeeBean.employee.distristPlace}"
+												id="distristplaceid" converter="abstractConverter"
+												effect="fade" var="t" filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItem itemLabel="--Quận/Huyện--" itemValue="#{null}" />
+												<f:selectItems value="#{employeeBean.distristPlaces}"
+													var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:ajax update="wardsplaceid" event="valueChange"
+													listener="#{employeeBean.installWardPlace()}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+											<p:outputLabel value="Phường/Xã" />
+											<p:selectOneMenu
+												disabled="#{empty employeeBean.employee.distristPlace}"
+												value="#{employeeBean.employee.wardsPlace}"
+												id="wardsplaceid" converter="abstractConverter"
+												effect="fade" var="t" filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<p:ajax process="@this" event="valueChange" />
+												<f:selectItem itemLabel="--Phường/Xã--" itemValue="#{null}" />
+												<f:selectItems value="#{employeeBean.wardPlaces}" var="item"
+													itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+										</h:panelGrid>
+									</p:fieldset>
+									<h:panelGrid columns="2" styleClass="panelSub2">
+										<p:fieldset legend="Ngày vào làm việc"
+											styleClass="noneformatfs">
+											<p:calendar styleClass="subw40" locale="vi"
+												value="#{employeeBean.employee.dayAtWork}"
+												pattern="#{applicationBean.cf.formatDate}"
+												showButtonPanel="true" navigator="true" showOn="button"
+												mask="#{applicationBean.cf.maskDate}" />
+										</p:fieldset>
+										<p:fieldset legend="Phép" styleClass="noneformatfs">
+											<p:inputNumber value="#{employeeBean.employee.numberDayOff}"
+												decimalPlaces="0" symbolPosition="s">
+												<p:ajax process="@this" />
+											</p:inputNumber>
+										</p:fieldset>
+									</h:panelGrid>
+									<p:fieldset legend="Hợp đồng" styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w40,w60">
+											<p:outputLabel value="Loại hợp đồng" />
+											<p:selectOneMenu
+												value="#{employeeBean.employee.contractType}"
+												style="width: 85% !important;" converter="abstractConverter"
+												effect="fade" var="t" styleClass="seOnMe95" filter="true"
+												filterMatchMode="custom" filterFunction="customFilter">
+												<f:selectItems value="#{employeeBean.contractTypes}"
+													var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+											<p:outputLabel value="Ngày kí HĐ lần 1" />
+											<p:calendar styleClass="subw40" locale="vi"
+												value="#{employeeBean.employee.dateFirstContract}"
+												pattern="#{applicationBean.cf.formatDate}"
+												showButtonPanel="true" navigator="true" showOn="button"
+												mask="#{applicationBean.cf.maskDate}" />
+											<p:outputLabel value="Ngày gia hạn HĐ" />
+											<p:calendar styleClass="subw40" locale="vi"
+												value="#{employeeBean.employee.dateAdjournContract}"
+												pattern="#{applicationBean.cf.formatDate}"
+												showButtonPanel="true" navigator="true" showOn="button"
+												mask="#{applicationBean.cf.maskDate}" />
+											<p:outputLabel value="Ngày kết thúc HĐ" />
+											<p:calendar styleClass="subw40" locale="vi"
+												value="#{employeeBean.employee.dateEndContract}"
+												pattern="#{applicationBean.cf.formatDate}"
+												showButtonPanel="true" navigator="true" showOn="button"
+												mask="#{applicationBean.cf.maskDate}" />
+											<p:outputLabel value="Số HĐ (mới nhất)" />
+											<p:inputText
+												value="#{employeeBean.employee.contractNoNewest}" />
+										</h:panelGrid>
+									</p:fieldset>
+								</h:panelGrid>
+								<h:panelGrid id="group2">
+									<h:panelGrid columns="2" styleClass="panelSub2"
+										columnClasses="w30,w70">
+										<p:fieldset legend="Trình độ" styleClass="noneformatfs">
+											<p:selectOneMenu value="#{employeeBean.employee.level}"
+												style="width: 40% !important;" converter="abstractConverter"
+												effect="fade" var="t" styleClass="seOnMe95" filter="true"
+												filterMatchMode="custom" filterFunction="customFilter">
+												<f:selectItems value="#{employeeBean.levels}" var="item"
+													itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+										</p:fieldset>
+										<p:fieldset legend="Công việc" styleClass="noneformatfs">
+											<p:selectOneMenu value="#{employeeBean.employee.typeJob}"
+												converter="abstractConverter" effect="fade" var="t"
+												styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItems value="#{employeeBean.typeJobs}" var="item"
+													itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+										</p:fieldset>
+									</h:panelGrid>
+									<p:fieldset legend="Lương căn bản" styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w60,w40">
+											<p:outputLabel value="Bậc lương" />
+											<p:selectOneMenu value="#{employeeBean.employee.levelSalary}"
+												converter="abstractConverter" effect="fade" var="t"
+												styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItems value="#{employeeBean.levelSalaries}"
+													var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+										</h:panelGrid>
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w60,w40">
+											<p:outputLabel value="Thời điểm xếp lương hiện tại" />
+											<p:calendar styleClass="subw40" locale="vi"
+												value="#{employeeBean.employee.dateRankSalary}"
+												pattern="#{applicationBean.cf.formatDate}"
+												showButtonPanel="true" navigator="true" showOn="button"
+												mask="#{applicationBean.cf.maskDate}" />
+										</h:panelGrid>
+									</p:fieldset>
+									<h:panelGrid columns="2" styleClass="panelSub2">
+										<p:fieldset legend="Số BHXH" styleClass="noneformatfs">
+											<p:inputText
+												value="#{employeeBean.employee.socialInsuranceNo}" />
+										</p:fieldset>
+										<p:fieldset legend="Số thẻ BHYT" styleClass="noneformatfs">
+											<p:inputText
+												value="#{employeeBean.employee.heathInsuranceNo}" />
+										</p:fieldset>
+									</h:panelGrid>
+									<h:panelGrid columns="2" styleClass="panelSub2"
+										columnClasses="w80,w20">
+										<p:fieldset legend="Phân loại khối" styleClass="noneformatfs">
+											<p:selectOneMenu value="#{employeeBean.employee.cateJob}"
+												converter="abstractConverter" effect="fade" var="t"
+												styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItems value="#{employeeBean.cateJobs}" var="item"
+													itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+										</p:fieldset>
+										<p:fieldset styleClass="noneformatfs" legend="Độc hại">
+											<p:selectBooleanCheckbox
+												value="#{employeeBean.employee.pestiferous}" />
+										</p:fieldset>
+									</h:panelGrid>
+									<p:fieldset legend="Chứng minh nhân dân"
+										styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w50,w50">
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w30,w70">
+												<p:outputLabel value="Số" />
+												<p:inputText value="#{employeeBean.employee.personID}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w30,w70">
+												<p:outputLabel value="Ngày cấp" />
+												<p:calendar styleClass="subw40" locale="vi"
+													value="#{employeeBean.employee.personIDDate}"
+													pattern="#{applicationBean.cf.formatDate}"
+													showButtonPanel="true" navigator="true" showOn="button"
+													mask="#{applicationBean.cf.maskDate}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w30,w70">
+												<p:outputLabel value="Nơi cấp" />
+												<p:selectOneMenu
+													value="#{employeeBean.employee.personIDCity}"
+													style="width:80% !important;" converter="abstractConverter"
+													effect="fade" var="t" filter="true"
+													filterMatchMode="custom" filterFunction="customFilter">
+													<f:selectItem itemLabel="--Thành phố--" itemValue="#{null}" />
+													<f:selectItems value="#{employeeBean.citiePlaces}"
+														var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+													<p:column>
+														<h:outputText value="#{t.code}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{t.name}" />
+													</p:column>
+												</p:selectOneMenu>
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w30,w70">
+												<p:outputLabel value="Dân tộc" />
+												<p:autoComplete style="width:100%;"
+													value="#{employeeBean.employee.people}"
+													converter="abstractConverter" minQueryLength="2"
+													completeMethod="#{abstractAutoComplete.completePeople}"
+													var="p" itemLabel="#{p.name}" itemValue="#{p}"
+													forceSelection="true">
+													<f:attribute name="filters" value="code,name"></f:attribute>
+													<p:column style="width:30px">
+													   	#{p.code}
+													</p:column>
+													<p:column style="width:300px">
+													   	#{p.name}
+													</p:column>
+												</p:autoComplete>
+											</h:panelGrid>
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="Nơi đăng ký khám chữa bệnh"
+										styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w30,w70">
+											<p:outputLabel value="Tỉnh/TP" />
+											<p:selectOneMenu value="#{employeeBean.employee.heathPlace}"
+												converter="abstractConverter" effect="fade" var="t"
+												filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItem itemLabel="--Thành phố--" itemValue="#{null}" />
+												<f:selectItems value="#{employeeBean.citiePlaces}"
+													var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+											<p:outputLabel value="Bệnh viện" />
+											<p:autoComplete style="width:100%;"
+												value="#{employeeBean.employee.hospital}"
+												converter="abstractConverter" minQueryLength="2"
+												completeMethod="#{abstractAutoComplete.completeHospital}"
+												var="p" itemLabel="#{p.name}" itemValue="#{p}"
+												forceSelection="true">
+												<f:attribute name="filters" value="code,name"></f:attribute>
+												<p:column style="width:30px">
+													   	#{p.code}
+													</p:column>
+												<p:column style="width:300px">
+												   	#{p.name}
+											   		<br />
+											   		#{p.addl}
+												</p:column>
+											</p:autoComplete>
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="Địa chỉ tạm trú" styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat">
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w30,w70">
+												<p:outputLabel value="Số nhà, Đường, Thôn xóm,.." />
+												<p:inputTextarea rows="2"
+													value="#{employeeBean.employee.addresstemp.addl}" />
+												<p:outputLabel value="Tỉnh/TP" />
+												<p:selectOneMenu
+													value="#{employeeBean.employee.addresstemp.city}"
+													converter="abstractConverter" effect="fade" var="t"
+													filter="true" filterMatchMode="custom"
+													filterFunction="customFilter">
+													<f:selectItem itemLabel="--Thành phố--" itemValue="#{null}" />
+													<f:selectItems value="#{employeeBean.citieTemps}"
+														var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+													<p:ajax update="distristtempid" event="valueChange"
+														listener="#{employeeBean.installDistristTemp()}" />
+													<p:column>
+														<h:outputText value="#{t.code}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{t.name}" />
+													</p:column>
+												</p:selectOneMenu>
+												<p:outputLabel value="Quận/Huyện" />
+												<p:selectOneMenu
+													disabled="#{empty employeeBean.employee.addresstemp.city}"
+													value="#{employeeBean.employee.addresstemp.distrist}"
+													id="distristtempid" converter="abstractConverter"
+													effect="fade" var="t" filter="true"
+													filterMatchMode="custom" filterFunction="customFilter">
+													<f:selectItem itemLabel="--Quận/Huyện--"
+														itemValue="#{null}" />
+													<f:selectItems value="#{employeeBean.distristTemps}"
+														var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+													<p:ajax update="wardstempid" event="valueChange"
+														listener="#{employeeBean.installWardTemp()}" />
+													<p:column>
+														<h:outputText value="#{t.code}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{t.name}" />
+													</p:column>
+												</p:selectOneMenu>
+												<p:outputLabel value="Phường/Xã" />
+												<p:selectOneMenu
+													disabled="#{empty employeeBean.employee.addresstemp.distrist}"
+													value="#{employeeBean.employee.addresstemp.wards}"
+													id="wardstempid" converter="abstractConverter"
+													effect="fade" var="t" filter="true"
+													filterMatchMode="custom" filterFunction="customFilter">
+													<p:ajax process="@this" event="valueChange" />
+													<f:selectItem itemLabel="--Phường/Xã--" itemValue="#{null}" />
+													<f:selectItems value="#{employeeBean.wardTemps}" var="item"
+														itemLabel="#{item.name}" itemValue="#{item}" />
+													<p:column>
+														<h:outputText value="#{t.code}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{t.name}" />
+													</p:column>
+												</p:selectOneMenu>
+											</h:panelGrid>
+
+										</h:panelGrid>
+									</p:fieldset>
+									<h:panelGrid columns="2" styleClass="panelSub2">
+										<p:fieldset legend="Mã số thuế" styleClass="noneformatfs">
+											<p:inputText value="#{employeeBean.employee.taxPersonId}" />
+										</p:fieldset>
+										<p:fieldset legend="Điện thoại" styleClass="noneformatfs">
+											<p:inputText value="#{employeeBean.employee.phone}" />
+										</p:fieldset>
+									</h:panelGrid>
+									<p:fieldset legend="Chấm công - Cơm" styleClass="noneformatfs">
+										<h:panelGrid columns="4" styleClass="noneformat">
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w80,w20">
+												<p:outputLabel value="Giờ vào 07:30 " />
+												<p:selectBooleanCheckbox
+													value="#{employeeBean.employee.is7_30}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w80,w20">
+												<p:outputLabel value="Đi ca " />
+												<p:selectBooleanCheckbox
+													value="#{employeeBean.employee.workShift}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w80,w20">
+												<p:outputLabel value="Cắt cơm " />
+												<p:selectBooleanCheckbox
+													value="#{employeeBean.employee.quitEating}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w80,w20">
+												<p:outputLabel value="Ăn chay" />
+												<p:selectBooleanCheckbox
+													value="#{employeeBean.employee.vegetarian}" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="Ghi chú" styleClass="noneformatfs">
+										<p:inputTextarea value="#{employeeBean.employee.note}" />
+									</p:fieldset>
+								</h:panelGrid>
+								<h:panelGrid id="group3">
+									<p:fieldset style="height:490px;width:91%; text-align:center"
+										id="imginfor">
+										<div style="height: 440px">
+											<p:graphicImage alt="Hình ảnh" cache="false"
+												value="/resources/inforEmp/#{employeeBean.employee.id}/avatar.jpg"
+												width="280" height="440" />
+										</div>
+										<h:panelGrid columns="2"
+											style="width:100%; height:40px;background: #ebebeb;"
+											styleClass="noneformat">
+											<p:commandLink
+												style="margin-left: 20px; color: #b94a48;
+    											font-weight: bold;"
+												value="Đổi ảnh đại diện" oncomplete="PF('dlavatar').show();" />
+											<p:commandLink
+												style="margin-left: 20px; color: #b94a48;
+    											font-weight: bold;"
+												value="Hồ sơ cá nhân" oncomplete="PF('dlavatar').show();" />
+										</h:panelGrid>
+										<p:dialog widgetVar="dlavatar" resizable="false" height="400"
+											header="Tải ảnh đại diện">
+											<h:form id="bg" enctype="multipart/form-data">
+												<p:fileUpload style="text-align:center"
+													update=":messages,:menuformid" id="fileupload"
+													dragDropSupport="true" allowTypes="/(\.|\/)(jpe?g|png)$/"
+													label="Chọn file từ máy tính" cancelLabel="Huỷ"
+													uploadLabel="Tải lên" fileLimit="1"
+													fileUploadListener="#{employeeBean.uploadAlbum}"
+													mode="advanced" sizeLimit="20480000" />
+											</h:form>
+										</p:dialog>
+									</p:fieldset>
+									<p:fieldset legend="Đảng - Công đoàn" styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w40,w60">
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w90,w10">
+												<p:outputLabel value="Đảng viên" />
+												<p:selectBooleanCheckbox
+													value="#{employeeBean.employee.partisan}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w50">
+												<p:outputLabel value="Ngày vào Đảng" />
+												<p:calendar styleClass="subw40" locale="vi"
+													value="#{employeeBean.employee.datePartisan}"
+													pattern="#{applicationBean.cf.formatDate}"
+													showButtonPanel="true" navigator="true" showOn="button"
+													mask="#{applicationBean.cf.maskDate}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w90,w10">
+												<p:outputLabel value="Đoàn viên CĐ" />
+												<p:selectBooleanCheckbox
+													value="#{employeeBean.employee.memberShip}" />
+											</h:panelGrid>
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w50">
+												<p:outputLabel value="Ngày vào CĐ" />
+												<p:calendar styleClass="subw40" locale="vi"
+													value="#{employeeBean.employee.dateMemberShip}"
+													pattern="#{applicationBean.cf.formatDate}"
+													showButtonPanel="true" navigator="true" showOn="button"
+													mask="#{applicationBean.cf.maskDate}" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="Nghỉ việc" styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w20,w80">
+											<p:outputLabel value="Đã nghỉ" />
+											<h:panelGrid columns="2" styleClass="noneformat"
+												columnClasses="w30, w70">
+												<h:panelGrid columns="2" styleClass="noneformat"
+													style="margin-right:20px;" columnClasses="w90,w10">
+													<p:selectBooleanCheckbox
+														value="#{employeeBean.employee.layOff}" />
+												</h:panelGrid>
+												<h:panelGrid columns="2" styleClass="noneformat"
+													columnClasses="w30,w70">
+													<p:outputLabel value="Ngày" />
+													<p:calendar styleClass="subw40" locale="vi"
+														value="#{employeeBean.employee.dateLayOff}"
+														pattern="#{applicationBean.cf.formatDate}"
+														showButtonPanel="true" navigator="true" showOn="button"
+														mask="#{applicationBean.cf.maskDate}" />
+												</h:panelGrid>
+											</h:panelGrid>
+										</h:panelGrid>
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w20,w80">
+											<p:outputLabel value="Lý do" />
+											<p:selectOneMenu
+												value="#{employeeBean.employee.reasonLayOff}"
+												converter="abstractConverter" effect="fade" var="t"
+												styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+												filterFunction="customFilter">
+												<f:selectItem value="#{null}" itemLabel="--Lý do--" />
+												<f:selectItems value="#{employeeBean.reasonLayOffs}"
+													var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+												<p:column>
+													<h:outputText value="#{t.code}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{t.name}" />
+												</p:column>
+											</p:selectOneMenu>
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="Hộ khẩu" styleClass="noneformatfs">
+										<h:panelGrid columns="2" styleClass="noneformat"
+											columnClasses="w40,w60">
+											<p:outputLabel value="Tên chủ hộ" />
+											<p:inputText value="#{employeeBean.employee.householderNo}" />
+											<p:outputLabel value="Số hộ khẩu" />
+											<p:inputText value="#{employeeBean.employee.householderNo}" />
+											<p:outputLabel value="Địa chỉ hộ khẩu" />
+											<p:inputTextarea rows="2"
+												value="#{employeeBean.employee.householderAdress}" />
+										</h:panelGrid>
+									</p:fieldset>
+								</h:panelGrid>
+							</h:panelGrid>
+						</p:fieldset>
+					</h:form>
+				</p:tab>
+
+			</p:tabView>
+		</h:form>
+	</ui:define>
+</ui:composition>

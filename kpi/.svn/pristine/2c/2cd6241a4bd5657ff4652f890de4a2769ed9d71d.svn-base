@@ -1,0 +1,16 @@
+/**
+ * UserRightServicePublic.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.service.publics;
+
+public interface UserRightServicePublic extends java.rmi.Remote {
+    public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.UserRight findId(long arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.UserRight[] findUserRightByRole(trong.lixco.com.service.publics.Role arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.UserRight create(trong.lixco.com.service.publics.UserRight arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.UserRight update(trong.lixco.com.service.publics.UserRight arg0) throws java.rmi.RemoteException;
+}

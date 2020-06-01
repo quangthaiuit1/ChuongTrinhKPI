@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/pages/home.xhtml">
+
+	<ui:define name="content">
+		<style>
+.selectbllb .ui-chkbox-label {
+	font-size: 1.2em;
+	margin-left: 20px;
+	font-weight: bold;
+}
+
+.accpanel .ui-accordion-header {
+	background: #dbd6d6;
+}
+
+.ui-selectonemenu-items-wrapper {
+	max-height: 300px !important;
+}
+</style>
+		<h3 style="margin: 0px">Đánh giá 360</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<p:fieldset style="margin:auto">
+				<p:dataTable value="#{ketQuaDanhGiaBean.chiTietDanhGias}"
+					scrollable="true" scrollHeight="400" paginatorPosition="bottom"
+					paginator="true" rows="20" style="width:60%; margin:auto"
+					rowIndexVar="rowIndex" styleClass="tableparent" rowKey="#{item.id}"
+					id="tableid" var="item">
+					<p:column headerText="STT" style="text-align:center" width="20">
+						<h:outputText value="#{rowIndex+1}" />
+					</p:column>
+					<p:column headerText="Nhân viên" style="width:100px">
+						<h:outputText value="#{item.tennhanvien}" />
+					</p:column>
+					<p:column headerText="Phòng ban" style="width:100px">
+						<h:outputText value="#{item.phongban}" />
+					</p:column>
+					<p:column headerText="Số điểm" style="width:35px">
+						<h:outputText value="#{item.sodiem}" />
+					</p:column>
+					<p:column headerText="..." style="width:25px">
+						<p:commandLink
+							style="color: red;font-style: italic;text-decoration: underline;"
+							value="Đánh giá" update=":fnhanvienduocdanhgia,:fchitietdanhgia"
+							action="#{ketQuaDanhGiaBean.chonnvdanhgia(item)}" />
+					</p:column>
+					<f:facet name="footer">
+						<p:commandLink
+							style="font-style: italic;text-decoration: underline;"
+							value="Xem hướng dẫn" oncomplete="PF('wghuongdan').show();" />
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</p:fieldset>
+		</h:form>
+		<p:dialog widgetVar="wgketquadanhgia" modal="true" width="500"
+			header="Chi tiết đánh giá">
+			<h:form id="fnhanvienduocdanhgia">
+				<p:panelGrid columns="2" style="width:100%">
+					<p:fieldset
+						style="background:#4a789ba8; text-align:center;color:white">
+						<p:outputLabel value="Đánh giá nhân viên" />
+						<br />
+						<p:outputLabel value="#{ketQuaDanhGiaBean.memberduocdanhgia.name}"
+							style="font-size: larger;font-weight: bold;" />
+					</p:fieldset>
+					<p:fieldset
+						style="background:#4a789ba8; text-align:center;color:white">
+						<p:outputLabel value="Điểm trung bình" />
+						<br />
+						<p:outputLabel value="#{ketQuaDanhGiaBean.chiTietDanhGia.sodiem}"
+							style="font-size: larger;font-weight: bold;" />
+					</p:fieldset>
+				</p:panelGrid>
+			</h:form>
+			<h:form id="fchitietdanhgia">
+				<p:dataTable value="#{ketQuaDanhGiaBean.ketQuaDanhGias}"
+					scrollable="true" scrollHeight="300" rowIndexVar="rowIndex"
+					rowKey="#{item.id}" id="tableid" var="item">
+					<p:column headerText="STT" style="text-align:center" width="20">
+						<h:outputText value="#{rowIndex+1}" />
+					</p:column>
+					<p:column headerText="Câu hỏi">
+						<h:outputText value="#{item.cauHoi}" />
+					</p:column>
+					<p:column headerText="Số điểm" style="width:50px">
+						<p:selectOneMenu value="#{item.diem}" styleClass="slnumber "
+							style="width:30px">
+							<f:selectItem itemLabel="0" itemValue="0" />
+							<f:selectItem itemLabel="1" itemValue="1" />
+							<f:selectItem itemLabel="2" itemValue="2" />
+							<f:selectItem itemLabel="3" itemValue="3" />
+							<f:selectItem itemLabel="4" itemValue="4" />
+							<f:selectItem itemLabel="5" itemValue="5" />
+							<f:selectItem itemLabel="6" itemValue="6" />
+							<f:selectItem itemLabel="7" itemValue="7" />
+							<f:selectItem itemLabel="8" itemValue="8" />
+							<f:selectItem itemLabel="9" itemValue="9" />
+							<f:selectItem itemLabel="10" itemValue="10" />
+							<p:ajax update=":fnhanvienduocdanhgia,@this" process="@this"
+								listener="#{ketQuaDanhGiaBean.ajaxdanhgia()}" />
+						</p:selectOneMenu>
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+				<p:commandButton value="Lưu đánh giá" styleClass="btsave"
+					action="#{ketQuaDanhGiaBean.luuketquadanhgia()}"
+					update=":messages,:menuformid" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wghuongdan" modal="true" width="500"
+			resizable="false" header="Giới thiệu">
+			<h:form id="fhuongdan">
+				<p:fieldset style="background: aliceblue;font-size: 1.1em;">
+					<span style="font-weight: 900;">Xin chào quý Anh/Chị!</span>
+
+					<p style="text-align: justify">Hiện tại công ty đang thực hiện
+						cuộc đánh giá 360 độ cho toàn thể cán bộ nhân viên trong công ty.
+						Cuộc đánh giá này nhằm mục đích mang lại kết quả khách quan và
+						công bằng nhất đối với cán bộ, nhân viên được đánh giá. Đây cũng
+						chính là trách nhiệm và quyền lợi của các Anh/Chị. Vì vậy, rất
+						mong quý Anh/Chị sắp xếp thời gian tham gia đánh giá theo đúng
+						thời gian và yêu cầu của công ty.</p>
+					
+Trân trọng cảm ơn quý Anh/Chị.
+<br />
+-------------------------------------
+<br />
+					<br />
+					<span style="text-decoration: underline; font-weight: bolder;">Hướng
+						dẫn đánh giá</span>
+					<br />
+Trong danh sách Anh/Chị chọn từng nhân viên để đánh giá với các tiêu chí theo mức điểm từ 1 đến 10 (thấp nhất là 1 điểm và tối đa là 10 điểm).
+				
+				</p:fieldset>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

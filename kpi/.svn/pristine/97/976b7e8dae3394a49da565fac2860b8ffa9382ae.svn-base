@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+	<style>
+	.autocomp35 input{
+height:35px;
+	}
+	
+	</style>
+	<script>
+		//<![CDATA[
+		var chemical=0;
+		 var chars = ['+','−','=','(',')','0','1','2','3','4','5','6','7','8','9','a','e','o','x','ə','i','j','r','u','v','β','γ','δ','φ','χ'];
+	      var sup =['⁺','⁻','⁼','⁽','⁾','⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹','ᵃ','ᵉ','ᵒ','ˣ','ᵊ','ⁱ','ʲ','ʳ','ᵘ','ᵛ','ᵝ','ᵞ','ᵟ','ᵠ','ᵡ'];  //For future use
+	      var  sub   = ['₊','₋','₌','₍','₎','₀','₁','₂','₃','₄','₅','₆','₇','₈','₉','ₐ','ₑ','ₒ','ₓ','ₔ','ᵢ','ⱼ','ᵣ','ᵤ','ᵥ','ᵦ','ᵧ','ᵨ','ᵩ','ᵪ'];
+	      $(document).on('keydown', function(e) {
+
+		      //0: Can bang
+		      //1: Len cao
+		      //-1:Xuong thap
+  				if (e.keyCode == 187 && e.ctrlKey){
+   			            if(chemical==0){
+   			            	chemical=1;
+   	  			        }else{
+ 							chemical=0;
+   	  	  			    }
+   			        	return false;
+   			    }
+   			    
+  				if (e.keyCode == 189 && e.ctrlKey){
+  					 	if(chemical==0){
+			            	chemical=-1;
+	  			        }else{
+							chemical=0;
+	  	  			    }
+   			         	return false;
+   			    }
+   				
+  			});
+
+  			function transformTypedChar(charStr) {
+  				if(chemical == 0){
+ 			        var n=chars.indexOf(charStr)
+ 			        return n == -1 ? charStr : chars[n];
+ 	  			}else
+ 			 	if(chemical==1){
+ 			        var n=chars.indexOf(charStr)
+ 			        return n == -1 ? charStr : sup[n]
+ 	  			}else{
+ 	  			 if(chemical==-1){
+ 			        var n=chars.indexOf(charStr)
+ 			        
+ 			        return n == -1 ? charStr : sub[n]
+
+ 	  			 }}
+  			}
+
+  			function oghin(evt) {
+  				var x  = document.activeElement;
+  			    var val = x.value;
+  			    evt = evt || window.event;
+
+  			    // Ensure we only handle printable keys, excluding enter and space
+  			    var charCode = typeof evt.which == "number" ? evt.which : evt.keyCode;
+  			    if (charCode && charCode > 32) {
+  			        var keyChar = String.fromCharCode(charCode);
+
+  			        // Transform typed character
+  			        var mappedChar = transformTypedChar(keyChar);
+  			        var start, end;
+
+  			            // Non-IE browsers and IE 9
+  			            start = x.selectionStart;
+  			            end = x.selectionEnd;
+  			          x.value = val.slice(0, start) + mappedChar + val.slice(end);
+  			
+  			         // Move the caret
+           				 x.selectionStart = x.selectionEnd = start + 1;
+  			        return false;
+  			    }
+  			};
+  		  //]]> 
+		</script>
+		<h3 style="margin: 0px">Chỉ tiêu đánh giá vật tư</h3>
+		<p:separator />
+			<h:form id="dialogItem">
+				<p:fieldset style="width:800px;margin:auto">
+					<h:panelGrid style="width:100%">
+						<p:outputLabel value="Vật tư" style="font-size: 1.5em"/>
+						<p:autoComplete style="width:100%" styleClass="autocomp35" scrollHeight="250"
+							value="#{evaluationBean.material}" converter="abstractConverter"
+							minQueryLength="3"
+							completeMethod="#{abstractAutoComplete.completeMaterial}" var="p"
+							itemLabel="#{p.name}" itemValue="#{p}" forceSelection="true">
+							<p:ajax event="itemSelect"
+								listener="#{evaluationBean.LoadEvaluationByMater()}"
+								update="tabledetail"/>
+							<f:attribute name="filters" value="name,code,codeU"></f:attribute>
+							<p:column style="width:20px">
+					   		#{p.code}
+						</p:column>
+							<p:column style="width:300px">
+						   #{p.name}
+						</p:column>
+							<p:column style="width:20px">
+						   #{p.unit}
+						</p:column>
+						</p:autoComplete>
+					</h:panelGrid>
+					<br/>
+					<p:separator/>
+					<p:dataTable value="#{evaluationBean.evaluations}" var="item"
+						id="tabledetail">
+						<p:column headerText="STT" style="width:10px">
+							<p:inputText value="#{item.no}" />
+						</p:column>
+						<p:column headerText="Chỉ tiêu kiểm tra (TEST)" style="width:250px;">
+							<p:inputTextarea value="#{item.name}" onkeypress="return oghin()" style="font-size:1.2em" rows="2"
+								styleClass="notUpCa" />
+						</p:column>
+						<p:column headerText="Đặc điểm kỹ thuật (SPECIFICATION)"
+							style="width:250px; text-align:center">
+							<p:inputTextarea value="#{item.limit}" styleClass="notUpCa" onkeypress="return oghin()" rows="2"  style="font-size:1.2em"/>
+						</p:column>
+					</p:dataTable>
+					<p:separator />
+					<p:commandButton value="Lưu/Cập nhật" id="save" icon="ui-icon-disk"
+						styleClass="greenbutton" update=":messages,:dialogItem"
+						actionListener="#{evaluationBean.saveOrUpdate()}" />
+					<p:commandButton value="Tạo mới" icon="ui-icon-document"
+						styleClass="greenbutton" update=":dialogItem"
+						actionListener="#{evaluationBean.reset()}" />
+						
+				</p:fieldset>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,22 @@
+/**
+ * MemberServicePublic.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.service.publics;
+
+public interface MemberServicePublic extends java.rmi.Remote {
+    public trong.lixco.com.service.publics.Member[] findByDepartment(java.lang.String arg0, trong.lixco.com.service.publics.Department arg1) throws java.rmi.RemoteException;
+    public boolean delete(java.lang.String arg0, trong.lixco.com.service.publics.Member arg1) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Member[] findAll(java.lang.String arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Member findId(java.lang.String arg0, long arg1) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Member[] findSearchWarehouse(java.lang.String arg0, java.lang.String arg1, java.lang.String[] arg2, java.lang.Boolean arg3) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Member create(java.lang.String arg0, trong.lixco.com.service.publics.Member arg1) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Member update(java.lang.String arg0, trong.lixco.com.service.publics.Member arg1) throws java.rmi.RemoteException;
+    public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Member[] findSearch(java.lang.String arg0, java.lang.String arg1, java.lang.String[] arg2) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Member findByCode(java.lang.String arg0, java.lang.String arg1) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Member findLike(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2) throws java.rmi.RemoteException;
+}

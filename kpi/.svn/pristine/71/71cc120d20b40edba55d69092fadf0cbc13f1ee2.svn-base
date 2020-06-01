@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<h3 style="margin: 0px">Mục tiêu phòng ban (năm)</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
+				<p:panel header="Thông tin" styleClass="panelw100">
+					<h:panelGrid id="info">
+						<p:outputLabel value="Phòng ban" />
+						<p:selectOneMenu value="#{tagetDepartAdminBean.departmentParent}"
+							converter="abstractConverter" effect="fade" var="t"
+							styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<f:selectItem value="#{null}" itemLabel="--Chọn phòng ban--" />
+							<f:selectItems value="#{tagetDepartAdminBean.departmentParents}"
+								var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.name}" />
+							</p:column>
+							<p:ajax update="tableid"
+								listener="#{tagetDepartAdminBean.searchItem()}" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Nhóm mục tiêu" />
+						<p:selectOneMenu value="#{tagetDepartAdminBean.tagetDepartCate}"
+							converter="abstractConverter" effect="fade" var="t"
+							styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<f:selectItems value="#{tagetDepartAdminBean.tagetDepartCates}"
+								var="item" itemLabel="#{item.content}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.content}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.weight}%" />
+							</p:column>
+							<p:ajax event="change" process="@this" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Năm*:" />
+						<p:spinner size="10" min="2017" max="2050"
+							value="#{tagetDepartAdminBean.tagetDepart.year}">
+							<p:ajax update=":menuformid,:dialogOrienid" process="@this"
+								listener="#{tagetDepartAdminBean.ajaxTagetDepart()}" />
+						</p:spinner>
+						<p:outputLabel value="Mã mục tiêu*:" />
+						<p:inputText value="#{tagetDepartAdminBean.tagetDepart.code}" />
+						<p:outputLabel value="Nội dung*:" />
+						<p:inputTextarea
+							value="#{tagetDepartAdminBean.tagetDepart.content}" />
+						<p:outputLabel value="Trọng số:" />
+						<h:panelGrid columns="2" columnClasses="w10,w90">
+							<p:inputText style="width:40px; margin-right:4px"
+								value="#{tagetDepartAdminBean.tagetDepart.weighted}" />
+							<p:outputLabel value="%" />
+						</h:panelGrid>
+						<p:outputLabel value="Ghi chú:" />
+						<p:inputTextarea cols="24" rows="4"
+							value="#{tagetDepartAdminBean.tagetDepart.note}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Lưu/Cập nhật" process="@form"
+						action="#{tagetDepartAdminBean.createOrUpdate()}"
+						update=":messages,:menuformid" />
+					<p:commandButton value="Tạo mới"
+						action="#{tagetDepartAdminBean.reset()}" update=":menuformid" />
+					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
+						value="Xoá" update=":messages,:menuformid"
+						action="#{tagetDepartAdminBean.delete()}">
+						<p:confirm icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:commandButton value="Trọng số nhóm mục tiêu"
+						oncomplete="PF('dialogWeight').show();" />
+					<p:commandButton type="submit" id="btloadct"
+						value="Mục tiêu công ty"
+						action="#{tagetDepartAdminBean.loadTaget()}" process="@this"
+						oncomplete="PF('dialogTaget').show();" update=":dialogTagetid"
+						icon="ui-icon-arrowthick-1-s">
+					</p:commandButton>
+				</p:panel>
+				<p:panel header="Danh sách" id="preview">
+					<h:panelGrid columns="2" cellpadding="5" style="width:400px">
+						<p:spinner size="10" min="2017" max="2050"
+							value="#{tagetDepartAdminBean.year}">
+							<p:ajax update="tableid" process="@this"
+								listener="#{tagetDepartAdminBean.searchItem()}" />
+						</p:spinner>
+						<p:selectOneMenu
+							value="#{tagetDepartAdminBean.departmentParentChoose}"
+							converter="abstractConverter" effect="fade" var="t"
+							styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<f:selectItem value="#{null}" itemLabel="--Chọn phòng ban--" />
+							<f:selectItems value="#{tagetDepartAdminBean.departmentParents}"
+								var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.name}" />
+							</p:column>
+							<p:ajax update="tableid"
+								listener="#{tagetDepartAdminBean.searchItem()}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<div style="clear: both" />
+					<p:dataTable value="#{tagetDepartAdminBean.tagetDeparts}"
+						lazy="true" sortBy="#{item.kTagetDepartCate.code}#{item.year}"
+						expandableRowGroups="true" paginatorPosition="bottom"
+						rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+						rowKey="#{item.id}"
+						selection="#{tagetDepartAdminBean.tagetDepartEdit}"
+						scrollable="true" selectionMode="single" scrollWidth="670"
+						id="tableid" scrollHeight="370" widgetVar="datatb"
+						resizableColumns="true" var="item">
+						<p:ajax event="rowSelect"
+							listener="#{tagetDepartAdminBean.showEdit()}"
+							update=":menuformid" />
+						<p:headerRow>
+							<p:column>
+								<h:outputText value="" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{item.year}" />
+							</p:column>
+							<p:column style="font-size: 1.2em;text-align:center">
+								<h:outputText value="#{item.kTagetDepartCate.code}" />
+							</p:column>
+
+							<p:column style="font-size: 1.2em;padding: 10px;">
+								<h:outputText value="#{item.kTagetDepartCate.content}" />
+							</p:column>
+							<p:column
+								style="font-size: 1.2em;padding: 10px;text-align:center">
+								<h:outputText value="#{item.kTagetDepartCate.weight}%" />
+							</p:column>
+						</p:headerRow>
+						<p:column headerText="ID" style="width:30px">
+							<h:outputText value="#{item.id}" />
+						</p:column>
+						<p:column headerText="Năm" style="width:35px">
+							<p:commandButton icon="fa fa-server" styleClass="greenbutton"
+								oncomplete="PF('dialogEmpP').show()"
+								actionListener="#{tagetDepartAdminBean.installListDepP(item)}"
+								update=":dialogDepartPid" />
+						</p:column>
+						<p:column headerText="Mã" style="width:30px;text-align:center">
+							<h:outputText value="#{item.code}" />
+						</p:column>
+						<p:column headerText="Nội dung" style="width:350px">
+							<h:outputText value="#{item.content}" />
+						</p:column>
+						<p:column headerText="Trọng số"
+							style="width:60px;text-align:center">
+							<h:outputText value="#{item.weighted}%" />
+						</p:column>
+						<p:column headerText="Ghi chú" style="width:300px">
+							<h:outputText value="#{item.note}" />
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+		<p:dialog widgetVar="dialogTaget" resizable="false" width="600"
+			closeOnEscape="true" header="Mục tiêu công ty">
+			<h:form id="dialogTagetid">
+				<p:dataTable value="#{tagetDepartAdminBean.tagets}" lazy="true"
+					sortBy="#{item.kTagetCate.code}" expandableRowGroups="true"
+					paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
+					paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
+					style="width:100%" id="tabletagetid" scrollHeight="370"
+					widgetVar="datatagettb" resizableColumns="true" var="item">
+					<p:headerRow>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column style="font-size: 1.2em;text-align:center">
+							<h:outputText value="#{item.kTagetCate.code}" />
+						</p:column>
+						<p:column style="font-size: 1.2em;padding: 10px;">
+							<h:outputText value="#{item.kTagetCate.content}" />
+						</p:column>
+						<p:column style="font-size: 1.2em;padding: 10px;">
+							<h:outputText value="#{item.kTagetCate.weight}%" />
+						</p:column>
+					</p:headerRow>
+					<f:facet name="header">
+						<div style="float: left">
+							<p:spinner size="10" min="2017" max="2050"
+								value="#{tagetDepartAdminBean.yearTaget}">
+								<p:ajax process="@this"
+									listener="#{tagetDepartAdminBean.loadTaget()}"
+									update="tabletagetid" />
+							</p:spinner>
+						</div>
+						<div style="float: right">
+							<p:commandButton type="submit" value="Đưa vào mục tiêu phòng"
+								update=":menuformid,:messages"
+								action="#{tagetDepartAdminBean.getListTaget()}"
+								icon="ui-icon-arrowreturnthick-1-s" />
+						</div>
+						<div style="clear: both;" />
+					</f:facet>
+					<p:column headerText="..."
+						style="width:20px;#{item.color==true?'color:red':''}">
+						<p:selectBooleanCheckbox value="#{item.select}">
+							<p:ajax process="@this" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column headerText="STT"
+						style="width:20px;#{item.color==true?'color:red':''}">
+						<h:outputText value="#{item.code}" />
+					</p:column>
+					<p:column headerText="Nội dung"
+						style="text-align:left;#{item.color==true?'color:red':''}">
+						<h:outputText value="#{item.content}" />
+					</p:column>
+					<p:column headerText="Trọng số" width="80"
+						style="text-align:left;#{item.color==true?'color:red':''}">
+						<h:outputText value="#{item.weighted}%" />
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dialogEmpP" resizable="false" width="400"
+			closeOnEscape="true" header="Danh sách nhân viên">
+			<h:form id="dialogDepartPid">
+				<p:dataTable value="#{tagetDepartAdminBean.employees}" var="item"
+					scrollHeight="500" scrollable="true">
+					<p:column headerText="..." style="text-align:center" width="30">
+						<p:selectBooleanCheckbox value="#{item.select}">
+							<p:ajax process="@this" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column headerText="Mã NV" style="text-align:center" width="50">
+						<h:outputText value="#{item.employeeCode}" />
+					</p:column>
+					<p:column headerText="Tên nhân viên" style="text-align:left">
+						<h:outputText value="#{item.employeeName}" />
+					</p:column>
+					<f:facet name="footer">
+						<p:commandButton process="@form" value="Lưu/Cập nhật"
+							update=":messages,:menuformid"
+							action="#{tagetDepartAdminBean.saveDepP()}" />
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dialogWeight" resizable="false" width="400"
+			closeOnEscape="true" header="Nhóm mục tiêu">
+			<h:form id="dialogOrienid">
+				<p:selectOneMenu value="#{tagetDepartAdminBean.departmentParentWeight}"
+					converter="abstractConverter" effect="fade" var="t"
+					styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+					filterFunction="customFilter">
+					<f:selectItems value="#{tagetDepartAdminBean.departmentParents}"
+						var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+					<p:column>
+						<h:outputText value="#{t.code}" />
+					</p:column>
+					<p:column>
+						<h:outputText value="#{t.name}" />
+					</p:column>
+					<p:ajax process="@this" />
+				</p:selectOneMenu>
+
+				<p:dataTable value="#{tagetDepartAdminBean.tagetDepartCates}"
+					var="item">
+					<p:column headerText="Nội dung" style="text-align:left">
+						<h:outputText value="#{item.content}" />
+					</p:column>
+					<p:column headerText="Trọng số (%)" style="text-align:center"
+						width="80">
+						<p:inputText style="width:15px; margin-right:4px"
+							value="#{item.weight}">
+							<p:ajax event="blur" process="@this" />
+						</p:inputText>
+						<p:outputLabel value="%" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:outputLabel value="Năm" />
+						<p:spinner size="10" min="2017" max="2050"
+							value="#{tagetDepartAdminBean.tagetDepart.year}"
+							style="margin-right:20px">
+							<p:ajax update=":menuformid,:dialogOrienid" process="@this"
+								listener="#{tagetDepartAdminBean.ajaxTagetDepart()}" />
+						</p:spinner>
+						<p:commandButton process="@form" value="Lưu/Cập nhật"
+							update=":menuformid,:messages"
+							action="#{tagetDepartAdminBean.saveWeight()}" />
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

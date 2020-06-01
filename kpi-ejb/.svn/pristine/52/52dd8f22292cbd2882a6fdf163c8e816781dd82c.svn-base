@@ -1,0 +1,43 @@
+package trong.lixco.com.ejb.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+
+import trong.lixco.com.jpa.entity.LAddress;
+import trong.lixco.com.jpa.entitykpi.KPIPerson;
+import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class AddressService extends AbstractService<LAddress> {
+@Inject
+	private EntityManager em;
+	@Resource
+	private SessionContext ct;
+	
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+	
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+	
+	@Override
+	protected Class<LAddress> getEntityClass() {
+		return LAddress.class;
+	}
+	
+	
+}

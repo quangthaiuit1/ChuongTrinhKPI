@@ -1,0 +1,264 @@
+package trong.lixco.com.nhansu.general;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import trong.lixco.com.ejb.service.AccountDatabaseService;
+import trong.lixco.com.ejb.service.ConfigBranch;
+import trong.lixco.com.jpa.entity.AccountDatabase;
+import trong.lixco.com.nhansu.general.AuthorizationManager;
+import trong.lixco.com.service.publics.Account;
+import trong.lixco.com.service.publics.AccountServicePublic;
+import trong.lixco.com.service.publics.AccountServicePublicProxy;
+import trong.lixco.com.service.publics.SingleSignOn;
+import trong.lixco.com.util.Decode;
+import trong.lixco.com.util.StaticPath;
+
+@javax.servlet.annotation.WebFilter("/pages/*")
+public class WebFilter implements Filter {
+
+	@EJB
+	private ConfigBranch configBranch;
+	@Inject
+	private AuthorizationManager authorizationManager;
+	@Inject
+	private AccountDatabaseService accountDatabaseService;
+	private String path;
+	private String pathlocal;
+	@Inject
+	private PathServerAccount pathServerAccount;
+
+	@Override
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException,
+			IOException {
+		req.setCharacterEncoding("UTF-8");
+		res.setCharacterEncoding("UTF-8");
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+		try {
+			HttpSession session = request.getSession();
+			String db = null;
+			Account account = null;
+			if (session.getAttribute("account") != null)
+				account = (Account) session.getAttribute("account");
+			if (session.getAttribute("database") != null) {
+				db = (String) session.getAttribute("database");
+				configBranch.setDatabase(db);
+
+			}
+
+			setPathLink(request);
+
+			String loginURL = path + "/AccountServiceAPI_WEB/pages/Start.jsf";
+			String path = request.getRequestURL().toString();
+
+			AccountServicePublic accountServicePublic = new AccountServicePublicProxy();
+			String a = request.getRequestURL().toString();
+			if (account == null && db == null) {
+				String idStr = request.getParameter("id");
+				String database = request.getParameter("database");
+				if (database != null) {
+					configBranch.setDatabase(database);
+					session.setAttribute("database", database);
+				}
+				if (idStr != null && database != null) {
+					accountServicePublic.setDatabase(database);
+					SingleSignOn[] singleSignOns = accountServicePublic.findSSOByValue(idStr);
+
+					if (singleSignOns != null) {
+						for (int i = 0; i < singleSignOns.length; i++) {
+							accountServicePublic.deleteSSO(singleSignOns[i]);
+						}
+						long id = (Long) Decode.fromString(idStr);
+						account = accountServicePublic.findById(id);
+						if (account != null) {
+							// Kiem tra User nay co cho phep truy cap chuong
+							// trinh hay khong
+							// Neu cho phep thi cai dat bo quyen cho cho user
+							boolean allow = authorizationManager.isAllowed(account);
+							if (allow) {
+								session.setAttribute("account", account);
+								response.sendRedirect(path);
+							}
+						}
+					} else {
+						response.sendRedirect(loginURL);
+					}
+				} else {
+					// Kiem tra da dang nhap tu server account chua
+					String urlresult = this.path + "/AccountServiceAPI_WEB/logout/";
+					if (checkServer(urlresult)) {
+						response.sendRedirect(urlresult);
+					} else {
+						response.sendRedirect(loginURL);
+					}
+
+				}
+			} else {
+				String idStr = request.getParameter("id");
+				if (idStr == null) {
+					// configBranch.setDatabase(db);
+					// Kiem tra co duoc phep truy cap form
+					boolean allowAccessForm = authorizationManager.allowAccessForm(request.getRequestURI());
+					if (allowAccessForm) {
+						chain.doFilter(req, res);
+					} else {
+						response.sendRedirect(pathlocal + "/nhansu/error/403.jsf");
+					}
+				} else {
+					String database = request.getParameter("database");
+					//Khi chuoi co dau + bi replay thanh khoang trang
+					if(idStr.contains(" "))
+						idStr=idStr.replace(" ", "+");
+					if (idStr != null && database != null) {
+						accountServicePublic.setDatabase(database);
+						long id = (Long) Decode.fromString(idStr);
+						Account accNew = accountServicePublic.findById(id);
+						session.setAttribute("account", accNew);
+						SingleSignOn[] singleSignOns = accountServicePublic.findSSOByValue(idStr);
+
+						if (singleSignOns != null) {
+							for (int i = 0; i < singleSignOns.length; i++) {
+								accountServicePublic.deleteSSO(singleSignOns[i]);
+							}
+							boolean allow = authorizationManager.isAllowed(accNew);
+							if (allow) {
+								configBranch.setDatabase(database);
+								session.setAttribute("account", accNew);
+								session.setAttribute("database", database);
+								response.sendRedirect(path);
+							}
+						} else {
+							response.sendRedirect(loginURL);
+						}
+					}
+
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean checkServer(String urlserver) {
+		boolean status = false;
+		try {
+			HttpURLConnection.setFollowRedirects(false);
+			HttpURLConnection con = (HttpURLConnection) new URL(urlserver).openConnection();
+			con.setRequestMethod("HEAD");
+			int responseCode = con.getResponseCode();
+			status = (200 <= responseCode && responseCode <= 399);
+		} catch (Exception e) {
+			status = false;
+		}
+		return status;
+	}
+
+	public String getCookie(String cookieName, HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		for (Cookie c : cookies) {
+			String name = c.getName();
+			if (name != null && name.equals(cookieName)) {
+				return c.getValue();
+			}
+		}
+		return "";
+	}
+
+	public String getURL(HttpServletRequest req) {
+
+		String scheme = req.getScheme(); // http
+		String serverName = req.getServerName(); // hostname.com
+		int serverPort = req.getServerPort(); // 80
+		String contextPath = req.getContextPath(); // /mywebapp
+		String servletPath = req.getServletPath(); // /servlet/MyServlet
+		String pathInfo = req.getPathInfo(); // /a/b;c=123
+		String queryString = req.getQueryString(); // d=789
+
+		// Reconstruct original requesting URL
+		StringBuilder url = new StringBuilder();
+		url.append(scheme).append("://").append(serverName);
+
+		if (serverPort != 80 && serverPort != 443) {
+			url.append(":").append(serverPort);
+		}
+
+		url.append(contextPath).append(servletPath);
+
+		if (pathInfo != null) {
+			url.append(pathInfo);
+		}
+		if (queryString != null) {
+			url.append("?").append(queryString);
+		}
+		return url.toString();
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void init(FilterConfig arg0) throws ServletException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setPathLink(HttpServletRequest request) {
+		AccountDatabase accdb = accountDatabaseService.findByName("hethong");
+		boolean check = checkAddressLocal(request);
+		if (check) {
+			path = accdb.getAddress();
+		} else {
+			path = accdb.getAddressPublic();
+		}
+		StaticPath.setPath(path);
+		pathServerAccount.setPath(this.path);
+
+		AccountDatabase accdblocal = accountDatabaseService.findByName("nhansu");
+		if (check) {
+			pathlocal = accdblocal.getAddress();
+		} else {
+			pathlocal = accdblocal.getAddressPublic();
+		}
+		StaticPath.setPathLocal(pathlocal);
+		pathServerAccount.setPathlocal(this.pathlocal);
+	}
+
+	public boolean checkAddressLocal(HttpServletRequest request) {
+		try {
+
+			String ipAddress = request.getHeader("X-FORWARDED-FOR");// ip
+			if (ipAddress == null) {
+				ipAddress = request.getRemoteAddr();
+				boolean temp = ipAddress.contains("192.168.");
+				if (temp == false) {
+					temp = ipAddress.contains("127.0.0.1");
+				}
+				return temp;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return true;
+		}
+	}
+}

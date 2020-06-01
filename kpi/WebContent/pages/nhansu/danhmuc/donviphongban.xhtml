@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<h3 style="margin: 0px">Đơn vị phòng ban</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60"
+				styleClass="panelthreeColumn">
+				<p:panel header="Thông tin" styleClass="panelw100">
+					<h:panelGrid id="info">
+						<p:outputLabel value="Mã đơn vị/phòng ban*" />
+						<p:inputText value="#{departmentBean.crudDepartment.code}" />
+						<p:outputLabel value="Tên đơn vị/phòng ban*" />
+						<p:inputText value="#{departmentBean.crudDepartment.name}" />
+						<p:outputLabel value="Phòng ban(parent)" />
+						<p:selectOneMenu
+							value="#{departmentBean.crudDepartment.departmentParent}"
+							style="margin-right:20px" converter="abstractConverter"
+							effect="fade" var="t" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<f:selectItem itemValue="#{null}" itemLabel="--PHÒNG BAN--" />
+							<f:selectItems value="#{departmentBean.listDepartmentParent}"
+								var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.name}" />
+							</p:column>
+							<p:ajax event="change" process="@this" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Ghi chú" />
+						<p:inputTextarea cols="24" rows="4" styleClass="upper"
+							value="#{departmentBean.crudDepartment.note}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Lưu/Cập nhật"
+						action="#{departmentBean.createOrUpdate()}"
+						update=":messages,:menuformid" />
+					<p:commandButton value="Tạo mới"
+						action="#{departmentBean.reset()}" update=":menuformid" />
+				</p:panel>
+				<p:panel header="Danh sách" id="preview">
+					<h:panelGrid id="mainGrid" columns="6"
+						style="float:left; margin-bottom:5px">
+						<p:commandButton value="Tìm kiếm " id="idorder" />
+						<p:tooltip for="xoact" value="Xoá form" />
+						<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
+							update=":messages,:menuformid"
+							action="#{departmentBean.deleteDepartment()}">
+							<p:confirm icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:overlayPanel id="imagePanel" for="idorder" hideEffect="fade"
+							widgetVar="panelsearch" style="width:350px;">
+							<div class="ui-grid-col-12"
+								style="padding-left: 0px !important; padding-right: 0px !important;">
+								<div class="ui-grid-col-12"
+									style="padding-top: 0px !important; padding-bottom: 5px !important;">
+									Mã đơn vị/phòng ban</div>
+								<div class="ui-grid-col-5" style="padding-top: 0px !important;">
+									<p:inputText value="#{departmentBean.searchDepartment.code}" />
+								</div>
+								<div class="ui-grid-col-12"
+									style="padding-top: 0px !important; padding-bottom: 5px !important;">
+									Tên đơn vị/phòng ban</div>
+								<div class="ui-grid-col-12" style="padding-top: 0px !important;">
+									<p:inputText value="#{departmentBean.searchDepartment.name}" />
+								</div>
+								<div class="ui-grid-col-12"
+									style="padding-top: 0px !important; padding-bottom: 5px !important;">
+									Phòng ban(parent)</div>
+								<div class="ui-grid-col-12" style="padding-top: 0px !important;">
+									<p:selectOneMenu
+										value="#{departmentBean.searchDepartment.departmentParent}"
+										style="margin-right:20px" converter="abstractConverter"
+										effect="fade" var="t" filter="true" filterMatchMode="custom"
+										filterFunction="customFilter">
+										<f:selectItem itemValue="#{null}" itemLabel="Tất cả" />
+										<f:selectItems value="#{departmentBean.listDepartmentParent}"
+											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+										<p:column>
+											<h:outputText value="#{t.code}" />
+										</p:column>
+										<p:column>
+											<h:outputText value="#{t.name}" />
+										</p:column>
+										<p:ajax event="change" process="@this" />
+									</p:selectOneMenu>
+								</div>
+							</div>
+							<p:commandButton value="Tìm" style="float:right;"
+								icon="ui-icon-search" oncomplete="PF('panelsearch').hide()"
+								actionListener="#{departmentBean.departmentSearch()}"
+								update="tableid" />
+							<div style="clear: both" />
+							<p:separator />
+						</p:overlayPanel>
+					</h:panelGrid>
+					<div style="clear: both" />
+					<p:dataTable value="#{departmentBean.listDepartment}" lazy="true"
+						paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
+						paginator="true" rows="40" rowKey="#{item.id}"
+						selection="#{departmentBean.selectDepartment}" scrollable="true"
+						selectionMode="single" scrollWidth="750" id="tableid"
+						scrollHeight="370" widgetVar="datatb" resizableColumns="true"
+						var="item">
+						<p:ajax event="rowSelect" listener="#{departmentBean.showEdit()}"
+							update=":menuformid" />
+						<p:column headerText="ID" style="width:30px">
+							<h:outputText value="#{item.id}" />
+						</p:column>
+						<p:column headerText="Mã " width="50">
+							<h:outputText value="#{item.code}" />
+						</p:column>
+						<p:column headerText="Tên đơn vị/phòng ban" width="250">
+							<h:outputText value="#{item.name}" />
+						</p:column>
+						<p:column headerText="Phòng ban(parent)" width="250">
+							<h:outputText value="#{item.departmentParent.name}" />
+						</p:column>
+						<p:column headerText="Ghi chú" width="90">
+							<h:outputText value="#{item.note}" />
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

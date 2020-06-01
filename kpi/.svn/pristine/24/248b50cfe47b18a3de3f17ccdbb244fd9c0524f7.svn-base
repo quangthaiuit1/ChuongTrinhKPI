@@ -1,0 +1,19 @@
+/**
+ * MenuServicePublic.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.service.publics;
+
+public interface MenuServicePublic extends java.rmi.Remote {
+    public boolean delete(trong.lixco.com.service.publics.Menu arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Menu[] findAll() throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Menu create(trong.lixco.com.service.publics.Menu arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Menu update(trong.lixco.com.service.publics.Menu arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Menu[] find_Program(trong.lixco.com.service.publics.Program arg0) throws java.rmi.RemoteException;
+    public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Menu find_ID(long arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.Menu find_Name(java.lang.String arg0, trong.lixco.com.service.publics.Program arg1) throws java.rmi.RemoteException;
+}

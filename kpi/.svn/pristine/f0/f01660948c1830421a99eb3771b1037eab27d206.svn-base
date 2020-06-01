@@ -1,0 +1,80 @@
+package trong.lixco.com.servlet;
+
+import java.io.Closeable;
+import java.io.IOException;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import trong.lixco.com.ejb.servicekpi.KPIPersonOfMonthService;
+import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
+
+@WebServlet(name = "pdfDataAssignServlet", urlPatterns = { "/pdfDataAssignServlet/*" })
+public class PDFDataAssignServlet extends HttpServlet {
+
+	@Inject
+	KPIPersonOfMonthService kpiPersonOfMonthService;
+
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+			IOException {
+
+		String idString = request.getParameter("id");
+
+		if (idString == null || idString.isEmpty()) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND); // 404.
+			return;
+		}
+
+		Long id = Long.parseLong(idString.trim());
+
+		KPIPersonOfMonth entry = null;
+		try {
+			entry = kpiPersonOfMonthService.findById(id);
+		} catch (Exception ex) {
+		}
+
+		if (entry == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND); // 404.
+			return;
+		}
+
+		ServletOutputStream out = null;
+		try {
+			response.reset();
+			out = response.getOutputStream();
+			if (entry.getDataAssign() != null && entry.getDataAssign().length != 0) {
+				out.write(entry.getDataAssign());
+			}
+		} catch (IOException e) {
+		} finally {
+			close(out);
+		}
+
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		processRequest(request, response);
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+			IOException {
+		processRequest(request, response);
+	}
+
+	private static void close(Closeable resource) {
+		if (resource != null) {
+			try {
+				resource.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+
+}

@@ -1,0 +1,97 @@
+package trong.lixco.com.ejb.service;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.jboss.logging.Logger;
+
+import trong.lixco.com.jpa.entity.Department;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class DepartmentService extends AbstractService<Department> {
+	@Inject
+	private EntityManager em;
+	@Inject
+	private Logger logger;
+	@Resource
+	private SessionContext ct;
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+
+	@Override
+	protected Class<Department> getEntityClass() {
+		return Department.class;
+	}
+
+	public Department findByCode(String code) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Department> cq = cb.createQuery(Department.class);
+		Root<Department> root = cq.from(Department.class);
+		cq.select(root).where(cb.equal(root.get("code"), code));
+		TypedQuery<Department> query = em.createQuery(cq);
+		List<Department> results = query.getResultList();
+		if (results.size() != 0) {
+			return results.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	public List<Department> findDepartment(DepartmentParent departmentParent) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Department> cq = cb.createQuery(Department.class);
+		Root<Department> root = cq.from(Department.class);
+		cq.select(root).where(cb.equal(root.get("departmentParent"), departmentParent));
+		TypedQuery<Department> query = em.createQuery(cq);
+		List<Department> results = query.getResultList();
+		return results;
+	}
+
+	public List<Department> searchDepartment(String code, String name, DepartmentParent parent) {
+		List<Department> result = null;
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Department> cq = cb.createQuery(Department.class);
+			Root<Department> root = cq.from(Department.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			if (code != null && !"".equals(code)) {
+				predicates.add(cb.like(root.get("code"), "%" + code + "%"));
+			}
+			if (name != null && !"".equals("name")) {
+				predicates.add(cb.like(root.get("name"), "%" + name + "%"));
+			}
+			if (parent != null) {
+				predicates.add(cb.equal(root.get("departmentParent"), parent));
+			}
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+			TypedQuery<Department> query = em.createQuery(cq);
+			result = query.getResultList();
+		} catch (Exception e) {
+			logger.error("DepartmentService.searchDepartment:" + e.getMessage(), e);
+		}
+		return result;
+	}
+}

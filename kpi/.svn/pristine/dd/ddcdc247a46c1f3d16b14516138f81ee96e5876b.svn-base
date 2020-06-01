@@ -1,0 +1,150 @@
+package trong.lixco.com.service.publics;
+
+public class AccountServicePublicProxy implements trong.lixco.com.service.publics.AccountServicePublic {
+  private String _endpoint = null;
+  private trong.lixco.com.service.publics.AccountServicePublic accountServicePublic = null;
+  
+  public AccountServicePublicProxy() {
+    _initAccountServicePublicProxy();
+  }
+  
+  public AccountServicePublicProxy(String endpoint) {
+    _endpoint = endpoint;
+    _initAccountServicePublicProxy();
+  }
+  
+  private void _initAccountServicePublicProxy() {
+    try {
+      accountServicePublic = (new trong.lixco.com.service.publics.AccountServicePublicServiceLocator()).getAccountServicePublicPort();
+      if (accountServicePublic != null) {
+        if (_endpoint != null)
+          ((javax.xml.rpc.Stub)accountServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+        else
+          _endpoint = (String)((javax.xml.rpc.Stub)accountServicePublic)._getProperty("javax.xml.rpc.service.endpoint.address");
+      }
+      
+    }
+    catch (javax.xml.rpc.ServiceException serviceException) {}
+  }
+  
+  public String getEndpoint() {
+    return _endpoint;
+  }
+  
+  public void setEndpoint(String endpoint) {
+    _endpoint = endpoint;
+    if (accountServicePublic != null)
+      ((javax.xml.rpc.Stub)accountServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+    
+  }
+  
+  public trong.lixco.com.service.publics.AccountServicePublic getAccountServicePublic() {
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic;
+  }
+  
+  public boolean delete(trong.lixco.com.service.publics.Account arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.delete(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Menu[] findMenuByProgram(trong.lixco.com.service.publics.Program arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.findMenuByProgram(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Account update(trong.lixco.com.service.publics.Account arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.update(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.SingleSignOn[] findSSOByValue(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.findSSOByValue(arg0);
+  }
+  
+  public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    accountServicePublic.setDatabase(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Account find_User(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.find_User(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Role[] findRoleByAccPro(trong.lixco.com.service.publics.Account arg0, trong.lixco.com.service.publics.Program arg1) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.findRoleByAccPro(arg0, arg1);
+  }
+  
+  public trong.lixco.com.service.publics.Account findMember(trong.lixco.com.service.publics.Member arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.findMember(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.UserRight[] findUserRightByAccPro(trong.lixco.com.service.publics.Account arg0, trong.lixco.com.service.publics.Program arg1) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.findUserRightByAccPro(arg0, arg1);
+  }
+  
+  public trong.lixco.com.service.publics.Account[] findAllNotAccount(trong.lixco.com.service.publics.Account arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.findAllNotAccount(arg0);
+  }
+  
+  public boolean deleteSSO(trong.lixco.com.service.publics.SingleSignOn arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.deleteSSO(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.SingleSignOn createSSO(trong.lixco.com.service.publics.SingleSignOn arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.createSSO(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Account create(trong.lixco.com.service.publics.Account arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.create(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Account find_User_Pass(java.lang.String arg0, java.lang.String arg1) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.find_User_Pass(arg0, arg1);
+  }
+  
+  public trong.lixco.com.service.publics.Account findById(long arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.findById(arg0);
+  }
+  
+  public trong.lixco.com.service.publics.Account find_User_Pass_Ext(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.find_User_Pass_Ext(arg0, arg1, arg2);
+  }
+  
+  public trong.lixco.com.service.publics.Program[] findProgramByAccount(trong.lixco.com.service.publics.Account arg0) throws java.rmi.RemoteException{
+    if (accountServicePublic == null)
+      _initAccountServicePublicProxy();
+    return accountServicePublic.findProgramByAccount(arg0);
+  }
+  
+  
+}

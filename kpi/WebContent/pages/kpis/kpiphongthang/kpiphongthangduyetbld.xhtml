@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/pages/home.xhtml">
+	<ui:define name="content">
+		<style>
+.selectbllb .ui-chkbox-label {
+	font-size: 1.2em;
+	margin-left: 20px;
+	font-weight: bold;
+}
+
+.selectbllbnm .ui-chkbox-label {
+	font-size: 1em;
+	margin-left: 20px;
+	font-weight: bold;
+}
+</style>
+		<h3 style="margin: 0px">Ban lãnh đạo duyệt KPI phòng (tháng)</h3>
+		<p:separator />
+
+		<h:form id="formdataassign">
+			<p:commandButton ajax="false" value="xem" style="display:none"
+				onclick="this.form.target='_blank'" id="process"
+				action="#{kPIDepMonthAssignBLDBean.showPDFData()}" />
+			<p:commandButton id="report" style="display:none" ajax="false"
+				update=":messages" onclick="this.form.target='_blank'"
+				action="#{kPIDepMonthAssignBLDBean.printOnly()}" />
+		</h:form>
+		<h:form id="menuformid">
+			<p:tabView id="tv" widgetVar="myTab"
+				activeIndex="#{kPIDepMonthAssignBLDBean.tabindex}">
+				<p:ajax event="tabChange" process="@this" update=":menuformid" />
+				<p:tab title="Chi tiết">
+					<h:form id="detail">
+						<p:panel
+							style="float:right; border:0px; margin-top:-53px !important">
+							<p:selectBooleanCheckbox itemLabel="Duyệt đăng ký KPI (BLĐ)"
+								styleClass="selectbllb"
+								disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signResultKPIBLD}"
+								value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}">
+								<p:ajax process="@this"
+									listener="#{kPIDepMonthAssignBLDBean.updatesignKPIBLD()}"
+									update=":menuformid,:messages" />
+							</p:selectBooleanCheckbox>
+							<p:selectBooleanCheckbox itemLabel="Duyệt kết quả KPI (BLĐ)"
+								disabled="#{!kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+								styleClass="selectbllb"
+								value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signResultKPIBLD}"
+								style="margin-right:20px">
+								<p:ajax process="@this"
+									listener="#{kPIDepMonthAssignBLDBean.updatesignResultKPIBLD()}"
+									update=":menuformid,:messages" />
+							</p:selectBooleanCheckbox>
+							<p:outputLabel value="Tổng điểm:"
+								style="font-size:1.3em;margin-left:20px;font-weight: bold;" />
+							<p:outputLabel
+								value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.result}%"
+								style="color:red;font-size:1.3em;margin-left:10px;font-weight: bold;" />
+						</p:panel>
+						<p:dataTable var="item" styleClass="tableformat1"
+							scrollable="true" editable="true" editMode="cell" 
+							value="#{kPIDepMonthAssignBLDBean.KPIDepOfMonths}"
+							scrollHeight="600" scrollWidth="1160" id="idtableinput">
+							<f:facet name="header">
+								<div style="float: left;">
+									<p:fieldset styleClass="noneformatfs">
+										<p:panelGrid columns="2" columnClasses="w95, w5"
+											style="width:580px">
+											<h:panelGrid columns="1">
+												<h:outputText value="#{kPIDepMonthAssignBLDBean.nameDepart}" />
+											</h:panelGrid>
+											<p:commandLink>
+												<h:outputText class="fa fa-fw fa-edit" />
+											</p:commandLink>
+										</p:panelGrid>
+										<p:outputLabel value="Tháng" style="margin-right:15px" />
+										<p:spinner size="2" min="1" max="12" style="margin-right:15px"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+											value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.month}">
+											<p:ajax process="@this" update="ttyear" />
+										</p:spinner>
+										<p:outputLabel value="Năm" style="margin-right:15px" />
+										<p:spinner size="3" min="2017" max="2050"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+											style="margin-right:15px"
+											value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.year}">
+											<p:ajax process="@this" update="ttyear" />
+										</p:spinner>
+										<p:tooltip for="btloadct" id="ttyear"
+											value="KPI năm #{kPIDepMonthAssignBLDBean.kpiDepMonth.year} của phòng."
+											position="top" />
+										<p:commandButton type="submit" id="btloadct" value="KPIs"
+											rendered="#{!kPIDepMonthAssignBLDBean.kpiDepMonth.signKPI}"
+											action="#{kPIDepMonthAssignBLDBean.loadTaget()}"
+											process="@this" oncomplete="PF('dialogTaget').show();"
+											update=":dialogTagetid" icon="ui-icon-arrowthick-1-s">
+										</p:commandButton>
+										<p:tooltip for="btaddnone" value="Thêm ngoài KPI năm"
+											position="top" />
+										<p:commandButton value="Thêm" id="btaddnone"
+											rendered="#{!kPIDepMonthAssignBLDBean.kpiDepMonth.signKPI}"
+											action="#{kPIDepMonthAssignBLDBean.addNone()}"
+											process="@this" update=":menuformid" icon="ui-icon-plus">
+										</p:commandButton>
+									</p:fieldset>
+								</div>
+								<div style="float: right">
+									<p:fieldset style="background:cadetblue; margin-top: 20px;"
+										styleClass="noneformatfs">
+										<p:tooltip for="caculid"
+											value="Tính toán các giá trị trong lưới chi tiết theo công thức"
+											position="top" />
+										<p:commandButton type="submit" value="Tính kết quả"
+											id="caculid" process="@form" style="background:#fbe4c6"
+											actionListener="#{kPIDepMonthAssignBLDBean.caculatorResult()}"
+											update=":menuformid,:messages" icon="ui-icon-calculator" />
+										<p:tooltip for="saveorupdateid"
+											value="Lưu hoặc cập nhật giá trị trong lưới chi tiết"
+											position="top" />
+										<p:commandButton type="submit" value="Lưu/cập nhật"
+											id="saveorupdateid" process="@form"
+											action="#{kPIDepMonthAssignBLDBean.createOrUpdate()}"
+											update=":messages,:menuformid" icon="ui-icon-disk" />
+										<p:tooltip for="btnew"
+											value="Làm trống dữ liệu trên form để tạo phiếu mới"
+											position="top" />
+										<p:commandButton type="submit" value="Tạo mới" process="@this"
+											id="btnew" action="#{kPIDepMonthAssignBLDBean.reset()}"
+											update=":menuformid" icon="ui-icon-document" />
+											<p:tooltip for="remote"
+											value="In hoặc xuất báo cáo ra file .pdf " position="top" />
+										<p:commandButton id="remote" icon="ui-icon-print" value="In"
+											styleClass="bthei40" process="@form"
+											actionListener="#{kPIDepMonthAssignBLDBean.process()}" />
+											
+										<p:tooltip for="toggler"
+											value="Chọn vào các cột để hiển thị trong lưới chi tiết"
+											position="top" />
+										<p:commandButton id="toggler" type="button" value="Cột"
+											icon="ui-icon-calculator" />
+										<p:columnToggler datasource="idtableinput" trigger="toggler">
+											<p:ajax event="toggle"
+												listener="#{kPIDepMonthAssignBLDBean.onToggle}" />
+										</p:columnToggler>
+									</p:fieldset>
+									<p:fieldset>
+										<p:selectBooleanCheckbox itemLabel="Duyệt đăng ký KPI"
+											styleClass="selectbllbnm"
+											value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPI}">
+											<p:ajax process="@this"
+												listener="#{kPIDepMonthAssignBLDBean.updatesignKPIRegister()}"
+												update=":menuformid,:messages" />
+										</p:selectBooleanCheckbox>
+										<p:selectBooleanCheckbox itemLabel="Duyệt kết quả KPI"
+											styleClass="selectbllbnm"
+											value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signResultKPI}"
+											style="margin-right:20px">
+											<p:ajax process="@this"
+												listener="#{kPIDepMonthAssignBLDBean.updatesignKPIResult()}"
+												update=":menuformid,:messages" />
+										</p:selectBooleanCheckbox>
+									</p:fieldset>
+								</div>
+								<div style="clear: both;" />
+							</f:facet>
+							<f:facet name="footer">
+								<div style="width: 100%">
+									<p:panelGrid columns="3" styleClass="noneformat"
+										columnClasses="w20,w20,w60 " style="width:100%">
+										<p:fieldset legend="Ngày nhận/duyệt tiêu chí"
+											styleClass="noneformatfs">
+											<p:calendar styleClass="subw40" locale="vi"
+												disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+												value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.dateRecei}"
+												pattern="#{applicationBean.cf.formatDate}"
+												showButtonPanel="true" navigator="true" showOn="button"
+												mask="#{applicationBean.cf.maskDate}" />
+										</p:fieldset>
+										<p:fieldset legend="Ngày duyệt kết quả"
+											styleClass="noneformatfs">
+											<p:calendar styleClass="subw40" locale="vi"
+												value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.dateAssignResult}"
+												pattern="#{applicationBean.cf.formatDate}"
+												showButtonPanel="true" navigator="true" showOn="button"
+												mask="#{applicationBean.cf.maskDate}" />
+										</p:fieldset>
+										<p:fieldset legend="Ghi chú" styleClass="noneformatfs">
+											<p:inputTextarea placeholder="..."
+												disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+												value="#{kPIDepMonthAssignBLDBean.kpiDepMonth.note}"
+												rows="2">
+												<p:ajax event="blur" process="@this" />
+											</p:inputTextarea>
+										</p:fieldset>
+									</p:panelGrid>
+								</div>
+								<div style="clear: both;" />
+							</f:facet>
+							<p:column headerText="..." style="width:10px; text-align:center"
+								visible="#{kPIDepMonthAssignBLDBean.list[0]}">
+								<p:commandButton id="btxoa" icon="ui-icon-closethick"
+									rendered="#{!kPIDepMonthAssignBLDBean.kpiDepMonth.signKPI}"
+									style="margin-left: -9px;background: none;border: none; box-shadow: none;"
+									update="idtableinput" styleClass="btnoneformat" process="@this"
+									actionListener="#{kPIDepMonthAssignBLDBean.removeDetail(item)}" />
+							</p:column>
+							<p:column headerText="STT"
+								visible="#{kPIDepMonthAssignBean.list[1]}"
+								style="text-align:center" width="20">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.no}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputNumber value="#{item.no}" decimalPlaces="0"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}">
+											<p:ajax process="@this" />
+										</p:inputNumber>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Mục tiêu" width="280"
+								visible="#{kPIDepMonthAssignBLDBean.list[2]}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.contentAppreciate}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.contentAppreciate}" rows="3"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+											autoResize="false">
+											<p:ajax event="blur" process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Trọng số(%)" width="32"
+								style="text-align:center"
+								visible="#{kPIDepMonthAssignBLDBean.list[3]}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.weighted/100}">
+											<f:convertNumber pattern="##0%" />
+										</h:outputText>
+									</f:facet>
+									<f:facet name="input">
+										<p:inputNumber value="#{item.weighted}" symbol="%"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+											decimalPlaces="0" symbolPosition="s">
+											<p:ajax process="@this" />
+										</p:inputNumber>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Tiêu chí đánh giá" width="120"
+								visible="#{kPIDepMonthAssignBLDBean.list[4]}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.criteriaCheck}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.criteriaCheck}" rows="2"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}">
+											<p:ajax event="blur" process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Cách tính" width="160"
+								visible="#{kPIDepMonthAssignBLDBean.list[5]}">
+								<p:outputLabel value="#{item.computation}" rows="2" />
+								<p:commandLink style="float:right" process="@this"
+									disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+									actionListener="#{kPIDepMonthAssignBLDBean.showListFormula(item)}"
+									update=":dialogformula,:messages">
+									<h:outputText value="&#8801;" />
+								</p:commandLink>
+							</p:column>
+							<p:column headerText="Thời điểm ghi nhận kết quả" width="100"
+								visible="#{kPIDepMonthAssignBLDBean.list[6]}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.timeTakeResult}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.timeTakeResult}" rows="2"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}">
+											<p:ajax event="blur" process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="A"
+								visible="#{kPIDepMonthAssignBLDBean.list[7]}" width="35">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.paramA}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.paramA}" rows="2"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+											style="text-align:center">
+											<p:ajax process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="B"
+								visible="#{kPIDepMonthAssignBLDBean.list[8]}" width="35">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.paramB}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.paramB}" rows="2"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+											style="text-align:center">
+											<p:ajax process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Nguồn dữ liệu chứng minh" width="100"
+								visible="#{kPIDepMonthAssignBLDBean.list[10]}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.sourceVerify}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.sourceVerify}" rows="2"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}">
+											<p:ajax process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Đơn vị tính"
+								visible="#{kPIDepMonthAssignBLDBean.list[11]}" width="40">
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.unit}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.unit}" rows="2"
+											style="text-align:center">
+											<p:ajax process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Kế hoạch(KH)"
+								visible="#{kPIDepMonthAssignBLDBean.list[12]}" width="55">
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.planKPI}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.planKPI}" rows="2"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+											style="text-align:center">
+											<p:ajax process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Thực hiện(TH)"
+								visible="#{kPIDepMonthAssignBLDBean.list[13]}" width="55">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.performKPI}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{item.performKPI}" rows="2"
+											disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signResultKPIBLD}"
+											style="text-align:center">
+											<p:ajax process="@this" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Tỉ lệ hoàn thành"
+								visible="#{kPIDepMonthAssignBLDBean.list[14]}" width="40"
+								style="text-align:center">
+								<p:outputLabel value="#{item.ratioComplete/100}" rows="2"
+									style="text-align:center">
+									<f:convertNumber pattern="##0%" />
+								</p:outputLabel>
+							</p:column>
+							<p:column headerText="Tỉ lệ nhân trọng số "
+								visible="#{kPIDepMonthAssignBLDBean.list[15]}" width="50"
+								style="text-align:center">
+								<p:outputLabel value="#{item.ratioCompleteIsWeighted/100}"
+									rows="2" style="text-align:center">
+									<f:convertNumber pattern="##0%" />
+								</p:outputLabel>
+							</p:column>
+							<p:column headerText="Ghi chú"
+								visible="#{kPIDepMonthAssignBLDBean.list[16]}" width="125">
+								<p:inputTextarea value="#{item.note}" rows="2"
+									disabled="#{kPIDepMonthAssignBLDBean.kpiDepMonth.signKPIBLD}"
+									style="text-align:center">
+									<p:ajax event="blur" process="@this" />
+								</p:inputTextarea>
+							</p:column>
+							<p:column headerText="DL chứng minh"
+								visible="#{kPIDepMonthAssignBLDBean.list[17]}" width="45">
+								<p:panelGrid id="mainGrid" columns="1" styleClass="noneformat">
+									<p:commandLink value="Xem file" process="@this"
+										style="font-size: 11px;text-decoration: underline;color: blue;font-style: italic;"
+										rendered="#{item.nameAssign!=null}"
+										actionListener="#{kPIDepMonthAssignBLDBean.processDataAssign(item)}" />
+								</p:panelGrid>
+							</p:column>
+						</p:dataTable>
+						<br />
+						<h:outputText value="Chú ý*:" style="font-weight: bold;" />
+						<br />
+						<h:outputText
+							value="- Nhập giá trị các tham số vào các cột (A,B,C,..) theo công thức để tính." />
+						<br />
+						<h:outputText
+							value="- Dữ liệu ngày nhập theo định dạng dd/MM/yyyy (ví dụ: 01/05/2018, 31/12/2018)." />
+						<br />
+						<h:outputText
+							value="- Dữ liệu tỉ lệ % thì nhập phần số bỏ dấu % (ví dụ: 70% nhập 70)." />
+						<br />
+						<h:outputText
+							value="- Ký tự ngăn cách số thập phân là dấu chấm (ví dụ: 9.200)." />
+					</h:form>
+				</p:tab>
+
+				<p:tab title="Danh Sách">
+					<h:form id="list">
+						<p:panel
+							style="float:right; border:0px; margin-top:-53px !important">
+							<h:panelGrid id="mainGrid" columns="6"
+								style="float:left; margin-bottom:5px">
+								<h:panelGrid columns="4" style="width:100%" cellspacing="10">
+									<p:outputLabel value="Tháng" />
+									<p:spinner min="1" max="12" size="10"
+										value="#{kPIDepMonthAssignBLDBean.monthSearch}">
+										<p:ajax process="@this" />
+									</p:spinner>
+									<p:outputLabel value="Năm" min="2018" max="2050" />
+									<p:spinner size="10"
+										value="#{kPIDepMonthAssignBLDBean.yearSearch}">
+										<p:ajax process="@this" />
+									</p:spinner>
+								</h:panelGrid>
+								<p:commandButton value="Tìm" style="float:right;"
+									icon="ui-icon-search" update=":menuformid:tv:list"
+									process="@this"
+									actionListener="#{kPIDepMonthAssignBLDBean.searchItem()}" />
+								<p:tooltip for="xoact" value="Xoá phiếu" />
+								<p:commandButton icon="fa fa-trash" id="xoact" process="@this"
+									value="Xoá" update=":messages,:menuformid"
+									action="#{kPIDepMonthAssignBLDBean.delete()}">
+									<p:confirm header="Xác nhận"
+										message="Bạn có chắc muốn xoá không?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGrid>
+						</p:panel>
+						<div style="clear: both" />
+						<p:dataTable value="#{kPIDepMonthAssignBLDBean.kpiDepMonths}"
+							styleClass="tableparent" rowKey="#{item.id}"
+							selection="#{kPIDepMonthAssignBLDBean.kpiDepMonthEdit}"
+							selectionMode="single" id="tableid" var="item">
+							<p:ajax event="rowSelect"
+								listener="#{kPIDepMonthAssignBLDBean.showEdit}"
+								update=":menuformid:tv:detail" />
+							<p:column headerText="BLĐ duyệt ĐK"
+								style="width:80px;text-align:center">
+								<p:selectBooleanCheckbox value="#{item.signKPIBLD}"
+									disabled="true" />
+							</p:column>
+							<p:column headerText="BLĐ duyệt KQ"
+								style="width:80px;text-align:center">
+								<p:selectBooleanCheckbox value="#{item.signResultKPIBLD}"
+									disabled="true" />
+							</p:column>
+							<p:column headerText="Duyệt ĐK"
+								style="width:80px;text-align:center">
+								<p:selectBooleanCheckbox value="#{item.signKPI}" disabled="true" />
+							</p:column>
+							<p:column headerText="Duyệt KQ"
+								style="width:80px;text-align:center">
+								<p:selectBooleanCheckbox value="#{item.signResultKPI}"
+									disabled="true" />
+							</p:column>
+							<p:column headerText="Tháng" style="width:60px;text-align:center">
+								<p:tooltip for="mlist" value="ID: #{item.id}" />
+								<h:outputText value="#{item.month}" id="mlist" />
+							</p:column>
+							<p:column headerText="Năm" style="width:60px;text-align:center">
+								<h:outputText value="#{item.year}" />
+							</p:column>
+							<p:column headerText="Tổng điểm"
+								style="width:80px;text-align:center">
+								<h:outputText value="#{item.result/100}">
+									<f:convertNumber pattern="##0%" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Phòng ban" style="width:300px;">
+								<h:outputText value="#{item.nameDepart}" />
+							</p:column>
+							<p:column headerText="Ghi chú">
+								<h:outputText value="#{item.note}" />
+							</p:column>
+							<f:facet name="footer">
+								<div style="clear: both;" />
+							</f:facet>
+						</p:dataTable>
+					</h:form>
+				</p:tab>
+
+			</p:tabView>
+		</h:form>
+		<p:dialog widgetVar="dialogConfirm" resizable="false" width="400"
+			closeOnEscape="true" header="KPI đã có trong tháng">
+			<h:form>
+				<h:outputText value="Bạn có muốn thay thế bằng dữ liệu mới không?" />
+
+				<p:separator />
+				<p:commandButton value="OK" oncomplete="PF('dialogConfirm').hide()"
+					action="#{kPIDepMonthAssignBLDBean.createAndDelete()}"
+					update=":messages,:menuformid:tv:detail" />
+				<p:commandButton value="Cancel"
+					oncomplete="PF('dialogConfirm').hide()" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dialogFormula" resizable="false" width="300"
+			closeOnEscape="true" header="Công thức tính">
+			<h:form id="dialogformula">
+				<p:dataTable value="#{kPIDepMonthAssignBLDBean.formulaKPIs}"
+					lazy="true" paginatorPosition="bottom"
+					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+					rowKey="#{item.id}" scrollable="true" scrollHeight="370"
+					selection="#{kPIDepMonthAssignBLDBean.formulaKPISelect}"
+					selectionMode="single" id="tableid" resizableColumns="true"
+					var="item">
+					<p:column headerText="ID" width="20">
+						<h:outputText value="#{item.id}" />
+					</p:column>
+					<p:column headerText="Mô tả công thức">
+						<h:outputText value="#{item.code}" />
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+				<p:separator />
+				<p:commandButton value="Đặt công thức"
+					oncomplete="PF('dialogFormula').hide()"
+					action="#{kPIDepMonthAssignBLDBean.updateFormula()}"
+					update=":menuformid" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dialogTaget" resizable="false" width="600"
+			closeOnEscape="true" header="KPIs năm của phòng">
+			<h:form id="dialogTagetid">
+				<p:dataTable value="#{kPIDepMonthAssignBLDBean.kpiDepOfYears}"
+					lazy="true" sortBy="#{item.tagetDepart.kTagetDepartCate.code}"
+					expandableRowGroups="true" paginatorPosition="bottom"
+					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+					rowKey="#{item.id}" scrollable="true" style="width:100%"
+					id="tabletagetid" scrollHeight="370" widgetVar="datatagettb"
+					resizableColumns="true" var="item">
+					<p:headerRow>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column style="font-size: 1.2em;text-align:center">
+							<h:outputText value="#{item.tagetDepart.kTagetDepartCate.code}" />
+						</p:column>
+						<p:column style="font-size: 1.2em;padding: 10px;">
+							<h:outputText
+								value="#{item.tagetDepart.kTagetDepartCate.content}" />
+						</p:column>
+						<p:column style="font-size: 1.2em;padding: 10px;">
+							<h:outputText value="#{item.weightedParent/100}">
+								<f:convertNumber pattern="##0%" />
+							</h:outputText>
+						</p:column>
+					</p:headerRow>
+					<f:facet name="header">
+						<div style="float: right">
+							<p:commandButton type="submit" value="Đưa vào KPI"
+								update=":menuformid"
+								action="#{kPIDepMonthAssignBLDBean.getListTaget()}"
+								icon="ui-icon-arrowreturnthick-1-s" />
+						</div>
+						<div style="clear: both;" />
+					</f:facet>
+					<p:column headerText="..." style="width:20px;">
+						<p:selectBooleanCheckbox value="#{item.select}">
+							<p:ajax process="@this" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column headerText="STT" style="width:20px;">
+						<h:outputText value="#{item.no}" />
+					</p:column>
+					<p:column headerText="Nội dung" style="text-align:left;">
+						<h:outputText value="#{item.contentAppreciate}" />
+					</p:column>
+					<p:column headerText="Trọng số" width="80" style="text-align:left;">
+						<h:outputText value="#{item.weighted}%" />
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

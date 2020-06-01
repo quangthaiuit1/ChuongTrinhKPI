@@ -1,0 +1,15 @@
+/**
+ * MemNoticeRelaServicePublic.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.service.publics;
+
+public interface MemNoticeRelaServicePublic extends java.rmi.Remote {
+    public void setDatabase(java.lang.String arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.MemNoticeRela[] findByMember(trong.lixco.com.service.publics.Member arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.MemNoticeRela[] findByNotice(trong.lixco.com.service.publics.NoticeSystem arg0) throws java.rmi.RemoteException;
+    public trong.lixco.com.service.publics.MemNoticeRela saveOrUpdater(trong.lixco.com.service.publics.MemNoticeRela arg0) throws java.rmi.RemoteException;
+}

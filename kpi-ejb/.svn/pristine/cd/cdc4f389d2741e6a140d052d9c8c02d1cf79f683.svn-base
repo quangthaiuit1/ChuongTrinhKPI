@@ -1,0 +1,37 @@
+package trong.lixco.com.ejb.service;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+
+import trong.lixco.com.jpa.util.Configuage;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class ConfigBranch {
+	@Inject
+	private Configuage config;
+	private String db="HO CHI MINH";
+
+	public void setDatabase(String nameDB) {
+		db=nameDB;
+		if (nameDB.equals("BINH DUONG")) {
+			
+			config.setChonchinhanh("em_bd");
+		} else if (nameDB.equals("HO CHI MINH")) {
+			config.setChonchinhanh("em");
+		}else{
+			config.setChonchinhanh("em_bn");
+		}
+	}
+
+	public String getDb() {
+		return db;
+	}
+
+	public void setDb(String db) {
+		this.db = db;
+	}
+
+}

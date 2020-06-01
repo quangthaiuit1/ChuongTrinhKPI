@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/pages/home.xhtml">
+
+	<ui:define name="content">
+		<style>
+.selectbllb .ui-chkbox-label {
+	font-size: 1.2em;
+	margin-left: 20px;
+	font-weight: bold;
+}
+
+.fmloadding {
+	background: none !important;
+	border: 0px !important;
+	box-shadow: none !important;
+}
+
+.fmloadding .ui-dialog-titlebar {
+	display: none !important;
+}
+</style>
+		<h3 style="margin: 0px">Cài đặt đánh giá 360</h3>
+		<p:separator />
+		<p:panelGrid>
+			<h:form>
+				<p:commandButton value="Nhập câu hỏi" styleClass="btsearch"
+					oncomplete="PF('wgnhapcauhoi').show()" />
+			</h:form>
+			<h:form>
+				<p:commandButton value="Nhập file cài đặt đánh giá"
+					styleClass="btsearch" oncomplete="PF('wgcaidatdanhgia').show()" />
+			</h:form>
+			<h:form>
+				<p:commandButton value="Nhập file vi phạm" styleClass="btsearch"
+					oncomplete="PF('wgvipham').show()" />
+			</h:form>
+			<h:form>
+				<p:commandButton value="Nhập file phong trào" styleClass="btsearch"
+					oncomplete="PF('wgphongtrao').show()" />
+			</h:form>
+			<h:form>
+				<p:commandButton value="Nhập file phong trào phòng"
+					styleClass="btsearch" oncomplete="PF('wgphongtraophong').show()" />
+			</h:form>
+		</p:panelGrid>
+		<h3 style="margin: 0px; margin-top: 20px">Báo cáo đánh giá 360</h3>
+		<p:separator />
+		<h:form>
+			<p:commandButton value="Báo cáo kết quả đánh giá cuối năm"
+				oncomplete="PF('wgbaocao').show()" />
+			<p:commandButton value="Báo cáo kết quả đánh giá 360"
+				oncomplete="PF('wgbaocaochitiet').show()" />
+		</h:form>
+		<p:dialog widgetVar="wgbaocaochitiet" modal="true" width="400"
+			header="Chọn kỳ đánh giá">
+			<h:form id="fbckydanhgiachitiet">
+				<p:panelGrid columns="3">
+					<p:selectOneMenu value="#{quanTriBean.kyDanhGia}"
+						converter="abstractConverter" effect="fade" var="t"
+						style="width:150px;" id="iddeps" filter="true"
+						filterMatchMode="custom" filterFunction="customFilter">
+						<p:ajax process="@this" />
+						<f:selectItems value="#{quanTriBean.kyDanhGias}" var="item"
+							itemLabel="#{item.tenkydanhgia}" itemValue="#{item}" />
+						<p:column>
+							<h:outputText value="#{t.tenkydanhgia}" />
+						</p:column>
+					</p:selectOneMenu>
+					<p:spinner value="#{quanTriBean.year}" min="2019" max="2050" />
+					<p:commandButton value="Báo cáo" onclick="PF('wgbaocaochitiet').hide();PF('wgloadding').show()"
+						action="#{quanTriBean.baocaoketquachitet()}" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wgloadding" styleClass="fmloadding" modal="true"
+			resizable="false">
+			<p:graphicImage name="/gfx/icon-loading.gif"
+				style="width: 60px;height: 60px;" />
+		</p:dialog>
+		<p:dialog widgetVar="wgbaocao" modal="true" width="400"
+			header="Chọn kỳ đánh giá">
+			<h:form id="fbckydanhgia">
+				<p:panelGrid columns="3">
+					<p:selectOneMenu value="#{quanTriBean.kyDanhGia}"
+						converter="abstractConverter" effect="fade" var="t"
+						style="width:150px;" id="iddeps" filter="true"
+						filterMatchMode="custom" filterFunction="customFilter">
+						<p:ajax process="@this" />
+						<f:selectItems value="#{quanTriBean.kyDanhGias}" var="item"
+							itemLabel="#{item.tenkydanhgia}" itemValue="#{item}" />
+						<p:column>
+							<h:outputText value="#{t.tenkydanhgia}" />
+						</p:column>
+					</p:selectOneMenu>
+					<p:spinner value="#{quanTriBean.year}" min="2019" max="2050" />
+					<p:commandButton value="Báo cáo" onclick="PF('wgbaocao').hide();PF('wgloadding').show()"
+						action="#{quanTriBean.baocaoketqua()}" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wgphongtraophong" modal="true" width="350"
+			header="Nhập phong trào phòng ">
+			<h:form id="fptphong">
+				<p:panelGrid columns="2" columnClasses="w90,w10"
+					style="margin-bottom: 20px;background:#4a789ba8; text-align:center;color:white">
+					<p:selectOneMenu value="#{quanTriBean.kyDanhGia}"
+						converter="abstractConverter" effect="fade" var="t"
+						style="width:150px;" id="iddeps" filter="true"
+						filterMatchMode="custom" filterFunction="customFilter">
+						<p:ajax process="@this" />
+
+						<f:selectItems value="#{quanTriBean.kyDanhGias}" var="item"
+							itemLabel="#{item.tenkydanhgia}" itemValue="#{item}" />
+						<p:column>
+							<h:outputText value="#{t.tenkydanhgia}" />
+						</p:column>
+					</p:selectOneMenu>
+					<p:commandButton icon="ui-icon-plus"
+						oncomplete="PF('wgtaomoikydanhgia').show()" />
+				</p:panelGrid>
+			</h:form>
+			<h:form enctype="multipart/form-data">
+				<p:tooltip for="fromexcel" value="Nhập từ file Excel" />
+				<p:fileUpload
+					fileUploadListener="#{quanTriBean.doctuExcelphongtraophong}"
+					id="fromexcel" cancelLabel="Xoá file" mode="advanced"
+					dragDropmaterport="false" uploadLabel="Tải lên" label="Chọn file"
+					update="@form,:messages" fileLimit="1" process="@form"
+					allowTypes="/(\.|\/)(xlsx|XLSX)$/" />
+				<p:commandButton value="Cài đặt số điểm"
+					action="#{quanTriBean.ajaxKyDanhGia()}"
+					update=":messages,:fcaidatdiem" />
+				<p:commandButton value="Xem file excel mẫu" immediate="true"
+					styleClass="btlink" style="float:right"
+					onclick="monitorDownload( showStatus , hideStatus)"
+					actionListener="#{quanTriBean.filemauphongtraophong()}" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wgphongtrao" modal="true" width="350"
+			header="Nhập phong trào ">
+			<h:form id="fptkydanhgia">
+				<p:panelGrid columns="2" columnClasses="w90,w10"
+					style="margin-bottom: 20px;background:#4a789ba8; text-align:center;color:white">
+					<p:selectOneMenu value="#{quanTriBean.kyDanhGia}"
+						converter="abstractConverter" effect="fade" var="t"
+						style="width:150px;" id="iddeps" filter="true"
+						filterMatchMode="custom" filterFunction="customFilter">
+						<p:ajax process="@this" />
+
+						<f:selectItems value="#{quanTriBean.kyDanhGias}" var="item"
+							itemLabel="#{item.tenkydanhgia}" itemValue="#{item}" />
+						<p:column>
+							<h:outputText value="#{t.tenkydanhgia}" />
+						</p:column>
+					</p:selectOneMenu>
+					<p:commandButton icon="ui-icon-plus"
+						oncomplete="PF('wgtaomoikydanhgia').show()" />
+				</p:panelGrid>
+			</h:form>
+			<h:form enctype="multipart/form-data">
+				<p:tooltip for="fromexcel" value="Nhập từ file Excel" />
+				<p:fileUpload
+					fileUploadListener="#{quanTriBean.doctuExcelphongtrao}"
+					id="fromexcel" cancelLabel="Xoá file" mode="advanced"
+					dragDropmaterport="false" uploadLabel="Tải lên" label="Chọn file"
+					update="@form,:messages" fileLimit="1" process="@form"
+					allowTypes="/(\.|\/)(xlsx|XLSX)$/" />
+				<p:commandButton value="Cài đặt số điểm"
+					action="#{quanTriBean.ajaxKyDanhGia()}"
+					update=":messages,:fcaidatdiem" />
+				<p:commandButton value="Xem file excel mẫu" immediate="true"
+					styleClass="btlink" style="float:right"
+					onclick="monitorDownload( showStatus , hideStatus)"
+					actionListener="#{quanTriBean.filemauphongtrao()}" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wgvipham" modal="true" width="350"
+			header="Nhập vi phạm">
+			<h:form id="fvpkydanhgia">
+				<p:panelGrid columns="2" columnClasses="w90,w10"
+					style="margin-bottom: 20px;background:#4a789ba8; text-align:center;color:white">
+					<p:selectOneMenu value="#{quanTriBean.kyDanhGia}"
+						converter="abstractConverter" effect="fade" var="t"
+						style="width:150px;" id="iddeps" filter="true"
+						filterMatchMode="custom" filterFunction="customFilter">
+						<p:ajax process="@this" />
+
+						<f:selectItems value="#{quanTriBean.kyDanhGias}" var="item"
+							itemLabel="#{item.tenkydanhgia}" itemValue="#{item}" />
+						<p:column>
+							<h:outputText value="#{t.tenkydanhgia}" />
+						</p:column>
+					</p:selectOneMenu>
+					<p:commandButton icon="ui-icon-plus"
+						oncomplete="PF('wgtaomoikydanhgia').show()" />
+				</p:panelGrid>
+			</h:form>
+			<h:form enctype="multipart/form-data">
+				<p:tooltip for="fromexcel" value="Nhập từ file Excel" />
+				<p:fileUpload fileUploadListener="#{quanTriBean.doctuExcelvipham}"
+					id="fromexcel" cancelLabel="Xoá file" mode="advanced"
+					dragDropmaterport="false" uploadLabel="Tải lên" label="Chọn file"
+					update="@form,:messages" fileLimit="1" process="@form"
+					allowTypes="/(\.|\/)(xlsx|XLSX)$/" />
+				<p:commandButton value="Cài đặt số điểm"
+					action="#{quanTriBean.ajaxKyDanhGia()}"
+					update=":messages,:fcaidatdiem" />
+				<p:commandButton value="Xem file excel mẫu" immediate="true"
+					styleClass="btlink" style="float:right"
+					onclick="monitorDownload( showStatus , hideStatus)"
+					actionListener="#{quanTriBean.filemauvipham()}" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wgcaidatdiem" modal="true" header="Cài đặt điểm"
+			width="250">
+			<h:form id="fcaidatdiem">
+				<p:panelGrid columns="2" columnClasses="w70,w30" style="width:100%">
+					<p:outputLabel value="Điểm trừ vi phạm" />
+					<p:inputNumber value="#{quanTriBean.caiDatDiem.vipham}">
+					</p:inputNumber>
+					<p:outputLabel value="Điểm cộng phong trào" />
+					<p:inputNumber value="#{quanTriBean.caiDatDiem.phongtrao}">
+					</p:inputNumber>
+				</p:panelGrid>
+				<p:separator />
+				<p:commandButton value="Lưu cài đặt" styleClass="btsave"
+					action="#{quanTriBean.luucaidatdiem()}" update=":messages" />
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog widgetVar="wgnhapcauhoi" modal="true" header="Nhập câu hỏi">
+			<h:form enctype="multipart/form-data">
+				<p:tooltip for="fromexcel" value="Nhập từ file Excel" />
+				<p:fileUpload fileUploadListener="#{quanTriBean.doctuExcelcauhoi}"
+					id="fromexcel" cancelLabel="Xoá file" mode="advanced"
+					dragDropmaterport="false" uploadLabel="Tải lên" label="Chọn file"
+					update="@form,:messages" fileLimit="1" process="@form"
+					allowTypes="/(\.|\/)(xlsx|XLSX)$/" />
+				<p:commandButton value="Xem file excel mẫu" immediate="true"
+					styleClass="btlink" style="float:right"
+					onclick="monitorDownload( showStatus , hideStatus)"
+					actionListener="#{quanTriBean.filemaucauhoi()}" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wgcaidatdanhgia" modal="true" width="350"
+			header="Nhập cài đặt đánh giá">
+			<h:form id="fkydanhgia">
+				<p:panelGrid columns="2" columnClasses="w90,w10"
+					style="margin-bottom: 20px;background:#4a789ba8; text-align:center;color:white">
+					<p:selectOneMenu value="#{quanTriBean.kyDanhGia}"
+						converter="abstractConverter" effect="fade" var="t"
+						style="width:150px;" id="iddeps" filter="true"
+						filterMatchMode="custom" filterFunction="customFilter">
+						<p:ajax process="@this" />
+						<f:selectItems value="#{quanTriBean.kyDanhGias}" var="item"
+							itemLabel="#{item.tenkydanhgia}" itemValue="#{item}" />
+						<p:column>
+							<h:outputText value="#{t.tenkydanhgia}" />
+						</p:column>
+					</p:selectOneMenu>
+					<p:commandButton icon="ui-icon-plus"
+						oncomplete="PF('wgtaomoikydanhgia').show()" />
+				</p:panelGrid>
+			</h:form>
+			<h:form enctype="multipart/form-data">
+				<p:tooltip for="fromexcel" value="Nhập từ file Excel" />
+				<p:fileUpload fileUploadListener="#{quanTriBean.doctuExcelcaidat}"
+					id="fromexcel" cancelLabel="Xoá file" mode="advanced"
+					dragDropmaterport="false" uploadLabel="Tải lên" label="Chọn file"
+					update="@form,:messages" fileLimit="1" process="@form"
+					allowTypes="/(\.|\/)(xlsx|XLSX)$/" />
+				<p:selectBooleanCheckbox value="#{quanTriBean.naplai}"
+					itemLabel="Nạp lại dữ liệu">
+					<p:ajax process="@this" />
+				</p:selectBooleanCheckbox>
+				<p:commandButton value="Xem file excel mẫu" immediate="true"
+					styleClass="btlink" style="float:right"
+					onclick="monitorDownload( showStatus , hideStatus)"
+					actionListener="#{quanTriBean.filemaucaidat()}" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wgtaomoikydanhgia" modal="true"
+			header="Tạo mới kỳ đánh giá">
+			<h:form id="ftaomoikydanhgia">
+				<p:panelGrid columns="2" columnClasses="w30,w70" style="width:100%">
+					<p:outputLabel value="Tên kỳ đánh giá" />
+					<p:inputTextarea rows="2" required="true"
+						value="#{quanTriBean.kyDanhGiaNew.tenkydanhgia}" />
+					<p:outputLabel value="Ngày bắt đầu" />
+					<p:calendar locale="vi" required="true"
+						value="#{quanTriBean.kyDanhGiaNew.ngaybatdau}"
+						pattern="dd/MM/yyyy" showButtonPanel="true" navigator="true"
+						mask="99/99/9999" />
+					<p:outputLabel value="Ngày kết thúc" />
+					<p:calendar locale="vi" required="true"
+						value="#{quanTriBean.kyDanhGiaNew.ngayketthuc}"
+						pattern="dd/MM/yyyy" showButtonPanel="true" navigator="true"
+						mask="99/99/9999" />
+					<p:outputLabel value="Disable" />
+					<p:selectBooleanCheckbox
+						value="#{quanTriBean.kyDanhGiaNew.disable}" />
+				</p:panelGrid>
+				<p:separator />
+				<p:commandButton value="Lưu thông tin" styleClass="btsave"
+					action="#{quanTriBean.luukydanhgia()}"
+					update=":messages,ftaomoikydanhgia,:fkydanhgia" />
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

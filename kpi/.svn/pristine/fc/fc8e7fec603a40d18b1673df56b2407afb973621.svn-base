@@ -1,0 +1,60 @@
+package trong.lixco.com.nhansu.servicepublics;
+
+public class DepartmentParentServicePublicProxy implements trong.lixco.com.nhansu.servicepublics.DepartmentParentServicePublic {
+  private String _endpoint = null;
+  private trong.lixco.com.nhansu.servicepublics.DepartmentParentServicePublic departmentParentServicePublic = null;
+  
+  public DepartmentParentServicePublicProxy() {
+    _initDepartmentParentServicePublicProxy();
+  }
+  
+  public DepartmentParentServicePublicProxy(String endpoint) {
+    _endpoint = endpoint;
+    _initDepartmentParentServicePublicProxy();
+  }
+  
+  private void _initDepartmentParentServicePublicProxy() {
+    try {
+      departmentParentServicePublic = (new trong.lixco.com.nhansu.servicepublics.DepartmentParentServicePublicServiceLocator()).getDepartmentParentServicePublicPort();
+      if (departmentParentServicePublic != null) {
+        if (_endpoint != null)
+          ((javax.xml.rpc.Stub)departmentParentServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+        else
+          _endpoint = (String)((javax.xml.rpc.Stub)departmentParentServicePublic)._getProperty("javax.xml.rpc.service.endpoint.address");
+      }
+      
+    }
+    catch (javax.xml.rpc.ServiceException serviceException) {}
+  }
+  
+  public String getEndpoint() {
+    return _endpoint;
+  }
+  
+  public void setEndpoint(String endpoint) {
+    _endpoint = endpoint;
+    if (departmentParentServicePublic != null)
+      ((javax.xml.rpc.Stub)departmentParentServicePublic)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+    
+  }
+  
+  public trong.lixco.com.nhansu.servicepublics.DepartmentParentServicePublic getDepartmentParentServicePublic() {
+    if (departmentParentServicePublic == null)
+      _initDepartmentParentServicePublicProxy();
+    return departmentParentServicePublic;
+  }
+  
+  public trong.lixco.com.nhansu.servicepublics.DepartmentParent findByCode(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (departmentParentServicePublic == null)
+      _initDepartmentParentServicePublicProxy();
+    return departmentParentServicePublic.findByCode(arg0);
+  }
+  
+  public trong.lixco.com.nhansu.servicepublics.DepartmentParent[] findByEmpMana(trong.lixco.com.nhansu.servicepublics.Employee arg0) throws java.rmi.RemoteException{
+    if (departmentParentServicePublic == null)
+      _initDepartmentParentServicePublicProxy();
+    return departmentParentServicePublic.findByEmpMana(arg0);
+  }
+  
+  
+}

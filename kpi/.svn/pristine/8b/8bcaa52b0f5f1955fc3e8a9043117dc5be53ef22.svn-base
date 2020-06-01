@@ -1,0 +1,191 @@
+package trong.lixco.com.beankpi;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jboss.logging.Logger;
+import org.omnifaces.cdi.ViewScoped;
+
+import trong.lixco.com.bean.AbstractBean;
+import trong.lixco.com.ejb.service.DepartmentParentService;
+import trong.lixco.com.ejb.servicekpi.PositionJobService;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entitykpi.PositionJob;
+import trong.lixco.com.util.Notify;
+
+@Named
+@ViewScoped
+public class PositionJobBean extends AbstractBean<PositionJob> {
+	private static final long serialVersionUID = 1L;
+	@Inject
+	private Logger logger;
+	@Inject
+	private PositionJobService positionJobService;
+	@Inject
+	private DepartmentParentService departmentParentService;
+	private Notify notify;
+	private PositionJob crudPositionJob;
+	private PositionJob selectPositionJob;
+	private PositionJob searchPositionJob;
+	private List<PositionJob> listPositionJob;
+	private List<DepartmentParent> listDepartmentParent;
+
+	@Override
+	protected void initItem() {
+		try {
+			searchPositionJob = new PositionJob();
+			crudPositionJob = new PositionJob();
+			listPositionJob = positionJobService.findAll();
+			listDepartmentParent = departmentParentService.findAll();
+		} catch (Exception e) {
+			logger.error("PositionJobBean.initItem:" + e.getMessage(), e);
+		}
+
+	}
+
+	public void forwardDes() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try {
+			if (crudPositionJob.getId() != null) {
+				FacesContext.getCurrentInstance().getExternalContext()
+						.redirect("/nhansu/pages/nhansu/danhmuc/motacongviec.jsf?idpj=" + crudPositionJob.getId());
+			} else {
+				notify.warning("Chưa lưu hoặc chọn vị trí/chức vụ công việc.");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void createOrUpdate() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try {
+			if (crudPositionJob != null && crudPositionJob.getCode() != null && !"".equals(crudPositionJob.getCode())
+					&& crudPositionJob.getName() != null && !"".equals(crudPositionJob.getName())) {
+				if (crudPositionJob.getId() != null) {
+					if (allowUpdate(new Date())) {
+						crudPositionJob = installUpdate(crudPositionJob);
+						crudPositionJob = positionJobService.update(crudPositionJob);
+						int index = listPositionJob.indexOf(crudPositionJob);
+						listPositionJob.set(index, crudPositionJob);
+						writeLogInfo("Cập nhật " + crudPositionJob.toString());
+						notify.success();
+					} else {
+						crudPositionJob = new PositionJob();
+						notify.warningDetail();
+					}
+				} else {
+					if (allowSave(null)) {
+						crudPositionJob = installSave(crudPositionJob);
+						crudPositionJob = positionJobService.create(crudPositionJob);
+						listPositionJob.add(0, crudPositionJob);
+						writeLogInfo("Tạo mới " + crudPositionJob.toString());
+						reset();
+						notify.success();
+					} else {
+						crudPositionJob = new PositionJob();
+						notify.warningDetail();
+					}
+				}
+			} else {
+				notify.message("Chưa điền đầy đủ thông tin");
+			}
+		} catch (Exception e) {
+			logger.error("PositionJobBean.createOrUpdate:" + e.getMessage(), e);
+		}
+	}
+
+	public void reset() {
+		crudPositionJob = new PositionJob();
+	}
+
+	public void positionJobSearch() {
+		try {
+			listPositionJob = positionJobService.searchPositionJob(searchPositionJob.getCode(),
+					searchPositionJob.getName(), searchPositionJob.getDepartmentParent());
+		} catch (Exception e) {
+			logger.error("PositionJobBean.positionJobSearch:" + e.getMessage(), e);
+		}
+	}
+	public void delete(){
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try{
+			if(allowDelete(null)){
+				Boolean kt=positionJobService.delete(crudPositionJob);
+				if(kt){
+					notify.success();
+				}else{
+					notify.message("Không thành công!.");
+				}
+			}else{
+				notify.warningDetail();
+			}
+		}catch(Exception e){
+			notify.message("Đã được sử dụng.");
+			logger.error("DepartmentBean.departmentSearch:"+e.getMessage(),e);
+		}
+	}
+
+	public void showEdit() {
+		this.crudPositionJob = selectPositionJob;
+	}
+
+	@Override
+	protected Logger getLogger() {
+		return logger;
+	}
+
+	public PositionJobService getPositionJobService() {
+		return positionJobService;
+	}
+
+	public void setPositionJobService(PositionJobService positionJobService) {
+		this.positionJobService = positionJobService;
+	}
+
+	public PositionJob getCrudPositionJob() {
+		return crudPositionJob;
+	}
+
+	public void setCrudPositionJob(PositionJob crudPositionJob) {
+		this.crudPositionJob = crudPositionJob;
+	}
+
+	public PositionJob getSelectPositionJob() {
+		return selectPositionJob;
+	}
+
+	public void setSelectPositionJob(PositionJob selectPositionJob) {
+		this.selectPositionJob = selectPositionJob;
+	}
+
+	public PositionJob getSearchPositionJob() {
+		return searchPositionJob;
+	}
+
+	public void setSearchPositionJob(PositionJob searchPositionJob) {
+		this.searchPositionJob = searchPositionJob;
+	}
+
+	public List<PositionJob> getListPositionJob() {
+		return listPositionJob;
+	}
+
+	public void setListPositionJob(List<PositionJob> listPositionJob) {
+		this.listPositionJob = listPositionJob;
+	}
+
+	public List<DepartmentParent> getListDepartmentParent() {
+		return listDepartmentParent;
+	}
+
+	public void setListDepartmentParent(List<DepartmentParent> listDepartmentParent) {
+		this.listDepartmentParent = listDepartmentParent;
+	}
+
+}

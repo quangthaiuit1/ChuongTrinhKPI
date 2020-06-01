@@ -1,0 +1,178 @@
+package trong.lixco.com.ejb.service;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import trong.lixco.com.jpa.entity.Department;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entity.Employee;
+import trong.lixco.com.jpa.entity.LAddress;
+import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
+import trong.lixco.com.jpa.entitykpi.PositionJob;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class EmployeeService extends AbstractService<Employee> {
+	@Inject
+	private EntityManager em;
+	@Resource
+	private SessionContext ct;
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+
+	@Override
+	protected Class<Employee> getEntityClass() {
+		return Employee.class;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public Employee saveOrUpdate(Employee employee) {
+		try {
+			LAddress add = employee.getlAddress();
+			if (add.getId() != null) {
+				add = em.merge(add);
+			} else {
+				em.persist(add);
+			}
+			employee.setlAddress(em.merge(add));
+
+			LAddress addTemp = employee.getAddresstemp();
+			if (addTemp.getId() != null) {
+				addTemp = em.merge(addTemp);
+			} else {
+				em.persist(addTemp);
+			}
+			employee.setAddresstemp(em.merge(addTemp));
+
+			if (employee.getId() == null) {
+				em.persist(employee);
+				employee = em.merge(employee);
+			} else {
+				employee = em.merge(employee);
+			}
+			em.flush();
+			return employee;
+		} catch (Exception e) {
+			e.printStackTrace();
+			ct.setRollbackOnly();
+			return null;
+		}
+
+	}
+
+	public List<Employee> findByPositionJob(PositionJob positionJob) {
+		if (positionJob != null) {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Employee> cq = cb.createQuery(Employee.class);
+			Root<Employee> root = cq.from(Employee.class);
+			cq.select(root).where(cb.equal(root.get("positionJob"), positionJob),
+					cb.equal(root.get("layOff"), false), cb.equal(root.get("disable"), false));
+			TypedQuery<Employee> query = em.createQuery(cq);
+			List<Employee> results = query.getResultList();
+			return results;
+		}
+		return new ArrayList<Employee>();
+	}
+
+	public Employee findByCode(String employeeCode) {
+		if (employeeCode != null && !"".equals(employeeCode)) {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Employee> cq = cb.createQuery(Employee.class);
+			Root<Employee> root = cq.from(Employee.class);
+			cq.select(root).where(cb.equal(root.get("employeeCode"), employeeCode));
+			TypedQuery<Employee> query = em.createQuery(cq);
+			List<Employee> results = query.getResultList();
+			if (results.size() != 0)
+				return results.get(0);
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	public List<Employee> findByDepp(DepartmentParent departmentParent) {
+		if (departmentParent != null) {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Employee> cq = cb.createQuery(Employee.class);
+			Root<Employee> root = cq.from(Employee.class);
+			cq.select(root).where(cb.equal(root.get("department").get("departmentParent"), departmentParent),cb.equal(root.get("layOff"), false),cb.equal(root.get("disable"), false));
+			TypedQuery<Employee> query = em.createQuery(cq);
+			List<Employee> results = query.getResultList();
+			return results;
+		} else {
+			return new ArrayList<Employee>();
+		}
+	}
+
+	public List<Employee> findByDep(Department department, DepartmentParent departmentParent, Employee employee,
+			boolean showLayoff) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Employee> cq = cb.createQuery(Employee.class);
+		Root<Employee> root = cq.from(Employee.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		if (department != null)
+			predicates.add(cb.equal(root.get("department"), department));
+		if (departmentParent != null)
+			predicates.add(cb.equal(root.get("department").get("departmentParent"), departmentParent));
+		if (employee != null && employee.getId() != null)
+			predicates.add(cb.equal(root.get("id"), employee.getId()));
+		if (!showLayoff)
+			predicates.add(cb.equal(root.get("layOff"), false));
+
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		TypedQuery<Employee> query = em.createQuery(cq);
+		List<Employee> results = query.getResultList();
+		return results;
+	}
+
+	public List<Employee> findLike(String[] params, String likeStr) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Employee> cq = cb.createQuery(Employee.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<Employee> root = cq.from(Employee.class);
+		List<ParameterExpression<String>> paramExps = new LinkedList<ParameterExpression<String>>();
+
+		for (int i = 0; i < params.length; i++) {
+			String selectedParam = params[i];
+			Path<String> path = root.get(selectedParam);
+			ParameterExpression<String> p = cb.parameter(String.class);
+			Predicate likePredicate = cb.like(path, p);
+			predicates.add(likePredicate);
+			paramExps.add(p);
+		}
+		cq.select(root).where(cb.or(predicates.toArray(new Predicate[0])), cb.equal(root.get("layOff"), false))
+				.distinct(true);
+		TypedQuery<Employee> query = em.createQuery(cq);
+		for (int i = 0; i < paramExps.size(); i++) {
+			query.setParameter(paramExps.get(i), "%" + likeStr + "%");
+		}
+		List<Employee> results = query.getResultList();
+		return results;
+	}
+}

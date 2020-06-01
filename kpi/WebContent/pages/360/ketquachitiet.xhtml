@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<h3 style="margin: 0px; float: left">Kết quả đánh giá 360</h3>
+		<h3 style="margin: 0px; float: right; color: blueviolet;">#{baoCaoChiTietBean.kyDanhGia.tenkydanhgia}</h3>
+		<div style="clear: both" />
+		<p:separator />
+		<style>
+.tableformat table thead tr {
+	background: gray;
+}
+
+.tableformat table thead th {
+	height: 25px;
+	background-color: gray !important;
+	background-image: none !important;
+	border: 1px solid white !important;
+	border-radius: 0px !important;
+}
+
+.tableformat table thead th span {
+	font-size: 1.1em !important;
+	font-weight: bold;
+	text-shadow: none !important;
+	color: white !important;
+}
+
+.ui-accordion-header {
+	background: antiquewhite !important;
+}
+
+.ui-accordion .ui-accordion-header.ui-state-active {
+	background: #dd830b !important;
+	color: white;
+}
+</style>
+		<h:form id="menuformid">
+			<p:accordionPanel style="width:95%;    margin: auto;"
+				styleClass="accpanel">
+				<p:tab title="Chi tiết kết quả đánh giá quản lý">
+					<p:commandButton value="Xuất excel" style="float:right"
+						onclick="target='_blank';monitorDownload( showStatus , hideStatus)"
+						action="#{baoCaoChiTietBean.excelql()}" icon="ui-icon-clipboard" />
+					<div style="clear: both" />
+					<p:dataTable
+						value="#{baoCaoChiTietBean.chiTietKetQuaDanhGia360quanlys}"
+						styleClass="tableformat" paginatorPosition="bottom"
+						rowsPerPageTemplate="60,80,100" paginator="true" rows="80"
+						rowKey="#{item.manhanvien}" sortBy="#{item.phongban}"
+						scrollable="true" resizableColumns="true" var="item">
+						<p:column headerText="Tên nhân viên" width="150">
+							<h:outputText value="#{item.tennhanvien}" style="color:#0200ff" />
+						</p:column>
+						<p:column headerText="Điểm tự ĐG" style="text-align:center"
+							width="30">
+							<h:outputText value="#{item.diemtudanhgia}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 1">
+							<h:outputText value="#{item.nv1}" />
+						</p:column>
+						<p:column headerText="Điểm 1" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem1}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 2">
+							<h:outputText value="#{item.nv2}" />
+						</p:column>
+						<p:column headerText="Điểm 2" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem2}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 3">
+							<h:outputText value="#{item.nv3}" />
+						</p:column>
+						<p:column headerText="Điểm 3" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem3}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 4">
+							<h:outputText value="#{item.nv4}" />
+						</p:column>
+						<p:column headerText="Điểm 4" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem4}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 5">
+							<h:outputText value="#{item.nv5}" />
+						</p:column>
+						<p:column headerText="Điểm 5" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem5}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Điểm trung bình"
+							style="text-align:center;color: #ff0084;font-weight: bold;"
+							width="40">
+							<h:outputText value="#{item.diemtrungbinh}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Chi tiết kết quả đánh giá nhân viên">
+					<p:commandButton value="Xuất excel" style="float:right"
+						onclick="target='_blank';monitorDownload( showStatus , hideStatus)"
+						action="#{baoCaoChiTietBean.excelnv()}" icon="ui-icon-clipboard" />
+					<div style="clear: both" />
+					<p:dataTable
+						value="#{baoCaoChiTietBean.chiTietKetQuaDanhGia360nhanviens}"
+						styleClass="tableformat" paginatorPosition="bottom"
+						rowsPerPageTemplate="60,80,100" paginator="true" rows="80"
+						rowKey="#{item.manhanvien}" expandableRowGroups="true"
+						sortBy="#{item.phongban}" scrollable="true"
+						resizableColumns="true" var="item">
+						<p:headerRow>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column
+								style="background:#2196f338;font-size: 1.3em;padding: 5px;">
+								<h:outputText value="#{item.phongban}" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+							<p:column style="background:#2196f338">
+								<h:outputText value="" />
+							</p:column>
+						</p:headerRow>
+						<p:column headerText="Mã NV" style="text-align:center" width="60">
+							<h:outputText value="#{item.manhanvien}" />
+						</p:column>
+						<p:column headerText="Tên nhân viên" width="150">
+							<h:outputText value="#{item.tennhanvien}" />
+						</p:column>
+						<p:column headerText="Điểm tự ĐG" style="text-align:center"
+							width="30">
+							<h:outputText value="#{item.diemtudanhgia}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 1">
+							<h:outputText value="#{item.nv1}" />
+						</p:column>
+						<p:column headerText="Điểm 1" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem1}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 2">
+							<h:outputText value="#{item.nv2}" />
+						</p:column>
+						<p:column headerText="Điểm 2" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem2}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 3">
+							<h:outputText value="#{item.nv3}" />
+						</p:column>
+						<p:column headerText="Điểm 3" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem3}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 4">
+							<h:outputText value="#{item.nv4}" />
+						</p:column>
+						<p:column headerText="Điểm 4" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem4}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="NV 5">
+							<h:outputText value="#{item.nv5}" />
+						</p:column>
+						<p:column headerText="Điểm 5" style="text-align:center" width="30">
+							<h:outputText value="#{item.diem5}">
+								<f:convertNumber pattern="0.#" />
+							</h:outputText>
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</p:tab>
+			</p:accordionPanel>
+		</h:form>
+	</ui:define>
+</ui:composition>

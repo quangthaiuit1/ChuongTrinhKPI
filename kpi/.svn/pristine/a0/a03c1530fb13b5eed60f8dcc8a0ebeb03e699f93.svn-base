@@ -1,0 +1,97 @@
+package trong.lixco.com.nhansu.general;
+
+import java.rmi.RemoteException;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import trong.lixco.com.ejb.service.AccountDatabaseService;
+import trong.lixco.com.jpa.entity.AccountDatabase;
+import trong.lixco.com.service.publics.Account;
+import trong.lixco.com.service.publics.AccountServicePublic;
+import trong.lixco.com.service.publics.AccountServicePublicProxy;
+import trong.lixco.com.util.StaticPath;
+
+@ManagedBean
+@SessionScoped
+public class PathServerAccount {
+	@Inject
+	private AccountDatabaseService accountDatabaseService;
+	private AccountServicePublic accountServicePublic;
+	private String path;
+	private String pathlocal;
+
+	@PostConstruct
+	public void init() {
+		accountServicePublic = new AccountServicePublicProxy();
+
+		AccountDatabase accdb = accountDatabaseService.findByName("hethong");
+		path = accdb.getAddress();
+
+		AccountDatabase accdblocal = accountDatabaseService.findByName("nhansu");
+		pathlocal = accdblocal.getAddress();
+
+	}
+
+	public boolean checkAddressLocal() {
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+				.getRequest();
+		try {
+
+			String ipAddress = request.getHeader("X-FORWARDED-FOR");// ip
+			if (ipAddress == null) {
+				ipAddress = request.getRemoteAddr();
+				boolean temp = ipAddress.contains("192.168.");
+				if (temp == false) {
+					temp = ipAddress.contains("127.0.0.1");
+				}
+				return temp;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return true;
+		}
+	}
+
+	public Account getAccount(long id) {
+		try {
+			return accountServicePublic.findById(id);
+		} catch (RemoteException e) {
+			return null;
+		}
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public String getPathRefresh() {
+		AccountDatabase accdb = accountDatabaseService.findByName("hethong");
+		if (checkAddressLocal()) {
+			path = accdb.getAddress();
+		} else {
+			path = accdb.getAddressPublic();
+		}
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getPathlocal() {
+		return pathlocal;
+	}
+
+	public void setPathlocal(String pathlocal) {
+		this.pathlocal = pathlocal;
+	}
+
+}

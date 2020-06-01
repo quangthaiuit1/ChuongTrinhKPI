@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<h3 style="margin: 0px">Mục tiêu Công ty</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
+				<p:panel header="Thông tin" styleClass="panelw100">
+					<h:panelGrid id="info">
+						<p:outputLabel value="Nhóm mục tiêu" />
+						<p:selectOneMenu value="#{tagetBean.tagetCate}"
+							converter="abstractConverter" effect="fade" var="t"
+							styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<f:selectItems value="#{tagetBean.tagetCates}" var="item"
+								itemLabel="#{item.content}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.content}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.weight}%" />
+							</p:column>
+							<p:ajax event="change" process="@this" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Năm*:" />
+						<p:spinner size="10" min="2017" max="2050"
+							value="#{tagetBean.taget.year}">
+							<p:ajax update=":menuformid,:dialogOrienid" process="@this"
+								listener="#{tagetBean.ajaxTaget()}" />
+						</p:spinner>
+						<p:outputLabel value="Mã mục tiêu*:" />
+						<p:inputText value="#{tagetBean.taget.code}" />
+						<p:outputLabel value="Nội dung*:" />
+						<p:inputTextarea value="#{tagetBean.taget.content}" />
+						<p:outputLabel value="Trọng số:" />
+						<h:panelGrid columns="2" columnClasses="w10,w90">
+							<p:inputText style="width:40px; margin-right:4px"
+								value="#{tagetBean.taget.weighted}" />
+							<p:outputLabel value="%" />
+						</h:panelGrid>
+						<p:outputLabel value="Ghi chú:" />
+						<p:inputTextarea cols="24" rows="4"
+							value="#{tagetBean.taget.note}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Lưu/Cập nhật" process="@form"
+						action="#{tagetBean.createOrUpdate()}"
+						update=":messages,:menuformid" />
+					<p:commandButton value="Tạo mới" action="#{tagetBean.reset()}"
+						update=":menuformid" />
+					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
+						value="Xoá" update=":messages,:menuformid"
+						action="#{tagetBean.delete()}">
+						<p:confirm icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:commandButton value="Cài trọng số"
+						oncomplete="PF('dialogWeight').show();" />
+				</p:panel>
+				<p:panel header="Danh sách" id="preview">
+					<h:panelGrid id="mainGrid" columns="2">
+						<h:panelGrid columns="1" style="width:100%">
+							<p:outputLabel value="Nhóm mục tiêu" />
+							<p:selectOneMenu value="#{tagetBean.tagetCateS}"
+								converter="abstractConverter" effect="fade" var="t"
+								styleClass="seOnMe95" filter="true" filterMatchMode="custom"
+								filterFunction="customFilter">
+								<f:selectItem value="#{null}" itemLabel="--TẤT CẢ--" />
+								<f:selectItems value="#{tagetBean.tagetCates}" var="item"
+									itemLabel="#{item.content}" itemValue="#{item}" />
+								<p:ajax process="@this" listener="#{tagetBean.searchItem()}"
+									update="tableid" />
+								<p:column>
+									<h:outputText value="#{t.code}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{t.content}" />
+								</p:column>
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="1" style="width:100%">
+							<p:outputLabel value="Năm" />
+							<p:spinner size="10" min="2017" max="2050"
+								value="#{tagetBean.year}">
+								<p:ajax process="@this" listener="#{tagetBean.searchItem()}"
+									update="tableid" />
+							</p:spinner>
+						</h:panelGrid>
+					</h:panelGrid>
+					<div style="clear: both" />
+					<p:dataTable value="#{tagetBean.tagets}" lazy="true"
+						sortBy="#{item.kTagetCate.code}#{item.year}"
+						expandableRowGroups="true" paginatorPosition="bottom"
+						rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+						rowKey="#{item.id}" selection="#{tagetBean.tagetEdit}"
+						scrollable="true" selectionMode="single" scrollWidth="670"
+						id="tableid" scrollHeight="360" widgetVar="datatb"
+						resizableColumns="true" var="item">
+						<p:ajax event="rowSelect" listener="#{tagetBean.showEdit()}"
+							update=":menuformid" />
+						<p:headerRow>
+							<p:column>
+								<h:outputText value="" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{item.year}" />
+							</p:column>
+							<p:column style="font-size: 1.2em;text-align:center">
+								<h:outputText value="#{item.kTagetCate.code}" />
+							</p:column>
+
+							<p:column style="font-size: 1.2em;padding: 10px;">
+								<h:outputText value="#{item.kTagetCate.content}" />
+							</p:column>
+							<p:column
+								style="font-size: 1.2em;padding: 10px;text-align:center">
+								<h:outputText value="#{item.kTagetCate.weight}%" />
+							</p:column>
+						</p:headerRow>
+						<p:column headerText="ID" style="width:30px">
+							<h:outputText value="#{item.id}" />
+						</p:column>
+						<p:column headerText="Năm" style="width:35px">
+							<p:commandButton icon="fa fa-server" styleClass="greenbutton"
+								oncomplete="PF('dialogDepartP').show()"
+								actionListener="#{tagetBean.installListDepP(item)}"
+								update=":dialogDepartPid" />
+						</p:column>
+						<p:column headerText="Mã" style="width:30px;text-align:center">
+							<h:outputText value="#{item.code}" />
+						</p:column>
+						<p:column headerText="Nội dung" style="width:350px">
+							<h:outputText value="#{item.content}" />
+						</p:column>
+						<p:column headerText="Trọng số"
+							style="width:60px;text-align:center">
+							<h:outputText value="#{item.weighted}%" />
+						</p:column>
+						<p:column headerText="Ghi chú" style="width:300px">
+							<h:outputText value="#{item.note}" />
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+		<p:dialog widgetVar="dialogDepartP" resizable="false" width="400"
+			closeOnEscape="true" header="Danh sách phòng ban">
+			<h:form id="dialogDepartPid">
+				<p:dataTable value="#{tagetBean.departmentParents}" var="item">
+					<p:column headerText="..." style="text-align:center" width="30">
+						<p:selectBooleanCheckbox value="#{item.select}">
+							<p:ajax process="@this" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column headerText="Mã" style="text-align:center" width="50">
+						<h:outputText value="#{item.code}" />
+					</p:column>
+					<p:column headerText="Tên phòng ban" style="text-align:left">
+						<h:outputText value="#{item.name}" />
+					</p:column>
+					<f:facet name="footer">
+						<p:commandButton process="@form" value="Lưu/Cập nhật"
+							update=":messages,:menuformid" action="#{tagetBean.saveDepP()}" />
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dialogWeight" resizable="false" width="400"
+			closeOnEscape="true" header="Nhóm mục tiêu">
+			<h:form id="dialogOrienid">
+				<p:dataTable value="#{tagetBean.tagetCates}" var="item">
+					<p:column headerText="Nội dung" style="text-align:left">
+						<h:outputText value="#{item.content}" />
+					</p:column>
+					<p:column headerText="Trọng số (%)" style="text-align:center"
+						width="80">
+						<p:inputText style="width:15px; margin-right:4px"
+							value="#{item.weight}">
+							<p:ajax event="blur" process="@this" />
+						</p:inputText>
+						<p:outputLabel value="%" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:outputLabel value="Năm" />
+						<p:spinner size="10" min="2017" max="2050"
+							value="#{tagetBean.taget.year}" style="margin-right:20px">
+							<p:ajax update=":menuformid,:dialogOrienid" process="@this"
+								listener="#{tagetBean.ajaxTaget()}" />
+						</p:spinner>
+						<p:commandButton process="@form" value="Lưu/Cập nhật"
+							update=":menuformid,:messages" action="#{tagetBean.saveWeight()}" />
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

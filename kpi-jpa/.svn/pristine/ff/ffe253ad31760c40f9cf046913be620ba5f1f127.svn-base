@@ -1,0 +1,489 @@
+package trong.lixco.com.jpa.entity;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import trong.lixco.com.jpa.entitykpi.PositionJob;
+/**
+ * @author vantrong
+ * @Time 16-04-2018 12:08:21 Nhan vien
+ */
+@Entity
+public class Employee extends AbstractEntity {
+
+	private String email;
+	
+	private String code;// ma the
+	private String codeOld;// ma the cu
+	private String codeInfor;// ma ho so (vi tri ho so trong tu)
+	@ManyToOne
+	private Department department;
+	private String employeeCode;
+	private String employeeName;
+	private boolean managerComp = false;// can bo quan ly
+	@ManyToOne
+	private LAddress lAddress;// Dia chi thuong tru
+	private Date birthday;// ngay sinh
+	private boolean yearOfBirth=false;// chi co nam sinh
+	/*
+	 * Noi sinh
+	 */
+	@ManyToOne
+	private City cityPlace;
+	@ManyToOne
+	private Distrist distristPlace;
+	@ManyToOne
+	private Wards wardsPlace;
+
+	private boolean female;// gioi tinh
+	private Date dayAtWork;// ngay vao lam viec
+	private int numberDayOff;// so ngay phep
+	@ManyToOne
+	private ContractType contractType;// Loai hop dong
+	private Date dateFirstContract;// ngay ky hop dong lan 1
+	private Date dateAdjournContract;// ngay gian han hop dong
+	private Date dateEndContract;// ngay ket thuc hop dong
+	private String contractNoNewest;// So hop dong mơi nhat
+	@ManyToOne
+	private Level level;// cap bac/ trinh do
+	@ManyToOne
+	private Position position;// vi tri, chuc vu
+	@ManyToOne
+	private LevelSalary levelSalary;// bac luong
+	private Date dateRankSalary;// Ngày xep luong hien tại
+	private String socialInsuranceNo;// so bao hiem xa hoi
+	private String heathInsuranceNo;// so bao hiem y te
+	@ManyToOne
+	private TypeJob typeJob;// cong viec
+	@ManyToOne
+	private CateJob cateJob;// phan loai khoi (viec)
+	private String personID; // so CMND
+	private Date personIDDate;// ngay cap
+	@ManyToOne
+	private City personIDCity;// noi cap
+	@ManyToOne
+	private People people;// dan toc
+	@ManyToOne
+	private City heathPlace;// noi dang ky kham chua benh
+	@ManyToOne
+	private Hospital hospital;// benh vien
+	@ManyToOne
+	private LAddress addresstemp;// Dia chi tam tru
+	private String taxPersonId;// ma so thue
+	private String phone;// so dien thoai
+	private boolean st7_30=false;// gio vao 7.30
+	private boolean workShift =false;// di ca
+	private boolean quitEating= false; // cat com
+	private boolean vegetarian=false;// an chay
+	private boolean partisan=false;// dang vien
+	private Date datePartisan;// ngay vao dang
+	private boolean memberShip=false;// doan vien
+	private Date dateMemberShip;// ngay vao cong doan
+	private boolean layOff=false;// nghi viec
+	private Date dateLayOff;// ngay nghi viec
+	@ManyToOne
+	private ReasonLayOff reasonLayOff;// ly do nghi viec
+	private String householderName;// ten chu ho
+	private String householderNo; // so ho khau
+	private String householderAdress;// dia chi ho khau;
+	private String inforURL;// ho so luu tru
+	private String inforComment;// thong tin ho so
+	private String wageAdjustment;//dien bien luong
+	private String training;//dao tao
+	private boolean pestiferous=false;//doc hai
+
+	
+	public Employee(){
+		lAddress=new LAddress();
+		addresstemp=new LAddress();
+	}
+	
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getCodeOld() {
+		return codeOld;
+	}
+	public void setCodeOld(String codeOld) {
+		this.codeOld = codeOld;
+	}
+	public String getCodeInfor() {
+		return codeInfor;
+	}
+	public void setCodeInfor(String codeInfor) {
+		this.codeInfor = codeInfor;
+	}
+	public Department getDepartment() {
+		return department;
+	}
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+	public String getEmployeeCode() {
+		return employeeCode;
+	}
+	public void setEmployeeCode(String employeeCode) {
+		this.employeeCode = employeeCode;
+	}
+	public String getEmployeeName() {
+		return employeeName;
+	}
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public boolean isManagerComp() {
+		return managerComp;
+	}
+
+	public void setManagerComp(boolean managerComp) {
+		this.managerComp = managerComp;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+	public City getCityPlace() {
+		return cityPlace;
+	}
+	public void setCityPlace(City cityPlace) {
+		this.cityPlace = cityPlace;
+	}
+	public Distrist getDistristPlace() {
+		return distristPlace;
+	}
+	public void setDistristPlace(Distrist distristPlace) {
+		this.distristPlace = distristPlace;
+	}
+	public Wards getWardsPlace() {
+		return wardsPlace;
+	}
+	public void setWardsPlace(Wards wardsPlace) {
+		this.wardsPlace = wardsPlace;
+	}
+
+
+	public Date getDayAtWork() {
+		return dayAtWork;
+	}
+	public void setDayAtWork(Date dayAtWork) {
+		this.dayAtWork = dayAtWork;
+	}
+	public int getNumberDayOff() {
+		return numberDayOff;
+	}
+	public void setNumberDayOff(int numberDayOff) {
+		this.numberDayOff = numberDayOff;
+	}
+	public ContractType getContractType() {
+		return contractType;
+	}
+	public void setContractType(ContractType contractType) {
+		this.contractType = contractType;
+	}
+	public Date getDateFirstContract() {
+		return dateFirstContract;
+	}
+	public void setDateFirstContract(Date dateFirstContract) {
+		this.dateFirstContract = dateFirstContract;
+	}
+	public Date getDateAdjournContract() {
+		return dateAdjournContract;
+	}
+	public void setDateAdjournContract(Date dateAdjournContract) {
+		this.dateAdjournContract = dateAdjournContract;
+	}
+	public Date getDateEndContract() {
+		return dateEndContract;
+	}
+	public void setDateEndContract(Date dateEndContract) {
+		this.dateEndContract = dateEndContract;
+	}
+	public String getContractNoNewest() {
+		return contractNoNewest;
+	}
+	public void setContractNoNewest(String contractNoNewest) {
+		this.contractNoNewest = contractNoNewest;
+	}
+	public Level getLevel() {
+		return level;
+	}
+	public void setLevel(Level level) {
+		this.level = level;
+	}
+	public Position getPosition() {
+		return position;
+	}
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+	public LevelSalary getLevelSalary() {
+		return levelSalary;
+	}
+	public void setLevelSalary(LevelSalary levelSalary) {
+		this.levelSalary = levelSalary;
+	}
+	public Date getDateRankSalary() {
+		return dateRankSalary;
+	}
+	public void setDateRankSalary(Date dateRankSalary) {
+		this.dateRankSalary = dateRankSalary;
+	}
+	public String getSocialInsuranceNo() {
+		return socialInsuranceNo;
+	}
+	public void setSocialInsuranceNo(String socialInsuranceNo) {
+		this.socialInsuranceNo = socialInsuranceNo;
+	}
+	public String getHeathInsuranceNo() {
+		return heathInsuranceNo;
+	}
+	public void setHeathInsuranceNo(String heathInsuranceNo) {
+		this.heathInsuranceNo = heathInsuranceNo;
+	}
+	public TypeJob getTypeJob() {
+		return typeJob;
+	}
+	public void setTypeJob(TypeJob typeJob) {
+		this.typeJob = typeJob;
+	}
+	public String getPersonID() {
+		return personID;
+	}
+	public void setPersonID(String personID) {
+		this.personID = personID;
+	}
+	public Date getPersonIDDate() {
+		return personIDDate;
+	}
+	public void setPersonIDDate(Date personIDDate) {
+		this.personIDDate = personIDDate;
+	}
+	public City getPersonIDCity() {
+		return personIDCity;
+	}
+	public void setPersonIDCity(City personIDCity) {
+		this.personIDCity = personIDCity;
+	}
+	public People getPeople() {
+		return people;
+	}
+	public void setPeople(People people) {
+		this.people = people;
+	}
+	public City getHeathPlace() {
+		return heathPlace;
+	}
+	public void setHeathPlace(City heathPlace) {
+		this.heathPlace = heathPlace;
+	}
+	public Hospital getHospital() {
+		return hospital;
+	}
+	public void setHospital(Hospital hospital) {
+		this.hospital = hospital;
+	}
+	public LAddress getAddresstemp() {
+		return addresstemp;
+	}
+	public void setAddresstemp(LAddress addresstemp) {
+		this.addresstemp = addresstemp;
+	}
+	public String getTaxPersonId() {
+		return taxPersonId;
+	}
+	public void setTaxPersonId(String taxPersonId) {
+		this.taxPersonId = taxPersonId;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	
+	public Date getDatePartisan() {
+		return datePartisan;
+	}
+	public void setDatePartisan(Date datePartisan) {
+		this.datePartisan = datePartisan;
+	}
+	
+	public Date getDateLayOff() {
+		return dateLayOff;
+	}
+	public void setDateLayOff(Date dateLayOff) {
+		this.dateLayOff = dateLayOff;
+	}
+	public ReasonLayOff getReasonLayOff() {
+		return reasonLayOff;
+	}
+	public void setReasonLayOff(ReasonLayOff reasonLayOff) {
+		this.reasonLayOff = reasonLayOff;
+	}
+	public String getHouseholderName() {
+		return householderName;
+	}
+	public void setHouseholderName(String householderName) {
+		this.householderName = householderName;
+	}
+	public String getHouseholderNo() {
+		return householderNo;
+	}
+	public void setHouseholderNo(String householderNo) {
+		this.householderNo = householderNo;
+	}
+	public String getHouseholderAdress() {
+		return householderAdress;
+	}
+	public void setHouseholderAdress(String householderAdress) {
+		this.householderAdress = householderAdress;
+	}
+	public String getInforURL() {
+		return inforURL;
+	}
+	public void setInforURL(String inforURL) {
+		this.inforURL = inforURL;
+	}
+	public String getInforComment() {
+		return inforComment;
+	}
+	public void setInforComment(String inforComment) {
+		this.inforComment = inforComment;
+	}
+	
+	public CateJob getCateJob() {
+		return cateJob;
+	}
+	public void setCateJob(CateJob cateJob) {
+		this.cateJob = cateJob;
+	}
+	public String getWageAdjustment() {
+		return wageAdjustment;
+	}
+	public void setWageAdjustment(String wageAdjustment) {
+		this.wageAdjustment = wageAdjustment;
+	}
+	public String getTraining() {
+		return training;
+	}
+	public void setTraining(String training) {
+		this.training = training;
+	}
+	public LAddress getlAddress() {
+		return lAddress;
+	}
+	public void setlAddress(LAddress lAddress) {
+		this.lAddress = lAddress;
+	}
+
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public boolean isYearOfBirth() {
+		return yearOfBirth;
+	}
+
+	public void setYearOfBirth(boolean yearOfBirth) {
+		this.yearOfBirth = yearOfBirth;
+	}
+
+	public boolean isFemale() {
+		return female;
+	}
+
+	public void setFemale(boolean female) {
+		this.female = female;
+	}
+
+	public boolean isSt7_30() {
+		return st7_30;
+	}
+
+	public void setSt7_30(boolean st7_30) {
+		this.st7_30 = st7_30;
+	}
+
+	public boolean isWorkShift() {
+		return workShift;
+	}
+
+	public void setWorkShift(boolean workShift) {
+		this.workShift = workShift;
+	}
+
+	public boolean isQuitEating() {
+		return quitEating;
+	}
+
+	public void setQuitEating(boolean quitEating) {
+		this.quitEating = quitEating;
+	}
+
+	public boolean isVegetarian() {
+		return vegetarian;
+	}
+
+	public void setVegetarian(boolean vegetarian) {
+		this.vegetarian = vegetarian;
+	}
+
+	public boolean isPartisan() {
+		return partisan;
+	}
+
+	public void setPartisan(boolean partisan) {
+		this.partisan = partisan;
+	}
+
+	public boolean isMemberShip() {
+		return memberShip;
+	}
+
+	public void setMemberShip(boolean memberShip) {
+		this.memberShip = memberShip;
+	}
+
+	public Date getDateMemberShip() {
+		return dateMemberShip;
+	}
+
+	public void setDateMemberShip(Date dateMemberShip) {
+		this.dateMemberShip = dateMemberShip;
+	}
+
+	public boolean isLayOff() {
+		return layOff;
+	}
+
+	public void setLayOff(boolean layOff) {
+		this.layOff = layOff;
+	}
+
+	public boolean isPestiferous() {
+		return pestiferous;
+	}
+
+	public void setPestiferous(boolean pestiferous) {
+		this.pestiferous = pestiferous;
+	}
+	
+}

@@ -1,0 +1,120 @@
+/**
+ * This class is made by Lam Quan Vu.
+ * @Copyright 2013 by Lam Quan Vu. Email : LamQuanVu@gmail.com
+ */
+package trong.lixco.com.util;
+
+import java.text.Normalizer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.naming.NamingException;
+
+import trong.lixco.com.ejb.service.EmployeeService;
+import trong.lixco.com.ejb.service.HospitalService;
+import trong.lixco.com.ejb.service.PeopleService;
+import trong.lixco.com.jpa.entity.Employee;
+import trong.lixco.com.jpa.entity.Hospital;
+import trong.lixco.com.jpa.entity.People;
+import trong.lixco.com.service.publics.DepartmentServicePublic;
+import trong.lixco.com.service.publics.DepartmentServicePublicProxy;
+import trong.lixco.com.service.publics.MemberServicePublic;
+import trong.lixco.com.service.publics.MemberServicePublicProxy;
+
+@ManagedBean
+public class AbstractAutoComplete {
+
+	MemberServicePublic memberServicePublic;
+	DepartmentServicePublic departmentService;
+	@Inject
+	private EmployeeService employeeService;
+	@Inject
+	private PeopleService peopleService;
+	@Inject
+	private HospitalService hospitalService;
+
+	@PostConstruct
+	public void init() {
+		memberServicePublic = new MemberServicePublicProxy();
+		departmentService = new DepartmentServicePublicProxy();
+	}
+
+	// Tim kiem nhan vien (KPI)
+	@SuppressWarnings("unchecked")
+	public List<Employee> completeEmployeeKPI(final String containedStr) throws NamingException, ClassNotFoundException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		String filters = (String) UIComponent.getCurrentComponent(context).getAttributes().get("filters");
+		String[] split = filters.split(",");
+		List<Employee> linkedList = new LinkedList<Employee>();
+		String searchText = converViToEn(containedStr);
+		linkedList = employeeService.findLike(split, "%" + searchText + "%");
+
+		List<Employee> linkedListTemp = new LinkedList<Employee>();
+		if (searchText.contains("D")) {
+			linkedListTemp = employeeService.findLike(split, "%" + containedStr.replace("D", "Đ") + "%");
+			linkedList.addAll(linkedListTemp);
+		}
+		if (containedStr.contains("d")) {
+			linkedListTemp = employeeService.findLike(split, "%" + containedStr.replace("d", "đ") + "%");
+			linkedList.addAll(linkedListTemp);
+		}
+		return linkedList;
+	}
+
+	// dan toc
+	@SuppressWarnings("unchecked")
+	public List<People> completePeople(final String containedStr) throws NamingException, ClassNotFoundException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		String filters = (String) UIComponent.getCurrentComponent(context).getAttributes().get("filters");
+		String[] split = filters.split(",");
+		List<People> linkedList = new LinkedList<People>();
+		String searchText = converViToEn(containedStr);
+		linkedList = peopleService.findLike(split, "%" + searchText + "%");
+
+		List<People> linkedListTemp = new LinkedList<People>();
+		if (searchText.contains("D")) {
+			linkedListTemp = peopleService.findLike(split, "%" + containedStr.replace("D", "Đ") + "%");
+			linkedList.addAll(linkedListTemp);
+		}
+		if (containedStr.contains("d")) {
+			linkedListTemp = peopleService.findLike(split, "%" + containedStr.replace("d", "đ") + "%");
+			linkedList.addAll(linkedListTemp);
+		}
+		return linkedList;
+	}
+
+	// benh vien
+	@SuppressWarnings("unchecked")
+	public List<Hospital> completeHospital(final String containedStr) throws NamingException, ClassNotFoundException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		String filters = (String) UIComponent.getCurrentComponent(context).getAttributes().get("filters");
+		String[] split = filters.split(",");
+		List<Hospital> linkedList = new LinkedList<Hospital>();
+		String searchText = converViToEn(containedStr);
+		linkedList = hospitalService.findLike(split, "%" + searchText + "%");
+
+		List<Hospital> linkedListTemp = new LinkedList<Hospital>();
+		if (searchText.contains("D")) {
+			linkedListTemp = hospitalService.findLike(split, "%" + containedStr.replace("D", "Đ") + "%");
+			linkedList.addAll(linkedListTemp);
+		}
+		if (containedStr.contains("d")) {
+			linkedListTemp = hospitalService.findLike(split, "%" + containedStr.replace("d", "đ") + "%");
+			linkedList.addAll(linkedListTemp);
+		}
+		return linkedList;
+	}
+
+	public static String converViToEn(String s) {
+		String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		String result = pattern.matcher(temp).replaceAll("");
+		return pattern.matcher(result).replaceAll("").replaceAll("Đ", "D").replaceAll("đ", "d");
+	}
+}

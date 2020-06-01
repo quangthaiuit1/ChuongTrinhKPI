@@ -1,0 +1,40 @@
+package trong.lixco.com.jpa.entitykpi;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+
+import trong.lixco.com.jpa.entity.AbstractEntity;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.jpa.entity.Employee;
+/**
+ * @author vantrong
+ * @Time 16-04-2018 12:08:21
+ * Chuc vu (trong KPI theo mo ta cong viec)
+ */
+@Entity
+public class PositionJob extends AbstractEntity {
+	private String code;
+	private String name;
+	@ManyToOne
+	private DepartmentParent departmentParent;//phong ban
+	
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public DepartmentParent getDepartmentParent() {
+		return departmentParent;
+	}
+	public void setDepartmentParent(DepartmentParent departmentParent) {
+		this.departmentParent = departmentParent;
+	}
+}

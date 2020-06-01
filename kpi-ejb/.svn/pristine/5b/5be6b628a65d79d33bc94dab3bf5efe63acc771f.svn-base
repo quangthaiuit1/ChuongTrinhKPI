@@ -1,0 +1,81 @@
+package trong.lixco.com.ejb.service;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import trong.lixco.com.jpa.entity.Hospital;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class HospitalService extends AbstractService<Hospital> {
+@Inject
+	private EntityManager em;
+	@Resource
+	private SessionContext ct;
+	
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+	
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+	
+	@Override
+	protected Class<Hospital> getEntityClass() {
+		return Hospital.class;
+	}
+	public Hospital findByCode(String code) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Hospital> cq = cb.createQuery(Hospital.class);
+		Root<Hospital> root = cq.from(Hospital.class);
+		cq.select(root).where(cb.equal(root.get("code"), code));
+		TypedQuery<Hospital> query = em.createQuery(cq);
+		List<Hospital> results = query.getResultList();
+		if (results.size() != 0) {
+			return results.get(0);
+		} else {
+			return null;
+		}
+	}
+	public List<Hospital> findLike(String[] params, String likeStr) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Hospital> cq = cb.createQuery(Hospital.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<Hospital> root = cq.from(Hospital.class);
+		List<ParameterExpression<String>> paramExps = new LinkedList<ParameterExpression<String>>();
+
+		for (int i = 0; i < params.length; i++) {
+			String selectedParam = params[i];
+			Path<String> path = root.get(selectedParam);
+			ParameterExpression<String> p = cb.parameter(String.class);
+			Predicate likePredicate = cb.like(path, p);
+			predicates.add(likePredicate);
+			paramExps.add(p);
+		}
+		cq.select(root).where(cb.or(predicates.toArray(new Predicate[0])), cb.equal(root.get("disable"), false))
+				.distinct(true);
+		TypedQuery<Hospital> query = em.createQuery(cq);
+		for (int i = 0; i < paramExps.size(); i++) {
+			query.setParameter(paramExps.get(i), "%" + likeStr + "%");
+		}
+		return query.getResultList();
+	}
+}

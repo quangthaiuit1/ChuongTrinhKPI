@@ -1,0 +1,139 @@
+package trong.lixco.com.bean;
+
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jboss.logging.Logger;
+import org.omnifaces.cdi.ViewScoped;
+
+import trong.lixco.com.ejb.service.DepartmentParentService;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.util.Notify;
+
+@Named
+@ViewScoped
+public class DepartmentParentBean extends AbstractBean<DepartmentParent> {
+	private static final long serialVersionUID = 1L;
+	private Notify notify;
+	private List<DepartmentParent> departmentParents;
+	private DepartmentParent departmentParent;
+	private DepartmentParent departmentParentEdit;
+
+	@Inject
+	private DepartmentParentService departmentParentService;
+	@Inject
+	private Logger logger;
+
+	@Override
+	protected Logger getLogger() {
+		return logger;
+	}
+
+	@Override
+	public void initItem() {
+		departmentParent = new DepartmentParent();
+		searchItem();
+
+	}
+	public void searchItem(){
+		departmentParents=departmentParentService.findAll();
+	}
+	public void createOrUpdate() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try {
+			if (departmentParent != null) {
+				if (!"".equals(departmentParent.getCode()) && !"".equals(departmentParent.getName())) {
+					if (departmentParent.getId() == null) {
+						if (allowSave(null)) {
+							departmentParent=installSave(departmentParent);
+							departmentParent = departmentParentService.create(departmentParent);
+							departmentParents.add(0, departmentParent);
+							writeLogInfo("Tạo mới " + departmentParent.toString());
+							reset();
+							notify.success();
+						} else {
+							departmentParentEdit = new DepartmentParent();
+							notify.warningDetail();
+						}
+					} else {
+						if (allowUpdate(null)) {
+							departmentParent=installUpdate(departmentParent);
+							departmentParent = departmentParentService.update(departmentParent);
+							int index = departmentParents.indexOf(departmentParent);
+							departmentParents.set(index, departmentParent);
+							writeLogInfo("Cập nhật " + departmentParent.toString());
+							notify.success();
+						} else {
+							notify.warningDetail();
+						}
+					}
+				} else {
+					notify.warning("Điền đầy đủ thông tin!");
+				}
+			}
+		} catch (Exception e) {
+			writeLogError(e.getLocalizedMessage());
+			notify.warning("Mã đã tồn tại!");
+		}
+	}
+
+	public void reset() {
+		departmentParent = new DepartmentParent();
+
+	}
+
+	public void showEdit() {
+		this.departmentParent = departmentParentEdit;
+	}
+
+	public void delete() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		if (departmentParent.getId() != null) {
+			if (allowDelete(null)) {
+				boolean status = departmentParentService.delete(departmentParent);
+				if (status) {
+					departmentParents.remove(departmentParent);
+					writeLogInfo("Xoá " + departmentParent.toString());
+					reset();
+					notify.success();
+				} else {
+					writeLogError("Lỗi khi xoá " + departmentParent.toString());
+					notify.error();
+				}
+			} else {
+				notify.warningDetail();
+			}
+		} else {
+			notify.warning("Chưa chọn trong danh sách!");
+		}
+	}
+
+	public List<DepartmentParent> getDepartmentParents() {
+		return departmentParents;
+	}
+
+	public void setDepartmentParents(List<DepartmentParent> departmentParents) {
+		this.departmentParents = departmentParents;
+	}
+
+	public DepartmentParent getDepartmentParent() {
+		return departmentParent;
+	}
+
+	public void setDepartmentParent(DepartmentParent departmentParent) {
+		this.departmentParent = departmentParent;
+	}
+
+	public DepartmentParent getDepartmentParentEdit() {
+		return departmentParentEdit;
+	}
+
+	public void setDepartmentParentEdit(DepartmentParent departmentParentEdit) {
+		this.departmentParentEdit = departmentParentEdit;
+	}
+
+
+}

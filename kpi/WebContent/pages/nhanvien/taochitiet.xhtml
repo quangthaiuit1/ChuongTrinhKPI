@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition>
+	<p:dialog widgetVar="dialogcreate" id="dialogcreateid"
+		resizable="false" closeOnEscape="true"
+		focus=":formdialogcreate:acceCode" header="Chi tiết nhập">
+		<h:form id="formdialogcreate">
+			<p:focus for="acceCode" />
+			<h:panelGrid columns="2" cellpadding="5" style="width:650px;">
+				<h:panelGrid columns="1">
+					<p:outputLabel value="Vật tư*" for="acceCode" />
+					<h:panelGrid columns="2" cellspacing="30" styleClass="noneformmat"
+						columnClasses="widthCode, widthName">
+						<p:inputText id="acceCode" placeholder="Mã"
+							value="#{importMaterDetailBean.importMaterDetail.material.code}">
+							<p:ajax event="blur" update="acceName,acceCode"
+								listener="#{importMaterDetailBean.selectMaterialByCode()}" />
+						</p:inputText>
+						<p:autoComplete style="width:100%;" id="acceName"
+							placeholder="Tên"
+							value="#{importMaterDetailBean.importMaterDetail.material}"
+							converter="abstractConverter" minQueryLength="3"
+							completeMethod="#{abstractAutoComplete.completeMaterial}" var="p"
+							itemLabel="#{p.name}" itemValue="#{p}" forceSelection="true">
+							<p:ajax event="itemSelect"
+								listener="#{importMaterDetailBean.selectMaterialByCode()}"
+								update="acceCode,acceName" />
+							<f:attribute name="filters" value="name,codeU,code"></f:attribute>
+							<p:column style="width:30px">
+							   	#{p.code}
+							</p:column>
+							<p:column style="width:50px">
+						   		#{p.codeU}
+							</p:column>
+							<p:column style="width:300px">
+							   	#{p.name}
+							</p:column>
+							<p:column style="width:30px">
+							   	#{p.unit}
+							</p:column>
+						</p:autoComplete>
+					</h:panelGrid>
+					<p:outputLabel value="SL chứng từ" />
+					<pe:inputNumber
+						value="#{importMaterDetailBean.importMaterDetail.quantityOnPaper}"
+						decimalPlaces="#{applicationBean.cf.decimalNumber}"
+						decimalSeparator="#{applicationBean.cf.decimalSeparator}"
+						thousandSeparator="#{applicationBean.cf.thousandSeparator}">
+					</pe:inputNumber>
+					<p:outputLabel value="SL thực tế" />
+					<pe:inputNumber
+						value="#{importMaterDetailBean.importMaterDetail.actualQuantity}"
+						decimalPlaces="#{applicationBean.cf.decimalNumber}"
+						decimalSeparator="#{applicationBean.cf.decimalSeparator}"
+						thousandSeparator="#{applicationBean.cf.thousandSeparator}">
+					</pe:inputNumber>
+					<p:outputLabel value="Số chứng từ" />
+					<p:inputText
+						value="#{importMaterDetailBean.importMaterDetail.code}"
+						styleClass="inputwidthonehundresspercent">
+					</p:inputText>
+					<p:outputLabel value="Ngày chứng từ" />
+					<p:calendar id="inforDate" showOn="button" locale="vi"
+						value="#{importMaterDetailBean.importMaterDetail.date}"
+						showButtonPanel="true" navigator="true"
+						pattern="#{applicationBean.cf.formatDate}"
+						mask="#{applicationBean.cf.maskDate}">
+					</p:calendar>
+					<p:outputLabel value="Ghi chú" />
+					<p:inputTextarea cols="24" rows="2"
+						value="#{importMaterDetailBean.importMaterDetail.note}" />
+				</h:panelGrid>
+				<h:panelGrid columns="1" style="margin-right:10px;">
+					<p:outputLabel value="Mã lô hàng (Lot no)*" />
+					<p:inputText
+						value="#{importMaterDetailBean.importMaterDetail.batch.code}">
+					</p:inputText>
+					<p:outputLabel value="Ngày nhập hàng" />
+					<p:calendar showOn="button" locale="vi"
+						value="#{importMaterDetailBean.importMaterDetail.batch.importedDate}"
+						showButtonPanel="true" navigator="true"
+						pattern="#{applicationBean.cf.formatDate}"
+						mask="#{applicationBean.cf.maskDate}">
+					</p:calendar>
+					<p:outputLabel value="Ngày hết hạn" />
+					<p:calendar showOn="button" locale="vi"
+						value="#{importMaterDetailBean.importMaterDetail.batch.endDate}"
+						showButtonPanel="true" navigator="true"
+						pattern="#{applicationBean.cf.formatDate}"
+						mask="#{applicationBean.cf.maskDate}">
+					</p:calendar>
+					<p:outputLabel value="Ghi chú lô hàng" />
+					<p:inputTextarea cols="24" rows="2"
+						value="#{importMaterDetailBean.importMaterDetail.batch.note}" />
+				</h:panelGrid>
+			</h:panelGrid>
+			<div style="clear: both;"></div>
+			<p:separator />
+			<h:panelGrid columns="2" styleClass="noneformat"
+				columnClasses="w50,w50" style="width:100%">
+				<p:panel style="border:0px;">
+					<p:commandButton value="Lưu/Cập nhật" id="save"
+						update=":messages,:menuformid,:formdialogcreate"
+						actionListener="#{importMaterDetailBean.createOrUpdate()}" />
+					<p:commandButton value="Copy"
+						actionListener="#{importMaterDetailBean.copy()}" />
+					<p:commandButton value="Paste" update=":formdialogcreate"
+						actionListener="#{importMaterDetailBean.paste()}" />
+				</p:panel>
+				<p:panel style="float:right; border:0px;">
+					<p:tooltip for="truoc" value="Phiếu trước đó" />
+					<p:commandButton id="truoc" icon="ui-icon-triangle-1-w"
+						process="@this"
+						actionListener="#{importMaterDetailBean.navigation('pre')}"
+						update=":menuformid:tv:infor,:formdialogcreate" />
+					<p:tooltip for="tiep" value="Phiếu tiếp theo" />
+					<p:commandButton icon="ui-icon-triangle-1-e" id="tiep"
+						process="@this"
+						actionListener="#{importMaterDetailBean.navigation('next')}"
+						update=":menuformid:tv:infor,:formdialogcreate" />
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</ui:composition>
+</html>

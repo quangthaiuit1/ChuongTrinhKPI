@@ -1,0 +1,160 @@
+package trong.lixco.com.bean;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jboss.logging.Logger;
+import org.omnifaces.cdi.ViewScoped;
+
+import trong.lixco.com.ejb.service.DepartmentParentService;
+import trong.lixco.com.ejb.service.DepartmentService;
+import trong.lixco.com.jpa.entity.Department;
+import trong.lixco.com.jpa.entity.DepartmentParent;
+import trong.lixco.com.util.Notify;
+
+@Named
+@ViewScoped
+public class DepartmentBean extends AbstractBean<Department> {
+	private static final long serialVersionUID = 1L;
+	@Inject
+	private Logger logger;
+	@Inject
+	private DepartmentService departmentService;
+	@Inject
+	private DepartmentParentService departmentParentService;
+	private Notify notify;
+	private Department crudDepartment;
+	private Department selectDepartment;
+	private Department searchDepartment;
+	private List<Department> listDepartment;
+	private List<DepartmentParent> listDepartmentParent;
+
+	@Override
+	protected void initItem() {
+		try{
+		searchDepartment=new Department();
+		crudDepartment=new Department();
+		listDepartment=departmentService.findAll();
+		listDepartmentParent = departmentParentService.findAll();
+		}catch(Exception e){
+			logger.error("DepartmentBean.initItem:"+e.getMessage(),e);
+		}
+	}
+
+	public void departmentSearch(){
+		try{
+			listDepartment=departmentService.searchDepartment(searchDepartment.getCode(),searchDepartment.getName(),searchDepartment.getDepartmentParent());
+		}catch(Exception e){
+			logger.error("DepartmentBean.departmentSearch:"+e.getMessage(),e);
+		}
+	}
+	public void reset(){
+		crudDepartment=new Department();
+	}
+	public void deleteDepartment(){
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try{
+			if(allowDelete(new Date())){
+				Boolean kt=departmentService.delete(crudDepartment);
+				if(kt){
+					notify.success();
+				}else{
+					notify.message("Không thành công!.");
+				}
+			}else{
+				notify.warningDetail();
+			}
+		}catch(Exception e){
+			logger.error("DepartmentBean.departmentSearch:"+e.getMessage(),e);
+		}
+	}
+	public void createOrUpdate(){
+		notify = new Notify(FacesContext.getCurrentInstance());
+		try{
+			if(crudDepartment!=null && crudDepartment.getCode()!=null && !"".equals(crudDepartment.getCode()) && crudDepartment.getName()!=null && 
+					!"".equals(crudDepartment.getName())){
+				if(crudDepartment.getId()!=null){
+					if(allowUpdate(new Date())){
+						crudDepartment=installUpdate(crudDepartment);
+						crudDepartment=departmentService.update(crudDepartment);
+						int index = listDepartment.indexOf(crudDepartment);
+						listDepartment.set(index, crudDepartment);
+						writeLogInfo("Cập nhật " + crudDepartment.toString());
+						notify.success();
+					}else{
+						crudDepartment=new Department();
+						notify.warningDetail();
+					}
+				}else{
+					if (allowSave(null)) {
+						crudDepartment=installSave(crudDepartment);
+						crudDepartment = departmentService.create(crudDepartment);
+						listDepartment.add(0, crudDepartment);
+						writeLogInfo("Tạo mới " + crudDepartment.toString());
+						notify.success();
+					} else {
+						crudDepartment = new Department();
+						notify.warningDetail();
+					}
+				}
+			}else{
+				notify.message("Chưa điền đầy đủ thông tin");
+			}
+		}catch(Exception e){
+			logger.error("DepartmentBean.createOrUpdate:"+e.getMessage(),e);
+		}
+	}
+	public void showEdit(){
+		this.crudDepartment=selectDepartment;
+	}
+	@Override
+	protected Logger getLogger() {
+		// TODO Auto-generated method stub
+		return logger;
+	}
+
+	public Department getCrudDepartment() {
+		return crudDepartment;
+	}
+
+	public void setCrudDepartment(Department crudDepartment) {
+		this.crudDepartment = crudDepartment;
+	}
+
+	public List<Department> getListDepartment() {
+		return listDepartment;
+	}
+
+	public void setListDepartment(List<Department> listDepartment) {
+		this.listDepartment = listDepartment;
+	}
+
+	public Department getSearchDepartment() {
+		return searchDepartment;
+	}
+
+	public void setSearchDepartment(Department searchDepartment) {
+		this.searchDepartment = searchDepartment;
+	}
+
+	public List<DepartmentParent> getListDepartmentParent() {
+		return listDepartmentParent;
+	}
+
+	public void setListDepartmentParent(List<DepartmentParent> listDepartmentParent) {
+		this.listDepartmentParent = listDepartmentParent;
+	}
+
+	public Department getSelectDepartment() {
+		return selectDepartment;
+	}
+
+	public void setSelectDepartment(Department selectDepartment) {
+		this.selectDepartment = selectDepartment;
+	}
+
+}

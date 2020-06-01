@@ -1,0 +1,95 @@
+package trong.lixco.com.ejb.service;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+import trong.lixco.com.jpa.entity.Distrist;
+import trong.lixco.com.jpa.entity.Wards;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
+public class WardsService extends AbstractService<Wards> {
+@Inject
+	private EntityManager em;
+	@Resource
+	private SessionContext ct;
+	
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+	
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+	
+	@Override
+	protected Class<Wards> getEntityClass() {
+		return Wards.class;
+	}
+	public List<Wards> findByDistrist(Distrist distrist) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Wards> cq = cb.createQuery(Wards.class);
+		Root<Wards> root = cq.from(Wards.class);
+		cq.select(root).where(cb.equal(root.get("distrist"), distrist));
+		TypedQuery<Wards> query = em.createQuery(cq);
+		List<Wards> results = query.getResultList();
+		return results;
+	}
+	public Wards findByCodeBH(String codeBH) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Wards> cq = cb.createQuery(Wards.class);
+		Root<Wards> root = cq.from(Wards.class);
+		cq.select(root).where(cb.equal(root.get("codeBH"), codeBH));
+		TypedQuery<Wards> query = em.createQuery(cq);
+		List<Wards> results = query.getResultList();
+		if (results.size() != 0) {
+			return results.get(0);
+		} else {
+			return null;
+		}
+	}
+
+
+	 public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		 //Lưu ý, AES chỉ chấp nhận các key có độ dài là 128, 192, hoặc 256 bits
+		    String SECRET_KEY = "stackjava.com.if";
+		    SecretKeySpec skeySpec = new SecretKeySpec(SECRET_KEY.getBytes(), "AES");
+		    
+		    String original = "stackjava.com";  
+		    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+		    cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+		    byte[] byteEncrypted = cipher.doFinal(original.getBytes());
+		    String encrypted =  Base64.getEncoder().encodeToString(byteEncrypted);
+		    
+		    
+		    cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+		    byte[] byteDecrypted = cipher.doFinal(byteEncrypted);
+		    String decrypted = new String(byteDecrypted);
+		    
+		    System.out.println("original  text: " + original);
+		    System.out.println("encrypted text: " + encrypted);
+		    System.out.println("decrypted text: " + decrypted);
+		    
+		  }
+}

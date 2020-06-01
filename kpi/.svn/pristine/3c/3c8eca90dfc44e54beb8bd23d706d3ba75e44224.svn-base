@@ -1,0 +1,305 @@
+/**
+ * LAddress.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package trong.lixco.com.nhansu.servicepublics;
+
+public class LAddress  implements java.io.Serializable {
+    private java.lang.String addl;
+
+    private trong.lixco.com.ejb.servicepublics.City city;
+
+    private trong.lixco.com.ejb.servicepublics.Distrist distrist;
+
+    private java.lang.Long id;
+
+    private java.lang.String note;
+
+    private trong.lixco.com.ejb.servicepublics.Wards wards;
+
+    public LAddress() {
+    }
+
+    public LAddress(
+           java.lang.String addl,
+           trong.lixco.com.ejb.servicepublics.City city,
+           trong.lixco.com.ejb.servicepublics.Distrist distrist,
+           java.lang.Long id,
+           java.lang.String note,
+           trong.lixco.com.ejb.servicepublics.Wards wards) {
+           this.addl = addl;
+           this.city = city;
+           this.distrist = distrist;
+           this.id = id;
+           this.note = note;
+           this.wards = wards;
+    }
+
+
+    /**
+     * Gets the addl value for this LAddress.
+     * 
+     * @return addl
+     */
+    public java.lang.String getAddl() {
+        return addl;
+    }
+
+
+    /**
+     * Sets the addl value for this LAddress.
+     * 
+     * @param addl
+     */
+    public void setAddl(java.lang.String addl) {
+        this.addl = addl;
+    }
+
+
+    /**
+     * Gets the city value for this LAddress.
+     * 
+     * @return city
+     */
+    public trong.lixco.com.ejb.servicepublics.City getCity() {
+        return city;
+    }
+
+
+    /**
+     * Sets the city value for this LAddress.
+     * 
+     * @param city
+     */
+    public void setCity(trong.lixco.com.ejb.servicepublics.City city) {
+        this.city = city;
+    }
+
+
+    /**
+     * Gets the distrist value for this LAddress.
+     * 
+     * @return distrist
+     */
+    public trong.lixco.com.ejb.servicepublics.Distrist getDistrist() {
+        return distrist;
+    }
+
+
+    /**
+     * Sets the distrist value for this LAddress.
+     * 
+     * @param distrist
+     */
+    public void setDistrist(trong.lixco.com.ejb.servicepublics.Distrist distrist) {
+        this.distrist = distrist;
+    }
+
+
+    /**
+     * Gets the id value for this LAddress.
+     * 
+     * @return id
+     */
+    public java.lang.Long getId() {
+        return id;
+    }
+
+
+    /**
+     * Sets the id value for this LAddress.
+     * 
+     * @param id
+     */
+    public void setId(java.lang.Long id) {
+        this.id = id;
+    }
+
+
+    /**
+     * Gets the note value for this LAddress.
+     * 
+     * @return note
+     */
+    public java.lang.String getNote() {
+        return note;
+    }
+
+
+    /**
+     * Sets the note value for this LAddress.
+     * 
+     * @param note
+     */
+    public void setNote(java.lang.String note) {
+        this.note = note;
+    }
+
+
+    /**
+     * Gets the wards value for this LAddress.
+     * 
+     * @return wards
+     */
+    public trong.lixco.com.ejb.servicepublics.Wards getWards() {
+        return wards;
+    }
+
+
+    /**
+     * Sets the wards value for this LAddress.
+     * 
+     * @param wards
+     */
+    public void setWards(trong.lixco.com.ejb.servicepublics.Wards wards) {
+        this.wards = wards;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof LAddress)) return false;
+        LAddress other = (LAddress) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = true && 
+            ((this.addl==null && other.getAddl()==null) || 
+             (this.addl!=null &&
+              this.addl.equals(other.getAddl()))) &&
+            ((this.city==null && other.getCity()==null) || 
+             (this.city!=null &&
+              this.city.equals(other.getCity()))) &&
+            ((this.distrist==null && other.getDistrist()==null) || 
+             (this.distrist!=null &&
+              this.distrist.equals(other.getDistrist()))) &&
+            ((this.id==null && other.getId()==null) || 
+             (this.id!=null &&
+              this.id.equals(other.getId()))) &&
+            ((this.note==null && other.getNote()==null) || 
+             (this.note!=null &&
+              this.note.equals(other.getNote()))) &&
+            ((this.wards==null && other.getWards()==null) || 
+             (this.wards!=null &&
+              this.wards.equals(other.getWards())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = 1;
+        if (getAddl() != null) {
+            _hashCode += getAddl().hashCode();
+        }
+        if (getCity() != null) {
+            _hashCode += getCity().hashCode();
+        }
+        if (getDistrist() != null) {
+            _hashCode += getDistrist().hashCode();
+        }
+        if (getId() != null) {
+            _hashCode += getId().hashCode();
+        }
+        if (getNote() != null) {
+            _hashCode += getNote().hashCode();
+        }
+        if (getWards() != null) {
+            _hashCode += getWards().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+    // Type metadata
+    private static org.apache.axis.description.TypeDesc typeDesc =
+        new org.apache.axis.description.TypeDesc(LAddress.class, true);
+
+    static {
+        typeDesc.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "lAddress"));
+        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("addl");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "addl"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("city");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "city"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "city"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("distrist");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "distrist"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "distrist"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("id");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "id"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "long"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("note");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "note"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("wards");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "wards"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://servicepublics.ejb.com.lixco.trong/", "wards"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+    }
+
+    /**
+     * Return type metadata object
+     */
+    public static org.apache.axis.description.TypeDesc getTypeDesc() {
+        return typeDesc;
+    }
+
+    /**
+     * Get Custom Serializer
+     */
+    public static org.apache.axis.encoding.Serializer getSerializer(
+           java.lang.String mechType, 
+           java.lang.Class _javaType,  
+           javax.xml.namespace.QName _xmlType) {
+        return 
+          new  org.apache.axis.encoding.ser.BeanSerializer(
+            _javaType, _xmlType, typeDesc);
+    }
+
+    /**
+     * Get Custom Deserializer
+     */
+    public static org.apache.axis.encoding.Deserializer getDeserializer(
+           java.lang.String mechType, 
+           java.lang.Class _javaType,  
+           javax.xml.namespace.QName _xmlType) {
+        return 
+          new  org.apache.axis.encoding.ser.BeanDeserializer(
+            _javaType, _xmlType, typeDesc);
+    }
+
+}
