@@ -92,6 +92,14 @@
 											action="#{kPIDepMonthBean.addNone()}" process="@this"
 											update=":menuformid" icon="ui-icon-plus">
 										</p:commandButton>
+										<p:tooltip for="btnAddKPIHieuSuat" value="Ngân hàng KPI hiệu suất"
+											position="top" />
+										<p:commandButton value="KPI hiệu suất" id="btnAddKPIHieuSuat"
+											rendered="#{!kPIDepMonthBean.kpiDepMonth.signKPI}"
+											action="#{kPIDepMonthBean.loadDepPerformance()}" process="@this"
+											oncomplete="PF('dialogAddKPIHieuSuat').show();"
+											update=":formDialogAddKPIHieuSuat" icon="ui-icon-arrowthick-1-s">
+										</p:commandButton>
 									</p:fieldset>
 								</div>
 								<div style="float: right">
@@ -647,5 +655,42 @@
 				</p:panelGrid>
 			</h:form>
 		</p:dialog>
+	<!-- Thai -->
+		<p:dialog widgetVar="dialogAddKPIHieuSuat" resizable="false" width="600"
+			closeOnEscape="true" header="Ngân hàng KPI hiệu suất của phòng">
+			<h:form id="formDialogAddKPIHieuSuat">
+				<p:dataTable value="#{kPIDepMonthBean.kpiDepPerformances}" lazy="true"
+					sortBy="#{item.id}"
+					expandableRowGroups="true" paginatorPosition="bottom"
+					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+					rowKey="#{item.id}" scrollable="true" style="width:100%"
+					id="dtTableAddKPIHieuSuat" scrollHeight="370" widgetVar="datatagettb"
+					resizableColumns="true" var="item" rowIndexVar="rowIndex">
+					<f:facet name="header">
+						<div style="float: right">
+							<p:commandButton type="submit" value="Đưa vào KPI"
+								update=":menuformid" action="#{kPIDepMonthBean.getListTaget()}"
+								icon="ui-icon-arrowreturnthick-1-s" />
+						</div>
+						<div style="clear: both;" />
+					</f:facet>
+					<p:column headerText="..." style="width:20px;">
+						<p:selectBooleanCheckbox value="#{item.select}">
+							<p:ajax process="@this" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column headerText="STT" style="width:20px;">
+						<h:outputText value="#{rowIndex+1}" />
+					</p:column>
+					<p:column headerText="Nội dung" style="text-align:left;">
+						<h:outputText value="#{item.content}" />
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	<!-- End Thai -->
 	</ui:define>
 </ui:composition>

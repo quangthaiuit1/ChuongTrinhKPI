@@ -59,11 +59,13 @@ import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.ejb.servicekpi.KPIDepOfMonthService;
 import trong.lixco.com.ejb.servicekpi.KPIDepService;
 import trong.lixco.com.ejb.servicekpi.PathImageAssignService;
+import trong.lixco.com.ejb.thai.kpi.DepPerformanceService;
 import trong.lixco.com.jpa.entitykpi.FormulaKPI;
 import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
 import trong.lixco.com.jpa.entitykpi.KPIDepOfMonth;
 import trong.lixco.com.jpa.entitykpi.KPIDepOfYear;
 import trong.lixco.com.jpa.entitykpi.ParamReportDetail;
+import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
 import trong.lixco.com.util.Notify;
 import trong.lixco.com.util.PDFMerger;
 
@@ -887,7 +889,15 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	public void loadTaget() {
 		kpiDepOfYears = kpiDepService.findKPIDepOfYear(kpiDepMonth.getYear(), kpiDepMonth.getCodeDepart());
 	}
-
+	//Thai
+	private List<KPIDepPerformanceJPA> kpiDepPerformances;
+	@Inject
+	DepPerformanceService DEPARTMENT_PERFORMANCE_SERVICE;
+	
+	public void loadDepPerformance() {
+		kpiDepPerformances = DEPARTMENT_PERFORMANCE_SERVICE.find(kpiDepMonth.getYear(), kpiDepMonth.getCodeDepart());
+	}
+	//End Thai
 	public void getListTaget() {
 		try {
 			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
@@ -1195,4 +1205,12 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		this.nameDepart = nameDepart;
 	}
 
+	public List<KPIDepPerformanceJPA> getKpiDepPerformances() {
+		return kpiDepPerformances;
+	}
+
+	public void setKpiDepPerformances(List<KPIDepPerformanceJPA> kpiDepPerformances) {
+		this.kpiDepPerformances = kpiDepPerformances;
+	}
+	
 }
