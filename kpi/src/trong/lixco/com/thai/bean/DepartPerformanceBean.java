@@ -1,8 +1,4 @@
 package trong.lixco.com.thai.bean;
-<<<<<<< HEAD
-
-=======
->>>>>>> kpi_canhan
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,26 +11,16 @@ import javax.inject.Named;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.omnifaces.cdi.ViewScoped;
-<<<<<<< HEAD
 import org.primefaces.context.RequestContext;
-=======
->>>>>>> kpi_canhan
 
 import trong.lixco.com.account.servicepublics.DepartmentServicePublic;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublicProxy;
 import trong.lixco.com.account.servicepublics.Member;
 import trong.lixco.com.bean.AbstractBean;
-import trong.lixco.com.classInfor.TagetDepartInfo;
-<<<<<<< HEAD
 import trong.lixco.com.ejb.servicekpi.FormulaKPIService;
 import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.ejb.thai.kpi.DepPerformanceService;
 import trong.lixco.com.jpa.entitykpi.FormulaKPI;
-import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
-import trong.lixco.com.jpa.entitykpi.KPIDepOfMonth;
-=======
-import trong.lixco.com.ejb.thai.kpi.DepPerformanceService;
->>>>>>> kpi_canhan
 import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
 import trong.lixco.com.thai.bean.entities.InfoDepPerformance;
 import trong.lixco.com.util.Notify;
@@ -54,20 +40,12 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 
 	@Inject
 	private Logger logger;
-<<<<<<< HEAD
 
-=======
->>>>>>> kpi_canhan
 	@Override
 	protected Logger getLogger() {
 		return logger;
 	}
-<<<<<<< HEAD
-
 	// Thai
-=======
-	//Thai
->>>>>>> kpi_canhan
 	KPIDepPerformanceJPA kpiDepPerformance;
 
 	@Override
@@ -81,7 +59,6 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		}
 		member = getAccount().getMember();
 		codeDepart = member.getDepartment().getCode();
-
 		searchItem();
 	}
 
@@ -170,36 +147,21 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		}
 	}
 
-	List<TagetDepartInfo> tagetDepartInfos;
-<<<<<<< HEAD
-
 	// Thai
-=======
-	
-	//Thai
->>>>>>> kpi_canhan
 	@Inject
 	DepPerformanceService DEPARTMENT_PERFORMANCE_SERVICE;
 	List<InfoDepPerformance> listInfoDepartPerformance;
 	List<KPIDepPerformanceJPA> listDepartPerformance;
 	private KPIDepPerformanceJPA kpiDepPerformanceUpdate;
-<<<<<<< HEAD
 
-=======
->>>>>>> kpi_canhan
 	public void searchItem() {
 		if (getAccount().isAdmin())
 			listDepartPerformance = DEPARTMENT_PERFORMANCE_SERVICE.find(year, null);
 		else
 			listDepartPerformance = DEPARTMENT_PERFORMANCE_SERVICE.find(year, member.getDepartment().getCode());
 
-<<<<<<< HEAD
 		Map<String, List<KPIDepPerformanceJPA>> datagroups1 = listDepartPerformance.stream()
 				.collect(Collectors.groupingBy(p -> p.getCodeDepart(), Collectors.toList()));
-=======
-		Map<String, List<KPIDepPerformanceJPA>> datagroups1 = listDepartPerformance.stream().collect(
-				Collectors.groupingBy(p -> p.getCodeDepart(), Collectors.toList()));
->>>>>>> kpi_canhan
 
 		listInfoDepartPerformance = new ArrayList<InfoDepPerformance>();
 		for (String key : datagroups1.keySet()) {
@@ -215,7 +177,6 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		}
 
 	}
-<<<<<<< HEAD
 
 	private List<FormulaKPI> formulaKPIs;
 	private FormulaKPI formulaKPISelect;
@@ -257,8 +218,6 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		}
 	}
 
-=======
->>>>>>> kpi_canhan
 	public List<InfoDepPerformance> getListInfoDepartPerformance() {
 		return listInfoDepartPerformance;
 	}
@@ -274,13 +233,10 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	public void setListDepartPerformance(List<KPIDepPerformanceJPA> listDepartPerformance) {
 		this.listDepartPerformance = listDepartPerformance;
 	}
-<<<<<<< HEAD
 
 	// End Thai
-=======
-	
-	//End Thai
->>>>>>> kpi_canhan
+
+	// End Thai
 
 	public int getYear() {
 		return year;
@@ -296,14 +252,6 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 
 	public void setMember(Member member) {
 		this.member = member;
-	}
-
-	public List<TagetDepartInfo> getTagetDepartInfos() {
-		return tagetDepartInfos;
-	}
-
-	public void setTagetDepartInfos(List<TagetDepartInfo> tagetDepartInfos) {
-		this.tagetDepartInfos = tagetDepartInfos;
 	}
 
 	public String getCodeDepart() {
@@ -330,7 +278,6 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		this.kpiDepPerformance = kpiDepPerformance;
 	}
 
-<<<<<<< HEAD
 	public List<FormulaKPI> getFormulaKPIs() {
 		return formulaKPIs;
 	}
@@ -363,6 +310,4 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		this.formulaKPIService = formulaKPIService;
 	}
 
-=======
->>>>>>> kpi_canhan
 }

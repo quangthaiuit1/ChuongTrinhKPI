@@ -92,7 +92,6 @@
 											action="#{kPIDepMonthBean.addNone()}" process="@this"
 											update=":menuformid" icon="ui-icon-plus">
 										</p:commandButton>
-<<<<<<< HEAD
 										<p:tooltip for="btnAddKPIHieuSuat"
 											value="Ngân hàng KPI hiệu suất" position="top" />
 										<p:commandButton value="KPI hiệu suất" id="btnAddKPIHieuSuat"
@@ -102,15 +101,6 @@
 											oncomplete="PF('dialogAddKPIHieuSuat').show();"
 											update=":formDialogAddKPIHieuSuat"
 											icon="ui-icon-arrowthick-1-s">
-=======
-										<p:tooltip for="btnAddKPIHieuSuat" value="Ngân hàng KPI hiệu suất"
-											position="top" />
-										<p:commandButton value="KPI hiệu suất" id="btnAddKPIHieuSuat"
-											rendered="#{!kPIDepMonthBean.kpiDepMonth.signKPI}"
-											action="#{kPIDepMonthBean.loadTaget()}" process="@this"
-											oncomplete="PF('dialogAddKPIHieuSuat').show();"
-											update=":dialogTagetid" icon="ui-icon-arrowthick-1-s">
->>>>>>> kpi_canhan
 										</p:commandButton>
 									</p:fieldset>
 								</div>
@@ -677,7 +667,6 @@
 				</p:panelGrid>
 			</h:form>
 		</p:dialog>
-<<<<<<< HEAD
 		<!-- Thai -->
 		<p:dialog widgetVar="dialogAddKPIHieuSuat" resizable="false"
 			width="600" closeOnEscape="true"
@@ -695,23 +684,6 @@
 							<p:commandButton type="submit" value="Đưa vào KPI"
 								update=":menuformid"
 								action="#{kPIDepMonthBean.getListKPIPerformance()}"
-=======
-	<!-- Thai -->
-		<p:dialog widgetVar="dialogAddKPIHieuSuat" resizable="false" width="600"
-			closeOnEscape="true" header="Ngân hàng KPI hiệu suất của phòng">
-			<h:form id="formDialogAddKPIHieuSuat">
-				<p:dataTable value="#{kPIDepMonthBean.kpiDepOfYears}" lazy="true"
-					sortBy="#{item.tagetDepart.kTagetDepartCate.code}"
-					expandableRowGroups="true" paginatorPosition="bottom"
-					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
-					rowKey="#{item.id}" scrollable="true" style="width:100%"
-					id="dtTableAddKPIHieuSuat" scrollHeight="370" widgetVar="datatagettb"
-					resizableColumns="true" var="item">
-					<f:facet name="header">
-						<div style="float: right">
-							<p:commandButton type="submit" value="Đưa vào KPI"
-								update=":menuformid" action="#{kPIDepMonthBean.getListTaget()}"
->>>>>>> kpi_canhan
 								icon="ui-icon-arrowreturnthick-1-s" />
 						</div>
 						<div style="clear: both;" />
@@ -722,20 +694,10 @@
 						</p:selectBooleanCheckbox>
 					</p:column>
 					<p:column headerText="STT" style="width:20px;">
-<<<<<<< HEAD
 						<h:outputText value="#{rowIndex+1}" />
 					</p:column>
 					<p:column headerText="Nội dung" style="text-align:left;">
 						<h:outputText value="#{item.content}" />
-=======
-						<h:outputText value="#{item.no}" />
-					</p:column>
-					<p:column headerText="Nội dung" style="text-align:left;">
-						<h:outputText value="#{item.contentAppreciate}" />
-					</p:column>
-					<p:column headerText="Trọng số" width="80" style="text-align:left;">
-						<h:outputText value="#{item.weighted}%" />
->>>>>>> kpi_canhan
 					</p:column>
 					<f:facet name="footer">
 						<div style="clear: both;" />
@@ -743,10 +705,6 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
-<<<<<<< HEAD
 		<!-- End Thai -->
-=======
-	<!-- End Thai -->
->>>>>>> kpi_canhan
 	</ui:define>
 </ui:composition>

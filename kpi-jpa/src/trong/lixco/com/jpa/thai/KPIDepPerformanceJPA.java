@@ -15,11 +15,8 @@ public class KPIDepPerformanceJPA extends AbstractEntity{
 	private int year;
 	@ManyToOne
 	private FormulaKPI formulaKPI;//cong thuc tinh
-<<<<<<< HEAD
 	private String computation;// cach tinh
 	
-=======
->>>>>>> kpi_canhan
 	public String getContent() {
 		return content;
 	}
@@ -44,13 +41,10 @@ public class KPIDepPerformanceJPA extends AbstractEntity{
 	public void setYear(int year) {
 		this.year = year;
 	}
-<<<<<<< HEAD
 	public String getComputation() {
 		return computation;
 	}
 	public void setComputation(String computation) {
 		this.computation = computation;
 	}
-=======
->>>>>>> kpi_canhan
 }
