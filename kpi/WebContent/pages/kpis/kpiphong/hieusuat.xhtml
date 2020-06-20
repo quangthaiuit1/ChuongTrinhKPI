@@ -7,7 +7,11 @@
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
 	<ui:define name="content">
+<<<<<<< HEAD
+		<h3 style="margin: 0px">Ngân hàng KPI hiệu suất</h3>
+=======
 		<h3 style="margin: 0px">Mục tiêu phòng ban (năm)</h3>
+>>>>>>> kpi_canhan
 		<p:separator />
 		<h:form id="menuformid">
 			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
@@ -69,19 +73,44 @@
 								selection="#{departPerformanceBean.kpiDepPerformanceUpdate}"
 								scrollable="true"
 								selectionMode="single" scrollWidth="650" scrollHeight="370"
+<<<<<<< HEAD
+								resizableColumns="true" var="item" rowIndexVar="rowIndex">
+								<p:ajax event="rowSelect"
+									listener="#{departPerformanceBean.showEdit()}"
+									update=":menuformid:info" />
+								<p:column headerText="STT" style="width:30px">
+									<h:outputText value="#{rowIndex+1}" />
+=======
 								resizableColumns="true" var="item">
 								<p:ajax event="rowSelect"
 									listener="#{departPerformanceBean.showEdit()}"
 									update=":menuformid:info" />
 								<p:column headerText="ID" style="width:30px">
 									<h:outputText value="#{item.id}" />
+>>>>>>> kpi_canhan
 								</p:column>
 								<p:column headerText="Năm" style="width:35px">
 									<h:outputText value="#{item.year}" />
 								</p:column>
+<<<<<<< HEAD
+								<p:column headerText="Nội dung" style="width:300px">
+									<h:outputText value="#{item.content}" />
+								</p:column>
+								<p:column headerText="Cách tính" width="160"
+								visible="#{kPIDepMonthBean.list[5]}">
+								<p:outputLabel value="#{item.formulaKPI.code}" rows="2" />
+								<p:commandLink style="float:right" process="@this"
+									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
+									actionListener="#{departPerformanceBean.showListFormula(item)}"
+									update=":dialogformula1,:messages">
+									<h:outputText value="&#8801;" />
+								</p:commandLink>
+							</p:column>
+=======
 								<p:column headerText="Nội dung" style="width:350px">
 									<h:outputText value="#{item.content}" />
 								</p:column>
+>>>>>>> kpi_canhan
 								<p:column headerText="Ghi chú" style="width:300px">
 									<h:outputText value="#{item.note}" />
 								</p:column>
@@ -94,6 +123,34 @@
 				</p:panel>
 			</h:panelGrid>
 		</h:form>
+<<<<<<< HEAD
+		<p:dialog widgetVar="dialogFormula1" resizable="false" width="300"
+			closeOnEscape="true" header="Công thức tính">
+			<h:form id="dialogformula1">
+				<p:dataTable value="#{departPerformanceBean.formulaKPIs}" lazy="true"
+					paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
+					paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
+					scrollHeight="370" selection="#{departPerformanceBean.formulaKPISelect}"
+					selectionMode="single" id="tableid" resizableColumns="true"
+					var="item" rowIndexVar="rowIndex">
+					<p:column headerText="STT" width="20">
+						<h:outputText value="#{rowIndex+1}" />
+					</p:column>
+					<p:column headerText="Mô tả công thức">
+						<h:outputText value="#{item.code}" />
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+				<p:separator />
+				<p:commandButton value="Đặt công thức"
+					oncomplete="PF('dialogFormula1').hide()"
+					action="#{departPerformanceBean.updateFormula()}" update=":menuformid" />
+			</h:form>
+		</p:dialog>
+=======
 		
+>>>>>>> kpi_canhan
 	</ui:define>
 </ui:composition>

@@ -476,7 +476,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 							engine.eval("var TH = " + TH);
 							engine.eval("var KH = " + KH);
 							iscacul = true;
-						}else{
+						} else {
 							iscacul = false;
 						}
 					} catch (Exception e) {
@@ -505,7 +505,8 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 							String code = item.getFormulaKPI().getCodeNotGood();
 							if (isdate) {
 								if (code.contains("TH-KH") || code.contains("KH-TH")) {
-									engine.eval("var KQ = Math.abs((TH.getTime() - KH.getTime()) / (24 * 60 * 60 * 1000))");
+									engine.eval(
+											"var KQ = Math.abs((TH.getTime() - KH.getTime()) / (24 * 60 * 60 * 1000))");
 									code = code.replaceAll("TH-KH", "KQ");
 									code = code.replaceAll("KH-TH", "KQ");
 								}
@@ -641,8 +642,8 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		kpiDepMonth.setSignResultKPIBLD(false);
 		kpiDepMonth.setResult(0);
 		kpiDepMonth.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
-		kpiDepMonth.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1)
-				.minusDays(1).toDate());
+		kpiDepMonth.setDateAssignResult(
+				new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1).minusDays(1).toDate());
 
 		List<KPIDepMonth> temps = kpiDepMonthService.findKPIDepMonth(monthCopy, yearCopy, kpiDepMonth.getCodeDepart());
 		for (int i = 0; i < temps.size(); i++) {
@@ -703,8 +704,8 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 				kpiDepMonth.setSignKPIBLD(false);
 				kpiDepMonth.setSignResultKPIBLD(false);
 				kpiDepMonth.setResult(0);
-				kpiDepMonth.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1)
-						.toDate());
+				kpiDepMonth.setDateRecei(
+						new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
 				kpiDepMonth.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1)
 						.withDayOfMonth(1).minusDays(1).toDate());
 
@@ -751,22 +752,44 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 				if (allowSave(date)) {
 					List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
 					double checkp = 0;
+					double checkKPIPerformanceWeighted = 0;
+					boolean checkKPIPerformanceWeightedInvalid = false;
 					for (int i = 0; i < kPIDepOfMonths.size(); i++) {
 						checkp += kPIDepOfMonths.get(i).getWeighted();
+						// Thai
+						if (kPIDepOfMonths.get(i).isKPIPerformance()) {
+							if (kPIDepOfMonths.get(i).getWeighted() >= 10) {
+								checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
+										+ kPIDepOfMonths.get(i).getWeighted();
+							} else {
+								checkKPIPerformanceWeightedInvalid = true;
+								break;
+							}
+						}
 					}
 					if (kPIDepOfMonths.size() != 0 && checkp != TOTALPARAM) {
 						noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
 					} else {
-						listSaves.addAll(kPIDepOfMonths);
-						kpiDepMonth.setKpiDepOfMonths(listSaves);
-						KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, KPIDepOfMonthRemoves);
-						if (wf != null) {
-							searchItem();
-							writeLogInfo("Tao moi " + wf.toString());
-							notice("Lưu thành công");
+						// Thai
+						if (checkKPIPerformanceWeightedInvalid == false && checkKPIPerformanceWeighted >= 80) {
+							listSaves.addAll(kPIDepOfMonths);
+							kpiDepMonth.setKpiDepOfMonths(listSaves);
+							KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, KPIDepOfMonthRemoves);
+							if (wf != null) {
+								searchItem();
+								writeLogInfo("Tao moi " + wf.toString());
+								notice("Lưu thành công");
+							} else {
+								noticeError("Xảy ra lỗi không lưu được");
+							}
 						} else {
-							noticeError("Xảy ra lỗi không lưu được");
+							if (checkKPIPerformanceWeightedInvalid == true) {
+								noticeError("Trọng số KPI hiệu suất phải lớn hơn 10%");
+							} else {
+								noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
+							}
 						}
+
 					}
 				} else {
 					notify.warningDetail();
@@ -806,8 +829,20 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 						} else {
 							List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
 							double checkp = 0;
+							double checkKPIPerformanceWeighted = 0;
+							boolean checkKPIPerformanceWeightedInvalid = false;
 							for (int i = 0; i < kPIDepOfMonths.size(); i++) {
 								checkp += kPIDepOfMonths.get(i).getWeighted();
+								// Thai
+								if (kPIDepOfMonths.get(i).isKPIPerformance()) {
+									if (kPIDepOfMonths.get(i).getWeighted() >= 10) {
+										checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
+												+ kPIDepOfMonths.get(i).getWeighted();
+									} else {
+										checkKPIPerformanceWeightedInvalid = true;
+										break;
+									}
+								}
 							}
 							if (kPIDepOfMonths.size() != 0 && checkp != TOTALPARAM) {
 								noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
@@ -815,28 +850,51 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 								listSaves.addAll(kPIDepOfMonths);
 								kpiDepMonth.setKpiDepOfMonths(listSaves);
 								KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, KPIDepOfMonthRemoves);
-								if (wf != null) {
-									kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
-									kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
-									for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-										kPIDepOfMonths.get(i).setIndex(i);
+								// Thai
+								if (checkKPIPerformanceWeightedInvalid == false && checkKPIPerformanceWeighted >= 80) {
+									if (wf != null) {
+										kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
+										kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
+										for (int i = 0; i < kPIDepOfMonths.size(); i++) {
+											kPIDepOfMonths.get(i).setIndex(i);
+										}
+										searchItem();
+										notice("Lưu thành công");
+									} else {
+										noticeError("Xảy ra lỗi không lưu được");
 									}
-									searchItem();
-									notice("Lưu thành công");
 								} else {
-									noticeError("Xảy ra lỗi không lưu được");
+									if (checkKPIPerformanceWeightedInvalid == true) {
+										noticeError("Trọng số KPI hiệu suất phải lớn hơn 10%");
+									} else {
+										noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
+									}
 								}
 							}
 						}
 					} else {
 						List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
 						double checkp = 0;
+						double checkKPIPerformanceWeighted = 0;
+						boolean checkKPIPerformanceWeightedInvalid = false;
 						for (int i = 0; i < kPIDepOfMonths.size(); i++) {
 							checkp += kPIDepOfMonths.get(i).getWeighted();
+							// Thai
+							if (kPIDepOfMonths.get(i).isKPIPerformance()) {
+								if (kPIDepOfMonths.get(i).getWeighted() >= 10) {
+									checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
+											+ kPIDepOfMonths.get(i).getWeighted();
+								} else {
+									checkKPIPerformanceWeightedInvalid = true;
+									break;
+								}
+							}
 						}
+
 						if (kPIDepOfMonths.size() != 0 && checkp != TOTALPARAM) {
 							noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
 						} else {
+
 							List<KPIDepMonth> temps = kpiDepMonthService.findKPIDepMonth(kpiDepMonth.getMonth(),
 									kpiDepMonth.getYear(), kpiDepMonth.getCodeDepart());
 							if (temps.size() != 0) {
@@ -850,31 +908,54 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 								listSaves.addAll(kPIDepOfMonths);
 								kpiDepMonth.setKpiDepOfMonths(listSaves);
 								if (status) {
-									KPIDepMonth wf = kpiDepMonthService.updateAssign(kpiDepMonth);
-									if (wf != null) {
-										kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
-										kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
-										for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-											kPIDepOfMonths.get(i).setIndex(i);
+									// Thai
+									if (checkKPIPerformanceWeightedInvalid == false
+											&& checkKPIPerformanceWeighted >= 80) {
+										KPIDepMonth wf = kpiDepMonthService.updateAssign(kpiDepMonth);
+										if (wf != null) {
+											kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
+											kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
+											for (int i = 0; i < kPIDepOfMonths.size(); i++) {
+												kPIDepOfMonths.get(i).setIndex(i);
+											}
+											searchItem();
+											notice("Lưu thành công");
+										} else {
+											noticeError("Xảy ra lỗi không lưu được");
 										}
-										searchItem();
-										notice("Lưu thành công");
 									} else {
-										noticeError("Xảy ra lỗi không lưu được");
+										if (checkKPIPerformanceWeightedInvalid == true) {
+											noticeError("Trọng số KPI hiệu suất phải lớn hơn 10%");
+										} else {
+											noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
+										}
 									}
+
 								} else {
-									KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, KPIDepOfMonthRemoves);
-									if (wf != null) {
-										kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
-										kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
-										for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-											kPIDepOfMonths.get(i).setIndex(i);
+									// Thai
+									if (checkKPIPerformanceWeightedInvalid == false
+											&& checkKPIPerformanceWeighted >= 80) {
+										KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth,
+												KPIDepOfMonthRemoves);
+										if (wf != null) {
+											kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
+											kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
+											for (int i = 0; i < kPIDepOfMonths.size(); i++) {
+												kPIDepOfMonths.get(i).setIndex(i);
+											}
+											searchItem();
+											notice("Lưu thành công");
+										} else {
+											noticeError("Xảy ra lỗi không lưu được");
 										}
-										searchItem();
-										notice("Lưu thành công");
 									} else {
-										noticeError("Xảy ra lỗi không lưu được");
+										if (checkKPIPerformanceWeightedInvalid == true) {
+											noticeError("Trọng số KPI hiệu suất phải lớn hơn 10%");
+										} else {
+											noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
+										}
 									}
+
 								}
 							}
 						}
@@ -889,15 +970,17 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	public void loadTaget() {
 		kpiDepOfYears = kpiDepService.findKPIDepOfYear(kpiDepMonth.getYear(), kpiDepMonth.getCodeDepart());
 	}
-	//Thai
+
+	// Thai
 	private List<KPIDepPerformanceJPA> kpiDepPerformances;
 	@Inject
 	DepPerformanceService DEPARTMENT_PERFORMANCE_SERVICE;
-	
+
 	public void loadDepPerformance() {
 		kpiDepPerformances = DEPARTMENT_PERFORMANCE_SERVICE.find(kpiDepMonth.getYear(), kpiDepMonth.getCodeDepart());
 	}
-	//End Thai
+
+	// End Thai
 	public void getListTaget() {
 		try {
 			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
@@ -922,6 +1005,34 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	}
 
+	// Thai
+	public void getListKPIPerformance() {
+		try {
+			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
+			if (kpiCompOld.isSignKPI()) {
+				noticeError("KPI đã duyệt không thêm được.");
+			} else {
+				for (int i = 0; i < kpiDepPerformances.size(); i++) {
+					if (kpiDepPerformances.get(i).isSelect()) {
+						KPIDepOfMonth item = new KPIDepOfMonth();
+						item.setKPIPerformance(true);
+						item.setContentAppreciate(kpiDepPerformances.get(i).getContent());
+						item.setComputation(kpiDepPerformances.get(i).getComputation());
+						kPIDepOfMonths.add(item);
+					}
+				}
+				for (int i = 0; i < kPIDepOfMonths.size(); i++) {
+					kPIDepOfMonths.get(i).setNoid(i + 1);
+					kPIDepOfMonths.get(i).setIndex(i);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+
+	// End Thai
 	public void addNone() {
 		try {
 			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
@@ -1045,8 +1156,8 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 				kpiDepMonths = kpiDepMonthService.findKPIDepMonth(monthSearch, yearSearch, null);
 			} else {
 				if (getAccount().getMember().getDepartment() != null)
-					kpiDepMonths = kpiDepMonthService.findKPIDepMonth(monthSearch, yearSearch, getAccount().getMember()
-							.getDepartment().getCode());
+					kpiDepMonths = kpiDepMonthService.findKPIDepMonth(monthSearch, yearSearch,
+							getAccount().getMember().getDepartment().getCode());
 			}
 			for (int i = 0; i < kpiDepMonths.size(); i++) {
 				try {
@@ -1212,5 +1323,4 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	public void setKpiDepPerformances(List<KPIDepPerformanceJPA> kpiDepPerformances) {
 		this.kpiDepPerformances = kpiDepPerformances;
 	}
-	
 }

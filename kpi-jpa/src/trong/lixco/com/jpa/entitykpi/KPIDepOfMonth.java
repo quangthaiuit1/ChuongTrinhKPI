@@ -1,5 +1,6 @@
 package trong.lixco.com.jpa.entitykpi;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
@@ -38,6 +39,9 @@ public class KPIDepOfMonth extends AbstractEntity {
 	private String paramD;
 	
 	private String nameAssign;
+	//check KPI hieu suat
+	@Column(name = "is_kpi_performance")
+	private boolean isKPIPerformance;
 	
 	@Transient
 	private int noid;// so thu tu
@@ -226,6 +230,11 @@ public class KPIDepOfMonth extends AbstractEntity {
 		this.nameAssign = nameAssign;
 	}
 
+	public boolean isKPIPerformance() {
+		return isKPIPerformance;
+	}
 
-
+	public void setKPIPerformance(boolean isKPIPerformance) {
+		this.isKPIPerformance = isKPIPerformance;
+	}
 }
