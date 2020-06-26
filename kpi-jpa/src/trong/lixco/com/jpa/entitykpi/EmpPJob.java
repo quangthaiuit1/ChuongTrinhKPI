@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 public class EmpPJob extends AbstractEntity {
 	private String codeEmp;
 	private String codePJob;
-
+	
 	public String getCodeEmp() {
 		return codeEmp;
 	}

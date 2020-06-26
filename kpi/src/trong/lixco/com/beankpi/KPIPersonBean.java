@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -64,6 +65,8 @@ import trong.lixco.com.ejb.servicekpi.KPIPersonService;
 import trong.lixco.com.ejb.servicekpi.OrientationPersonService;
 import trong.lixco.com.ejb.servicekpi.PathImageAssignService;
 import trong.lixco.com.ejb.servicekpi.PositionJobService;
+import trong.lixco.com.ejb.thai.kpi.DepPerformanceService;
+import trong.lixco.com.ejb.thai.kpi.PersonalPerformanceService;
 import trong.lixco.com.jpa.entitykpi.BehaviourPerson;
 import trong.lixco.com.jpa.entitykpi.EmpPJob;
 import trong.lixco.com.jpa.entitykpi.FormulaKPI;
@@ -74,7 +77,10 @@ import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
 import trong.lixco.com.jpa.entitykpi.OrientationPerson;
 import trong.lixco.com.jpa.entitykpi.ParamReportDetail;
 import trong.lixco.com.jpa.entitykpi.PositionJob;
+import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
+import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
 import trong.lixco.com.kpi.general.ApplicationBean;
+import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
 import trong.lixco.com.util.DepartmentUtil;
 import trong.lixco.com.util.Notify;
 import trong.lixco.com.util.PDFMerger;
@@ -244,7 +250,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 								positionJobService);
 						pk.setHeaderGroupCode("I");
 						pk.setHeaderGroupName("Phẩm chất - thái độ - hành vi");
-						pk.setHeaderGroupWeighted(30.0);
+						pk.setHeaderGroupWeighted(10.0);
 						printKPIs.add(pk);
 					}
 					printKPIPRs.addAll(printKPIs);
@@ -299,7 +305,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 				PrintKPI pk = new PrintKPI(expds.get(0), true, empPJobService, memberServicePublic, positionJobService);
 				pk.setHeaderGroupCode("I");
 				pk.setHeaderGroupName("Phẩm chất - thái độ - hành vi");
-				pk.setHeaderGroupWeighted(30.0);
+				pk.setHeaderGroupWeighted(10.0);
 				printKPIs.add(pk);
 			}
 			printKPIs.sort(Comparator.comparing(PrintKPI::getHeaderGroupCode).thenComparing(PrintKPI::getNo));
@@ -385,6 +391,30 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 	public void onToggle(ToggleEvent e) {
 		list.set((Integer) e.getData(), e.getVisibility() == Visibility.VISIBLE);
 	}
+
+	// thai
+	public void removeDetailThai(KPIPersonOfMonth item) {
+		for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
+			if (kpiPersonOfMonths.get(i).getIndex() == item.getIndex()) {
+				try {
+					KPIPerson kpiCompOld = kPIPersonService.findById(kpiPersonOfMonths.get(i).getKpiPerson().getId());
+					if (kpiCompOld.isSignKPI()) {
+						noticeError("KPI đã duyệt không xóa được.");
+					} else {
+						kpiPersonOfMonths.remove(i);
+						kpiPersonOfMonthRemoves.add(item);
+						break;
+					}
+				} catch (Exception e) {
+					kpiPersonOfMonths.remove(i);
+					kpiPersonOfMonthRemoves.add(item);
+				}
+
+			}
+
+		}
+	}
+	// end thai
 
 	public void removeDetail(int no) {
 		try {
@@ -493,7 +523,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 				KPIPersonOfMonth item = new KPIPersonOfMonth();
 				item.setBehaviour(true);
 				item.setRatioComplete(-behaviourPersons.get(i).getMinusPoint());
-				item.setRatioCompleteIsWeighted((-behaviourPersons.get(i).getMinusPoint() * 30) / 100);
+				item.setRatioCompleteIsWeighted((-behaviourPersons.get(i).getMinusPoint() * 10) / 100);
 				item.setContentAppreciate(behaviourPersons.get(i).getContent());
 				kpiPersonOfMonthAdds.add(item);
 			}
@@ -504,6 +534,54 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 		}
 	}
 
+//	// Thai
+//	private List<KPIPersonalPerformance> kpiPersonalPerformances;
+//
+//	public void loadPersonalPerformance() {
+//		kpiPersonalPerformances = PERSONAL_PERFORMANCE_SERVICE.findAll();
+//		showDialogOrien();
+//	}
+
+	public List<KPIPersonalPerformance> getListKPIPersonalPerformanceSelected() {
+		List<KPIPersonalPerformance> temp = new ArrayList<>();
+		for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
+			for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
+				if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).isSelect()) {
+					temp.add(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j));
+				}
+			}
+		}
+		return temp;
+	}
+
+	public void getListKPIPerformance() {
+		try {
+			KPIPerson kpiCompOld = kPIPersonService.findById(kPIPerson.getId());
+			if (kpiCompOld.isSignKPI()) {
+				noticeError("KPI đã duyệt không thêm được.");
+			} else {
+				List<KPIPersonalPerformance> listKPIPersonalPerformanceSelected = getListKPIPersonalPerformanceSelected();
+				for (int i = 0; i < listKPIPersonalPerformanceSelected.size(); i++) {
+					// check xem item nao duoc chon
+					KPIPersonOfMonth item = new KPIPersonOfMonth();
+					item.setKPIPerformance(true);
+					item.setContentAppreciate(listKPIPersonalPerformanceSelected.get(i).getContent());
+					item.setCodeFormula(listKPIPersonalPerformanceSelected.get(i).getComputation());
+					item.setFormulaKPI(listKPIPersonalPerformanceSelected.get(i).getFormulaKPI());
+					kpiPersonOfMonths.add(item);
+				}
+				for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
+//					kpiPersonOfMonths.get(i).setNoid(i + 1);
+					kpiPersonOfMonths.get(i).setIndex(i);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+
+	// End Thai
 	public void removeDetailAdd(int no) {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		if (kpiPersonOfMonthAdds.get(no - 1).getId() != null)
@@ -567,8 +645,8 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 		kPIPerson.setTotalHV(0);
 		kPIPerson.setTotalCV(0);
 		kPIPerson.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
-		kPIPerson.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1)
-				.minusDays(1).toDate());
+		kPIPerson.setDateAssignResult(
+				new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1).minusDays(1).toDate());
 		List<KPIPerson> temps = kPIPersonService.findRange(kPIPerson.getCodeEmp(), kPIPerson.getKmonth(),
 				kPIPerson.getKyear());
 		for (int i = 0; i < temps.size(); i++) {
@@ -642,10 +720,10 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 				kPIPerson.setTotal(0);
 				kPIPerson.setTotalHV(0);
 				kPIPerson.setTotalCV(0);
-				kPIPerson.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1)
-						.toDate());
-				kPIPerson.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1)
-						.withDayOfMonth(1).minusDays(1).toDate());
+				kPIPerson.setDateRecei(
+						new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
+				kPIPerson.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1)
+						.minusDays(1).toDate());
 				List<KPIPersonOfMonth> listSaves = new ArrayList<KPIPersonOfMonth>();
 				listSaves.addAll(kpiPersonOfMonths);
 				listSaves.addAll(kpiPersonOfMonthAdds);
@@ -709,6 +787,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 						if (kpiPersonOfMonths.size() != 0 && checkp != TOTALPARAM) {
 							noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
 						} else {
+							// trong
 							listSaves.addAll(kpiPersonOfMonths);
 							listSaves.addAll(kpiPersonOfMonthAdds);
 							kPIPerson.setKpiPersonOfMonths(listSaves);
@@ -721,6 +800,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 							} else {
 								noticeError("Xảy ra lỗi không lưu được");
 							}
+							// end trong
 						}
 					}
 				} else {
@@ -757,8 +837,23 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 							} else {
 								List<KPIPersonOfMonth> listSaves = new ArrayList<KPIPersonOfMonth>();
 								double checkp = 0;
+								// thai
+								double checkKPIPerformanceWeighted = 0;
+								boolean checkKPIInvalid = false;
+								// end thai
 								for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
 									checkp += kpiPersonOfMonths.get(i).getWeighted();
+									// thai
+									if (kpiPersonOfMonths.get(i).isKPIPerformance()) {
+										if (kpiPersonOfMonths.get(i).getWeighted() >= 10) {
+											checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
+													+ kpiPersonOfMonths.get(i).getWeighted();
+										}
+									}
+									if(kpiPersonOfMonths.get(i).getWeighted() < 10) {
+										checkKPIInvalid = true;
+									}
+									// end thai
 								}
 								if (kpiPersonOfMonths.size() != 0 && checkp != TOTALPARAM) {
 									noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
@@ -767,21 +862,49 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 									listSaves.addAll(kpiPersonOfMonthAdds);
 									kPIPerson.setKpiPersonOfMonths(listSaves);
 									KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson, kpiPersonOfMonthRemoves);
-									if (wf != null) {
-										this.kPIPersonEdit = wf;
-										showEdit();
-										writeLogInfo("Cap nhat" + wf.toString());
-										notice("Lưu thành công.");
+									// Thai
+									if (checkKPIInvalid == false
+											&& checkKPIPerformanceWeighted >= 80) {
+										// trong
+										if (wf != null) {
+											this.kPIPersonEdit = wf;
+											showEdit();
+											writeLogInfo("Cap nhat" + wf.toString());
+											notice("Lưu thành công.");
+										} else {
+											noticeError("Xảy ra lỗi khi lưu.");
+										}
+										// end trong
 									} else {
-										noticeError("Xảy ra lỗi khi lưu.");
+										if (checkKPIInvalid == true) {
+											noticeError("Trọng số KPI phải lớn hơn 10%");
+										} else {
+											noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
+										}
 									}
+									// end thai
 								}
 							}
 						} else {
 							List<KPIPersonOfMonth> listSaves = new ArrayList<KPIPersonOfMonth>();
 							double checkp = 0;
+							// thai
+							double checkKPIPerformanceWeighted = 0;
+							boolean checkKPIInvalid = false;
+							// end thai
 							for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
 								checkp += kpiPersonOfMonths.get(i).getWeighted();
+								// thai
+								if (kpiPersonOfMonths.get(i).isKPIPerformance()) {
+									if (kpiPersonOfMonths.get(i).getWeighted() >= 10) {
+										checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
+												+ kpiPersonOfMonths.get(i).getWeighted();
+									}
+								}
+								if(kpiPersonOfMonths.get(i).getWeighted() < 10) {
+									checkKPIInvalid = true;
+								}
+								// end thai
 							}
 							if (kpiPersonOfMonths.size() != 0 && checkp != TOTALPARAM) {
 								noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
@@ -800,23 +923,44 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 									listSaves.addAll(kpiPersonOfMonthAdds);
 									kPIPerson.setKpiPersonOfMonths(listSaves);
 									if (status) {
-										KPIPerson wf = kPIPersonService.updateAssign(kPIPerson);
-										if (wf != null) {
-											this.kPIPersonEdit = wf;
-											showEdit();
-											notice("Lưu thành công");
+										// Thai
+										if (checkKPIInvalid == false
+												&& checkKPIPerformanceWeighted >= 80) {
+											KPIPerson wf = kPIPersonService.updateAssign(kPIPerson);
+											if (wf != null) {
+												this.kPIPersonEdit = wf;
+												showEdit();
+												notice("Lưu thành công");
+											} else {
+												noticeError("Xảy ra lỗi không lưu được");
+											}
 										} else {
-											noticeError("Xảy ra lỗi không lưu được");
+											if (checkKPIInvalid == true) {
+												noticeError("Trọng số KPI phải lớn hơn 10%");
+											} else {
+												noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
+											}
 										}
+
 									} else {
-										KPIPerson wf = kPIPersonService
-												.saveOrUpdate(kPIPerson, kpiPersonOfMonthRemoves);
-										if (wf != null) {
-											this.kPIPersonEdit = wf;
-											showEdit();
-											notice("Lưu thành công");
+										// Thai
+										if (checkKPIInvalid == false
+												&& checkKPIPerformanceWeighted >= 80) {
+											KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson,
+													kpiPersonOfMonthRemoves);
+											if (wf != null) {
+												this.kPIPersonEdit = wf;
+												showEdit();
+												notice("Lưu thành công");
+											} else {
+												noticeError("Xảy ra lỗi không lưu được");
+											}
 										} else {
-											noticeError("Xảy ra lỗi không lưu được");
+											if (checkKPIInvalid == true) {
+												noticeError("Trọng số KPI phải lớn hơn 10%");
+											} else {
+												noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
+											}
 										}
 									}
 								}
@@ -947,31 +1091,30 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 			try {
 				FacesContext facesContext = FacesContext.getCurrentInstance();
 				ExternalContext externalContext = facesContext.getExternalContext();
-					try {
-						byte[] file = PDFMerger.getFile(pathImageAssignService.findById(1l).getPath(),
-								kpm.getNameAssign());
-						HttpSession session = (HttpSession) externalContext.getSession(true);
-						HttpServletRequest ht = (HttpServletRequest) FacesContext.getCurrentInstance()
-								.getExternalContext().getRequest();
-						ITextRenderer renderer = new ITextRenderer();
-						String url = "http://" + ht.getServerName() + ":" + ht.getServerPort()
-								+ "/kpi/showdata.xhtml;jsessionid=" + session.getId() + "?pdf=true";
-						renderer.setDocument(new URL(url).toString());
-						renderer.layout();
+				try {
+					byte[] file = PDFMerger.getFile(pathImageAssignService.findById(1l).getPath(), kpm.getNameAssign());
+					HttpSession session = (HttpSession) externalContext.getSession(true);
+					HttpServletRequest ht = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+							.getRequest();
+					ITextRenderer renderer = new ITextRenderer();
+					String url = "http://" + ht.getServerName() + ":" + ht.getServerPort()
+							+ "/kpi/showdata.xhtml;jsessionid=" + session.getId() + "?pdf=true";
+					renderer.setDocument(new URL(url).toString());
+					renderer.layout();
 
-						HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-						response.setContentType("application/pdf");
-						response.addHeader("Content-disposition", "inline;filename=report.pdf");
+					HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+					response.setContentType("application/pdf");
+					response.addHeader("Content-disposition", "inline;filename=report.pdf");
 
-						response.setContentLength(file.length);
-						response.getOutputStream().write(file, 0, file.length);
-						response.getOutputStream().flush();
+					response.setContentLength(file.length);
+					response.getOutputStream().write(file, 0, file.length);
+					response.getOutputStream().flush();
 
-						OutputStream browserStream = response.getOutputStream();
-						renderer.createPDF(browserStream);
-					} finally {
-						facesContext.responseComplete();
-					}
+					OutputStream browserStream = response.getOutputStream();
+					renderer.createPDF(browserStream);
+				} finally {
+					facesContext.responseComplete();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -981,10 +1124,19 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 	@Inject
 	private EmpPJobService empPJobService;
 	private List<PositionJob> positionJobs;
+	@Inject
+	private PersonalPerformanceService PERSONAL_PERFORMANCE_SERVICE;
+	@Inject
+	private PositionJobService POSITION_JOB_SERVICE;
+
+	private List<KPIPersonalPerformance> listKPIPersonalByEmployee;
+	private List<InfoPersonalPerformance> listInfoPersonalPerformances;
 
 	public void showDialogOrien() {
+		listInfoPersonalPerformances = new ArrayList<>();
 		notify = new Notify(FacesContext.getCurrentInstance());
 		if (kPIPerson.getId() != null) {
+			// tat ca vi tri cong viec
 			positionJobs = new ArrayList<PositionJob>();
 			List<EmpPJob> empPJobs = empPJobService.findByEmployee(kPIPerson.getCodeEmp());
 			for (int i = 0; i < empPJobs.size(); i++) {
@@ -995,9 +1147,33 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 
 			if (positionJobs.size() != 0)
 				positionJobSelect = positionJobs.get(0);
-			showOrientationPerson();
+			// Thai
+			// Tao danh sach code PJob theo tung nhan vien
+			List<String> listCodePJob = new ArrayList<>();
+			for (int i = 0; i < positionJobs.size(); i++) {
+				listCodePJob.add(positionJobs.get(i).getCode());
+			}
+			// Tao list info
+			listKPIPersonalByEmployee = PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
+			Map<String, List<KPIPersonalPerformance>> datagroups11 = listKPIPersonalByEmployee.stream()
+					.collect(Collectors.groupingBy(a -> a.getCodePJob(), Collectors.toList()));
+
+			listKPIPersonalByEmployee = new ArrayList<>();
+			for (String key : datagroups11.keySet()) {
+				List<KPIPersonalPerformance> invs = datagroups11.get(key);
+				try {
+					InfoPersonalPerformance tgi = new InfoPersonalPerformance();
+					tgi.setPositionJobName(POSITION_JOB_SERVICE.findByCode(key).getName());
+					tgi.setPersonalPerformances(invs);
+					listInfoPersonalPerformances.add(tgi);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+			// End Thai
+//			showOrientationPerson();
 			RequestContext context = RequestContext.getCurrentInstance();
-			context.execute("PF('dialogOrien').show();");
+			context.execute("PF('widgetKPIPersonalPerformance').show();");
 		} else {
 			notify.warning("Chưa lưu thông tin phòng ban/nhân viên!");
 		}
@@ -1125,12 +1301,12 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 		}
 	}
 
-	int totalHV = 30;
+	int totalHV = 10;
 	double totalCV = 0;
 
 	public void caculatorResult() {
 		totalCV = 0;
-		totalHV = 30;
+		totalHV = 10;
 		for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
 			KPIPersonOfMonth item = kpiPersonOfMonths.get(i);
 			// Lay bo cong thuc xem tinh theo sua dung cong thuc nao
@@ -1255,7 +1431,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 
 			}
 		}
-		totalCV = totalCV * 70 / 100;
+		totalCV = totalCV * 90 / 100;
 		for (int i = 0; i < kpiPersonOfMonthAdds.size(); i++) {
 			if (kpiPersonOfMonthAdds.get(i).getContentAppreciate() != null
 					&& !"".equals(kpiPersonOfMonthAdds.get(i).getContentAppreciate().trim()))
@@ -1445,8 +1621,8 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 
 				for (int i = 0; i < kPIPersons.size(); i++) {
 					try {
-						kPIPersons.get(i).setNameEmp(
-								memberServicePublic.findByCode(kPIPersons.get(i).getCodeEmp()).getName());
+						kPIPersons.get(i)
+								.setNameEmp(memberServicePublic.findByCode(kPIPersons.get(i).getCodeEmp()).getName());
 					} catch (Exception e) {
 					}
 				}
@@ -1731,5 +1907,22 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 
 	public void setOrienInfoEmpls(List<OrienInfoEmpl> orienInfoEmpls) {
 		this.orienInfoEmpls = orienInfoEmpls;
+	}
+
+	// Thai
+	public List<KPIPersonalPerformance> getListKPIPersonalByEmployee() {
+		return listKPIPersonalByEmployee;
+	}
+
+	public void setListKPIPersonalByEmployee(List<KPIPersonalPerformance> listKPIPersonalByEmployee) {
+		this.listKPIPersonalByEmployee = listKPIPersonalByEmployee;
+	}
+
+	public List<InfoPersonalPerformance> getListInfoPersonalPerformances() {
+		return listInfoPersonalPerformances;
+	}
+
+	public void setListInfoPersonalPerformances(List<InfoPersonalPerformance> listInfoPersonalPerformances) {
+		this.listInfoPersonalPerformances = listInfoPersonalPerformances;
 	}
 }

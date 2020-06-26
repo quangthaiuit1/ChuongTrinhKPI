@@ -7,7 +7,7 @@
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
 	<ui:define name="content">
-		<h3 style="margin: 0px">Ngân hàng KPI hiệu suất</h3>
+		<h3 style="margin: 0px">Ngân hàng KPI hiệu suất (Phòng)</h3>
 		<p:separator />
 		<h:form id="menuformid">
 			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
@@ -20,18 +20,32 @@
 						<p:outputLabel value="Năm*:" />
 						<p:spinner size="10" min="2017" max="2050"
 							value="#{departPerformanceBean.kpiDepPerformance.year}">
-							<p:ajax update=":menuformid" process="@this"
-								listener="#{departPerformanceBean.ajaxTagetDepart()}" />
 						</p:spinner>
 						<p:outputLabel value="Nội dung*:" />
-						<p:inputTextarea value="#{departPerformanceBean.kpiDepPerformance.content}" />
+						<p:inputTextarea
+							value="#{departPerformanceBean.kpiDepPerformance.content}" />
+						<p:outputLabel value="Cách tính*:" />
+						<p:panel id="basic" style="margin-bottom:10px;width:396px">
+							<h:panelGrid columns="2" cellpadding="2">
+								<p:inputTextarea
+									value="#{departPerformanceBean.kpiDepPerformance.formulaKPI.code}"
+									disabled="true" />
+								<p:commandLink style="float:right" process="@this"
+									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
+									actionListener="#{departPerformanceBean.showListFormula(departPerformanceBean.kpiDepPerformance)}"
+									update=":dialogformula1,:messages">
+									<h:outputText value="&#8801;" />
+								</p:commandLink>
+							</h:panelGrid>
+						</p:panel>
 						<p:outputLabel value="Ghi chú:" />
 						<p:inputTextarea cols="24" rows="4"
 							value="#{departPerformanceBean.kpiDepPerformance.note}" />
 					</h:panelGrid>
 					<p:separator />
 					<p:commandButton value="Lưu/Cập nhật" process="@form"
-						action="#{departPerformanceBean.createOrUpdate()}" update=":messages,:menuformid" />
+						action="#{departPerformanceBean.createOrUpdate()}"
+						update=":messages,:menuformid" />
 					<p:commandButton value="Tạo mới"
 						action="#{departPerformanceBean.reset()}" update=":menuformid" />
 					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
@@ -39,8 +53,6 @@
 						action="#{departPerformanceBean.delete()}">
 						<p:confirm icon="ui-icon-alert" />
 					</p:commandButton>
-					<p:commandButton value="Trọng số nhóm mục tiêu"
-						oncomplete="PF('dialogWeight').show();" />
 				</p:panel>
 				<p:panel header="Danh sách" id="preview">
 					<p:spinner size="10" min="2017" max="2050"
@@ -49,7 +61,8 @@
 					<p:commandButton value="Tìm" style="margin-left: 20px;"
 						action="#{departPerformanceBean.searchItem()}" update="tableid" />
 					<div style="clear: both" />
-					<p:dataTable value="#{departPerformanceBean.listInfoDepartPerformance}"
+					<p:dataTable
+						value="#{departPerformanceBean.listInfoDepartPerformance}"
 						sortBy="#{itemp.nameDepart}" expandableRowGroups="true"
 						id="tableid" widgetVar="datatb" scrollable="true"
 						scrollWidth="670" scrollHeight="600" resizableColumns="true"
@@ -62,14 +75,13 @@
 						</p:column>
 						<p:rowExpansion>
 							<p:dataTable value="#{itemp.listDepPerformance}"
-								sortBy="#{item.year}"
-								expandableRowGroups="true" paginatorPosition="bottom"
-								rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
-								rowKey="#{item.id}"
+								sortBy="#{item.year}" expandableRowGroups="true"
+								paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
+								paginator="true" rows="40" rowKey="#{item.id}"
 								selection="#{departPerformanceBean.kpiDepPerformanceUpdate}"
-								scrollable="true"
-								selectionMode="single" scrollWidth="650" scrollHeight="370"
-								resizableColumns="true" var="item" rowIndexVar="rowIndex">
+								scrollable="true" selectionMode="single" scrollWidth="650"
+								scrollHeight="370" resizableColumns="true" var="item"
+								rowIndexVar="rowIndex">
 								<p:ajax event="rowSelect"
 									listener="#{departPerformanceBean.showEdit()}"
 									update=":menuformid:info" />
@@ -83,15 +95,9 @@
 									<h:outputText value="#{item.content}" />
 								</p:column>
 								<p:column headerText="Cách tính" width="160"
-								visible="#{kPIDepMonthBean.list[5]}">
-								<p:outputLabel value="#{item.formulaKPI.code}" rows="2" />
-								<p:commandLink style="float:right" process="@this"
-									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
-									actionListener="#{departPerformanceBean.showListFormula(item)}"
-									update=":dialogformula1,:messages">
-									<h:outputText value="&#8801;" />
-								</p:commandLink>
-							</p:column>
+									visible="#{kPIDepMonthBean.list[5]}">
+									<p:outputLabel value="#{item.formulaKPI.code}" rows="2" />
+								</p:column>
 								<p:column headerText="Ghi chú" style="width:300px">
 									<h:outputText value="#{item.note}" />
 								</p:column>
@@ -107,10 +113,11 @@
 		<p:dialog widgetVar="dialogFormula1" resizable="false" width="300"
 			closeOnEscape="true" header="Công thức tính">
 			<h:form id="dialogformula1">
-				<p:dataTable value="#{departPerformanceBean.formulaKPIs}" lazy="true"
-					paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
-					paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
-					scrollHeight="370" selection="#{departPerformanceBean.formulaKPISelect}"
+				<p:dataTable value="#{departPerformanceBean.formulaKPIs}"
+					lazy="true" paginatorPosition="bottom"
+					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+					rowKey="#{item.id}" scrollable="true" scrollHeight="370"
+					selection="#{departPerformanceBean.formulaKPISelect}"
 					selectionMode="single" id="tableid" resizableColumns="true"
 					var="item" rowIndexVar="rowIndex">
 					<p:column headerText="STT" width="20">
@@ -126,7 +133,8 @@
 				<p:separator />
 				<p:commandButton value="Đặt công thức"
 					oncomplete="PF('dialogFormula1').hide()"
-					action="#{departPerformanceBean.updateFormula()}" update=":menuformid" />
+					action="#{departPerformanceBean.updateFormula()}"
+					update=":menuformid:basic" />
 			</h:form>
 		</p:dialog>
 	</ui:define>

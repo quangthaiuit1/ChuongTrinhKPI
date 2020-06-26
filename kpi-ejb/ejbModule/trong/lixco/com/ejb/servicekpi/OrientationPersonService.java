@@ -57,5 +57,4 @@ public class OrientationPersonService extends AbstractService<OrientationPerson>
 			return new ArrayList<OrientationPerson>();
 		}
 	}
-
 }

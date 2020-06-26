@@ -1,6 +1,7 @@
 package trong.lixco.com.ejb.servicekpi;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,8 +24,6 @@ import javax.persistence.criteria.Root;
 import trong.lixco.com.ejb.service.AbstractService;
 import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
 import trong.lixco.com.jpa.entitykpi.KPIDepOfMonth;
-import trong.lixco.com.jpa.entitykpi.KPIPerson;
-import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
@@ -76,7 +75,8 @@ public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
 		predicates.add(cb.equal(root.get("kpiDepMonth"), kPIDepMonth));
 		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.asc(root.get("no")));
 		TypedQuery<KPIDepOfMonth> query = em.createQuery(cq);
-		List<KPIDepOfMonth> results = query.getResultList();
+		List<KPIDepOfMonth> results = new ArrayList<>();
+		results = query.getResultList();
 		return results;
 	}
 
@@ -94,6 +94,7 @@ public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
 		List<KPIDepMonth> results = query.getResultList();
 		return results;
 	}
+
 	public List<KPIDepMonth> findKPIDepYear(int year, String codeDepart) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<KPIDepMonth> cq = cb.createQuery(KPIDepMonth.class);
@@ -118,8 +119,8 @@ public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
 			Predicate pd = cb.in(root.get("codeDepart")).value(codeDeparts);
 			predicates.add(pd);
 		}
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])))
-				.orderBy(cb.desc(root.get("year")), cb.desc(root.get("month")));
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.desc(root.get("year")),
+				cb.desc(root.get("month")));
 		TypedQuery<KPIDepMonth> query = em.createQuery(cq);
 		List<KPIDepMonth> results = query.getResultList();
 		return results;
@@ -242,6 +243,7 @@ public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
 		}
 
 	}
+
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public KPIDepMonth updateSignResult(KPIDepMonth kpiDepMonth) {
 		try {
@@ -279,6 +281,7 @@ public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
 		}
 
 	}
+
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public KPIDepMonth updateSignBLDResult(KPIDepMonth kpiDepMonth) {
 		try {

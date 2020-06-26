@@ -1,17 +1,19 @@
-package trong.lixco.com.jpa.entitykpi;
+package trong.lixco.com.jpa.thai;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-/**
- * @author vantrong
- * @Time 16-04-2018 12:08:21
- * Dinh huong KPI ca nhan
- */
+import javax.persistence.Table;
+
+import trong.lixco.com.jpa.entitykpi.AbstractEntity;
+import trong.lixco.com.jpa.entitykpi.FormulaKPI;
+
 @Entity
-public class OrientationPerson extends AbstractEntity {
+@Table(name = "personal_performance")
+public class KPIPersonalPerformance extends AbstractEntity {
 	private String code;//ma
 	private String content;//noi dung
 	private String codePJob;//Chuc vu (trong KPI theo mo ta cong viec)
+	private String computation;
 	
 	@ManyToOne
 	private FormulaKPI formulaKPI;//cong thuc tinh
@@ -55,5 +57,11 @@ public class OrientationPerson extends AbstractEntity {
 	}
 	public void setCodeHeader(String codeHeader) {
 		this.codeHeader = codeHeader;
+	}
+	public String getComputation() {
+		return computation;
+	}
+	public void setComputation(String computation) {
+		this.computation = computation;
 	}
 }

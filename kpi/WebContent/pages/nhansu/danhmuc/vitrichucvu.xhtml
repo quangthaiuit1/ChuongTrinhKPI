@@ -39,11 +39,11 @@
 						selection="#{positionJobBean.selectPositionJob}" scrollable="true"
 						selectionMode="single" scrollWidth="750 " id="tableid"
 						scrollHeight="370" widgetVar="datatb" resizableColumns="true"
-						var="item">
+						var="item" rowIndexVar="rowIndex">
 						<p:ajax event="rowSelect" listener="#{positionJobBean.showEdit()}"
 							update=":menuformid" />
 						<p:column headerText="ID" style="width:30px">
-							<h:outputText value="#{item.id}" />
+							<h:outputText value="#{rowIndex+1}" />
 						</p:column>
 						<p:column headerText="Mã" width="80">
 							<h:outputText value="#{item.code}" />

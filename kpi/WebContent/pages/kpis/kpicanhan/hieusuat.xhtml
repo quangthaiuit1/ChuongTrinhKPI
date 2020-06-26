@@ -7,37 +7,144 @@
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
 	<ui:define name="content">
-		<h3 style="margin: 0px">Ngân hàng KPI hiệu suất cá nhân</h3>
+		<h3 style="margin: 0px">Ngân hàng KPI hiệu suất (Cá nhân)</h3>
 		<p:separator />
-		<h:form id="menuformid">
-			<p:dataTable value="#{orientationInfoBean.orienInfoEmpls}"
-				id="tbreportimptargetsale" expandableRowGroups="true"
-				paginatorPosition="bottom" paginator="true" scrollable="true"
-				scrollHeight="500" resizableColumns="true" var="item">
-				<p:column style="width:30px">
-					<p:rowToggler />
-				</p:column>
-				<p:column headerText="Vị trí/chức vụ công việc">
-					<h:outputText value="#{item.namePos}" />
-				</p:column>
-				<p:rowExpansion>
-					<p:dataTable value="#{item.orientationPersons}"
-						expandableRowGroups="true"
-						var="car">
-						<p:column headerText="STT" style="width:20px">
-							<p:outputLabel value="#{car.code}"
-								styleClass="#{car.header==true?'textboldoutput':''}" />
+		<h:form id="formPersonalPerformance">
+			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
+				<p:panel header="Thông tin" styleClass="panelw100"
+					style="height:690px">
+					<h:panelGrid id="info">
+						<p:outputLabel value="Vị trí công việc:" />
+						<p:inputText value="#{personalPerformanceBean.namePositionJob}"
+							disabled="true" />
+						<p:outputLabel value="Nội dung*:" />
+						<p:inputTextarea
+							value="#{personalPerformanceBean.kpiPersonalPerformance.content}" />
+						<p:outputLabel value="Cách tính*:" />
+						<p:panel id="panelPersonalPerfomanceComputating" style="margin-bottom:10px;width:396px">
+							<h:panelGrid columns="2" cellpadding="2">
+								<p:inputTextarea
+									value="#{personalPerformanceBean.kpiPersonalPerformance.formulaKPI.code}"
+									disabled="true" />
+								<p:commandLink style="float:right" process="@this"
+									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
+									actionListener="#{personalPerformanceBean.showListFormula(personalPerformanceBean.kpiPersonalPerformance)}"
+									update=":dialogformula11,:messages">
+									<h:outputText value="&#8801;" />
+								</p:commandLink>
+							</h:panelGrid>
+						</p:panel>
+						<p:outputLabel value="Ghi chú:" />
+						<p:inputTextarea cols="24" rows="4"
+							value="#{personalPerformanceBean.kpiPersonalPerformance.note}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Lưu/Cập nhật" process="@form"
+						action="#{personalPerformanceBean.createOrUpdate()}"
+						update=":messages,:formPersonalPerformance" />
+					<p:commandButton value="Tạo mới"
+						action="#{personalPerformanceBean.reset()}" update=":formPersonalPerformance" />
+					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
+						value="Xoá" update=":messages,:formPersonalPerformance,:formPersonalPerformance:dtTablePersonalPerformance"
+						action="#{personalPerformanceBean.delete()}">
+						<p:confirm icon="ui-icon-alert" />
+					</p:commandButton>
+				</p:panel>
+				<p:panel header="Danh sách" id="preview">
+					<h:panelGrid id="panelGridSearch" columns="2">
+						<h:panelGrid columns="1">
+							<p:selectOneMenu value="#{personalPerformanceBean.departmentSelected}"
+								converter="abstractConverter" effect="fade" var="t"
+								style="width:150px;" id="iddeps" filter="true"
+								filterMatchMode="custom" filterFunction="customFilter">
+								<f:selectItems value="#{personalPerformanceBean.allDepartment}"
+									var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+								<p:column>
+									<h:outputText value="#{t.code}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
+								</p:column>
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<p:commandButton value="Tìm" style="float:right;"
+							icon="ui-icon-search" update="dtTablePersonalPerformance"
+							process="@form" oncomplete="PF('datatb').clearFilters()"
+							actionListener="#{personalPerformanceBean.searchItem()}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:dataTable
+						value="#{personalPerformanceBean.listInfoPersonalPerformances}"
+						sortBy="#{itemp.positionJobName}" expandableRowGroups="true"
+						id="dtTablePersonalPerformance" widgetVar="datatb"
+						scrollable="true" scrollWidth="670" scrollHeight="600"
+						resizableColumns="true" var="itemp">
+						<p:column style="width:10px">
+							<p:rowToggler />
 						</p:column>
-						<p:column headerText="Nội dung" style="text-align:left">
-							<p:outputLabel value="#{car.content}"
-								styleClass="#{car.header==true?'textboldoutput':''}" />
+						<p:column headerText="Vị trí công việc">
+							<h:outputText value="#{itemp.positionJobName}" />
 						</p:column>
-						<p:column headerText="Công thức" style="text-align:left">
-							<p:outputLabel value="#{car.formulaKPI.code}" />
-						</p:column>
+						<p:rowExpansion>
+							<p:dataTable value="#{itemp.personalPerformances}"
+								sortBy="#{item.createdDate}" expandableRowGroups="true"
+								paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
+								paginator="true" rows="40" rowKey="#{item.id}"
+								selection="#{personalPerformanceBean.kpiPersonalPerformanceUpdated}"
+								scrollable="true" selectionMode="single" scrollWidth="650"
+								scrollHeight="370" resizableColumns="true" var="item"
+								rowIndexVar="rowIndex">
+								<p:ajax event="rowSelect"
+									listener="#{personalPerformanceBean.showEdit()}"
+									update=":formPersonalPerformance:info" />
+								<p:column headerText="STT" style="width:30px">
+									<h:outputText value="#{rowIndex+1}" />
+								</p:column>
+								<p:column headerText="Nội dung" style="width:300px">
+									<h:outputText value="#{item.content}" />
+								</p:column>
+								<p:column headerText="Cách tính" width="160"
+									visible="#{kPIDepMonthBean.list[5]}">
+									<p:outputLabel value="#{item.formulaKPI.code}" rows="2" />
+								</p:column>
+								<p:column headerText="Ghi chú" style="width:300px">
+									<h:outputText value="#{item.note}" />
+								</p:column>
+								<f:facet name="footer">
+									<div style="clear: both;" />
+								</f:facet>
+							</p:dataTable>
+						</p:rowExpansion>
 					</p:dataTable>
-				</p:rowExpansion>
-			</p:dataTable>
+				</p:panel>
+			</h:panelGrid>
 		</h:form>
+		<p:dialog widgetVar="dialogFormula11" resizable="false" width="300"
+			closeOnEscape="true" header="Công thức tính">
+			<h:form id="dialogformula11">
+				<p:dataTable value="#{personalPerformanceBean.formulaKPIs}"
+					lazy="true" paginatorPosition="bottom"
+					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+					rowKey="#{item.id}" scrollable="true" scrollHeight="370"
+					selection="#{personalPerformanceBean.formulaKPISelect}"
+					selectionMode="single" id="dtTablePersonalPerformance"
+					resizableColumns="true" var="item" rowIndexVar="rowIndex">
+					<p:column headerText="STT" width="20">
+						<h:outputText value="#{rowIndex+1}" />
+					</p:column>
+					<p:column headerText="Mô tả công thức">
+						<h:outputText value="#{item.code}" />
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+				<p:separator />
+				<p:commandButton value="Đặt công thức"
+					oncomplete="PF('dialogFormula11').hide()"
+					action="#{personalPerformanceBean.updateFormula()}"
+					update=":formPersonalPerformance:panelPersonalPerfomanceComputating" />
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

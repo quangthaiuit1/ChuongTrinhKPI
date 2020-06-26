@@ -1,46 +1,49 @@
 package trong.lixco.com.jpa.entitykpi;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+
 /**
  * @author vantrong
- * @Time 16-04-2018 12:08:21
- * KPI ca nhan theo thang
+ * @Time 16-04-2018 12:08:21 KPI ca nhan theo thang
  */
 @Entity
 public class KPIPersonOfMonth extends AbstractEntity {
 
-	private int no;//so thu tu
-	private double weighted;//trong so
-	private String contentAppreciate;//noi dung/tieu chi danh gia
+	private int no;// so thu tu
+	private double weighted;// trong so
+	private String contentAppreciate;// noi dung/tieu chi danh gia
 	@ManyToOne
 	private OrientationPerson orientationPerson;// dinh huong muc tieu ca nhan
 	private String codeFormula;
-	private String timeTakeResult;//Thoi gian ghi nhan ket qua
-	private String sourceVerify;//nguồn xác nhận/chung minh
-	private String unit;//don vi tinh
-	private String planKPI;//ke hoach  KPI
-	private String performKPI;//thuc hien kpi
-	private double ratioComplete;//ti le hoan thanh
-	private double ratioCompleteIsWeighted;//ti le da nhan trong so
-	private boolean behaviour=false;
-	
+	private String timeTakeResult;// Thoi gian ghi nhan ket qua
+	private String sourceVerify;// nguồn xác nhận/chung minh
+	private String unit;// don vi tinh
+	private String planKPI;// ke hoach KPI
+	private String performKPI;// thuc hien kpi
+	private double ratioComplete;// ti le hoan thanh
+	private double ratioCompleteIsWeighted;// ti le da nhan trong so
+	private boolean behaviour = false;
+
 	@ManyToOne
 	private FormulaKPI formulaKPI;
-	
-	
+
 	private String paramA;
 	private String paramB;
 	private String paramC;
 	private String paramD;
 	private String paramE;
 	private String paramF;
-	
+
 	private String nameAssign;
-	
+
 	@ManyToOne
 	private KPIPerson kpiPerson;
-	
+
+	// check KPI hieu suat
+	@Column(name = "is_kpi_performance")
+	private boolean isKPIPerformance;
 
 	public int getNo() {
 		return no;
@@ -209,6 +212,15 @@ public class KPIPersonOfMonth extends AbstractEntity {
 	public void setFormulaKPI(FormulaKPI formulaKPI) {
 		this.formulaKPI = formulaKPI;
 	}
+	
+	public boolean isKPIPerformance() {
+		return isKPIPerformance;
+	}
+
+	public void setKPIPerformance(boolean isKPIPerformance) {
+		this.isKPIPerformance = isKPIPerformance;
+	}
+
 
 	@Override
 	public String toString() {
@@ -219,8 +231,7 @@ public class KPIPersonOfMonth extends AbstractEntity {
 				+ ratioCompleteIsWeighted + ", behaviour=" + behaviour + ", formulaKPI=" + formulaKPI + ", paramA="
 				+ paramA + ", paramB=" + paramB + ", paramC=" + paramC + ", paramD=" + paramD + ", paramE=" + paramE
 				+ ", paramF=" + paramF + ", kpiPerson=" + kpiPerson + ", id=" + id + ", createdDate=" + createdDate
-				+ ", modifiedDate=" + modifiedDate + ", createdUser=" + createdUser + ", note="
-				+ note + "]";
+				+ ", modifiedDate=" + modifiedDate + ", createdUser=" + createdUser + ", note=" + note + "]";
 	}
 
 	public String getNameAssign() {
@@ -230,6 +241,5 @@ public class KPIPersonOfMonth extends AbstractEntity {
 	public void setNameAssign(String nameAssign) {
 		this.nameAssign = nameAssign;
 	}
-	
-	
+
 }

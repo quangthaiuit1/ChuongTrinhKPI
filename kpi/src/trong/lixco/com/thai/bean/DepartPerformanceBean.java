@@ -1,4 +1,5 @@
 package trong.lixco.com.thai.bean;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,9 @@ import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.ejb.thai.kpi.DepPerformanceService;
 import trong.lixco.com.jpa.entitykpi.FormulaKPI;
 import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
+import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
 import trong.lixco.com.thai.bean.entities.InfoDepPerformance;
+import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
 import trong.lixco.com.util.Notify;
 
 @Named
@@ -45,6 +48,7 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	protected Logger getLogger() {
 		return logger;
 	}
+
 	// Thai
 	KPIDepPerformanceJPA kpiDepPerformance;
 
@@ -82,6 +86,7 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 								kpiDepPerformance.setCodeDepart(codeDepart);
 								kpiDepPerformance = DEPARTMENT_PERFORMANCE_SERVICE.create(kpiDepPerformance);
 								listDepartPerformance.add(0, kpiDepPerformance);
+								searchItem();//test
 								writeLogInfo("Tạo mới " + kpiDepPerformance.toString());
 								notify.success();
 							} else {
@@ -97,6 +102,7 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 							kpiDepPerformance = DEPARTMENT_PERFORMANCE_SERVICE.update(kpiDepPerformance);
 							int index = listDepartPerformance.indexOf(kpiDepPerformance);
 							listDepartPerformance.set(index, kpiDepPerformance);
+							searchItem();//test
 							writeLogInfo("Cập nhật " + kpiDepPerformance.toString());
 							notify.success();
 						} else {
@@ -132,8 +138,10 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 				boolean status = DEPARTMENT_PERFORMANCE_SERVICE.delete(kpiDepPerformance);
 				if (status) {
 					listDepartPerformance.remove(kpiDepPerformance);
+					updateListInfo();
 					writeLogInfo("Xoá " + kpiDepPerformance.toString());
 					reset();
+
 					notify.success();
 				} else {
 					writeLogError("Lỗi khi xoá " + kpiDepPerformance.toString());
@@ -144,6 +152,25 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 			}
 		} else {
 			notify.warning("Chưa chọn trong danh sách!");
+		}
+	}
+
+	// update list info personal performance
+	public void updateListInfo() {
+		Map<String, List<KPIDepPerformanceJPA>> datagroups1 = listDepartPerformance.stream()
+				.collect(Collectors.groupingBy(p -> p.getCodeDepart(), Collectors.toList()));
+
+		listInfoDepartPerformance = new ArrayList<InfoDepPerformance>();
+		for (String key : datagroups1.keySet()) {
+			List<KPIDepPerformanceJPA> invs = datagroups1.get(key);
+			try {
+				InfoDepPerformance tgi = new InfoDepPerformance();
+				tgi.setNameDepart(departmentServicePublic.findByCode("code", key).getName());
+				tgi.setListDepPerformance(invs);
+				listInfoDepartPerformance.add(tgi);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 	}
 
