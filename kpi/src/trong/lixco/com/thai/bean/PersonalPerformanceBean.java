@@ -1,7 +1,14 @@
 package trong.lixco.com.thai.bean;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,11 +17,18 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
 
+import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.text.IDNA.Info;
 
 import trong.lixco.com.account.servicepublics.Department;
@@ -95,7 +109,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		member = getAccount().getMember();
+		member = getAccount().getMember();
 //		codeDepart = member.getDepartment().getCode();
 //		searchItem();
 	}
@@ -262,7 +276,92 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 			notify.warning("Chưa chọn trong danh sách!");
 		}
 	}
-	
+	// import file excel
+	public void handleFileUpload(FileUploadEvent event) throws IOException {
+
+		// context.execute("PF('dlg1').show();");
+		long size = event.getFile().getSize();
+
+		String filename = FilenameUtils.getBaseName(event.getFile().getFileName());
+
+		String path = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/temp/");
+		File checkFile = new File(path);
+		if (!checkFile.exists()) {
+			checkFile.mkdirs();
+		}
+
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
+		String name = filename + fmt.format(new Date())
+				+ event.getFile().getFileName().substring(event.getFile().getFileName().lastIndexOf('.'));
+		File file = new File(path + "/" + name);
+
+		InputStream is = event.getFile().getInputstream();
+		OutputStream out = new FileOutputStream(file);
+		byte buf[] = new byte[(int) size];
+		int len;
+		while ((len = is.read(buf)) > 0)
+			out.write(buf, 0, len);
+		is.close();
+		out.close();
+
+		InputStream inp = null;
+		try {
+			inp = new FileInputStream(file.getAbsolutePath());
+			Workbook wb = WorkbookFactory.create(inp);
+
+			for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+				System.out.println(wb.getSheetAt(i).getSheetName());
+				echoAsCSVFile(wb.getSheetAt(i));
+			}
+		} catch (Exception ex) {
+		} finally {
+			try {
+				inp.close();
+			} catch (IOException ex) {
+			}
+		}
+	}
+
+	@Inject
+	private FormulaKPIService FORMULA_KPI_SERVICE;
+	public void echoAsCSVFile(Sheet sheet) {
+		Row row = null;
+		Date createdDate = new Date();
+		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+			row = sheet.getRow(i);
+			try {
+				System.out.println(i);
+				int codePJob = (int)Double.parseDouble(row.getCell(0).toString());
+				String content = row.getCell(1).toString();
+				int formulaKPIIdInt = (int)Double.parseDouble(row.getCell(2).toString());
+				long formulaKPIIdLong = (long)formulaKPIIdInt;
+//				//Luu doi tuong xuong DB
+				KPIPersonalPerformance kpiPersonalPerformanceCreate = new KPIPersonalPerformance();
+				kpiPersonalPerformanceCreate.setCodePJob(Integer.toString(codePJob));
+				kpiPersonalPerformanceCreate.setContent(content);
+				FormulaKPI formulaKPITemp = FORMULA_KPI_SERVICE.findById(formulaKPIIdLong);
+				kpiPersonalPerformanceCreate.setComputation(formulaKPITemp.getCode());
+				kpiPersonalPerformanceCreate.setFormulaKPI(formulaKPITemp);
+				kpiPersonalPerformanceCreate.setCreatedDate(createdDate);
+				kpiPersonalPerformanceCreate.setCreatedUser(member.getName());
+				kpiPersonalPerformanceCreate.setDisable(false);
+				kpiPersonalPerformanceCreate.setOldData(false);
+				kpiPersonalPerformanceCreate.setHeader(false);
+				try {
+					PERSONAL_PERFORMANCE_SERVICE.create(kpiPersonalPerformanceCreate);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		notice("Thành công");
+
+	}
+	// end import file excel
 	//
 	public int getYear() {
 		return year;

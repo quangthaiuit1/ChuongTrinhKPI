@@ -45,10 +45,22 @@
 					<p:commandButton value="Tạo mới"
 						action="#{personalPerformanceBean.reset()}" update=":formPersonalPerformance" />
 					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
-						value="Xoá" update=":messages,:formPersonalPerformance,:formPersonalPerformance:dtTablePersonalPerformance"
+						value="Xóa" update=":messages,:formPersonalPerformance,:formPersonalPerformance:dtTablePersonalPerformance"
 						action="#{personalPerformanceBean.delete()}">
 						<p:confirm icon="ui-icon-alert" />
 					</p:commandButton>
+					<p:separator/>
+					<!-- Upload file excel -->
+					<h:form enctype="multipart/form-data">
+						<p:fileUpload
+							fileUploadListener="#{personalPerformanceBean.handleFileUpload}"
+							mode="advanced" dragDropSupport="false" multiple="true"
+							update="messagesh" sizeLimit="10000000"
+							allowTypes="/(\.|\/)(xls|xlsx)$/" label="Chọn tệp tải lên"
+							uploadLabel="Tải lên" cancelLabel="Hủy" process="@form" />
+						<p:growl id="messagesh" showDetail="true" />
+					</h:form>
+					<!-- End upload file excel -->
 				</p:panel>
 				<p:panel header="Danh sách" id="preview">
 					<h:panelGrid id="panelGridSearch" columns="2">
