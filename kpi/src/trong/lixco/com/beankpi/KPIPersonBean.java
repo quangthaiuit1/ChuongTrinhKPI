@@ -570,6 +570,9 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 					item.setFormulaKPI(listKPIPersonalPerformanceSelected.get(i).getFormulaKPI());
 					kpiPersonOfMonths.add(item);
 				}
+				//Cap nhat list kpi hieu suat de selected khong bi lap
+				
+				//End
 				for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
 //					kpiPersonOfMonths.get(i).setNoid(i + 1);
 					kpiPersonOfMonths.get(i).setIndex(i);

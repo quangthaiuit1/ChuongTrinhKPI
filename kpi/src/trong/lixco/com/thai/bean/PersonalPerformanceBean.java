@@ -262,7 +262,8 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 			notify.warning("Chưa chọn trong danh sách!");
 		}
 	}
-//
+	
+	//
 	public int getYear() {
 		return year;
 	}
