@@ -16,16 +16,17 @@
 					<h:panelGrid id="info">
 						<p:outputLabel value="Vị trí công việc:" />
 						<p:inputText value="#{personalPerformanceBean.namePositionJob}"
-							disabled="true" />
+							readonly="true" />
 						<p:outputLabel value="Nội dung*:" />
 						<p:inputTextarea
 							value="#{personalPerformanceBean.kpiPersonalPerformance.content}" />
 						<p:outputLabel value="Cách tính*:" />
-						<p:panel id="panelPersonalPerfomanceComputating" style="margin-bottom:10px;width:396px">
+						<p:panel id="panelPersonalPerfomanceComputating"
+							style="margin-bottom:10px;width:396px">
 							<h:panelGrid columns="2" cellpadding="2">
 								<p:inputTextarea
 									value="#{personalPerformanceBean.kpiPersonalPerformance.formulaKPI.code}"
-									disabled="true" />
+									readonly="true" />
 								<p:commandLink style="float:right" process="@this"
 									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
 									actionListener="#{personalPerformanceBean.showListFormula(personalPerformanceBean.kpiPersonalPerformance)}"
@@ -43,13 +44,19 @@
 						action="#{personalPerformanceBean.createOrUpdate()}"
 						update=":messages,:formPersonalPerformance" />
 					<p:commandButton value="Tạo mới"
-						action="#{personalPerformanceBean.reset()}" update=":formPersonalPerformance" />
+						action="#{personalPerformanceBean.reset()}"
+						update=":formPersonalPerformance" />
 					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
-						value="Xóa" update=":messages,:formPersonalPerformance,:formPersonalPerformance:dtTablePersonalPerformance"
+						value="Xóa"
+						update=":messages,:formPersonalPerformance,:formPersonalPerformance:dtTablePersonalPerformance"
 						action="#{personalPerformanceBean.delete()}">
 						<p:confirm icon="ui-icon-alert" />
 					</p:commandButton>
-					<p:separator/>
+					<p:commandButton value="File excel mẫu" immediate="true"
+					styleClass="btlink"
+					onclick="monitorDownload( showStatus , hideStatus)"
+					actionListener="#{personalPerformanceBean.fileDuLieuKPICaNhanMau()}" />
+					<p:separator />
 					<!-- Upload file excel -->
 					<h:form enctype="multipart/form-data">
 						<p:fileUpload
@@ -65,7 +72,8 @@
 				<p:panel header="Danh sách" id="preview">
 					<h:panelGrid id="panelGridSearch" columns="2">
 						<h:panelGrid columns="1">
-							<p:selectOneMenu value="#{personalPerformanceBean.departmentSelected}"
+							<p:selectOneMenu
+								value="#{personalPerformanceBean.departmentSelected}"
 								converter="abstractConverter" effect="fade" var="t"
 								style="width:150px;" id="iddeps" filter="true"
 								filterMatchMode="custom" filterFunction="customFilter">

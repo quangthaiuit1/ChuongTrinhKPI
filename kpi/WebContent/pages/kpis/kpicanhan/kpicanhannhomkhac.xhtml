@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/pages/home.xhtml">
+
+	<ui:define name="content">
+		<style>
+.selectbllb .ui-chkbox-label {
+	font-size: 1.2em;
+	margin-left: 20px;
+	font-weight: bold;
+}
+</style>
+		<h3 style="margin: 0px">KPI cá nhân (Nhóm khác)</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<p:tabView id="tv" widgetVar="myTab">
+				<p:tab title="Danh Sách">
+					<h:form id="list">
+						<p:panel
+							style="float:right; border:0px; margin-top:-65px !important;background:none;">
+							<h:panelGrid id="mainGrid" columns="9"
+								style="float:left; margin-bottom:5px">
+								<h:panelGrid columns="4" style="width:100%" cellspacing="10">
+									<p:outputLabel value="Tháng" />
+									<p:spinner size="10"
+										value="#{personalPerformanceOthersBean.monthSearch}" min="1"
+										max="12">
+										<p:ajax process="@this" />
+									</p:spinner>
+									<p:outputLabel value="Năm" />
+									<p:spinner size="10"
+										value="#{personalPerformanceOthersBean.yearSearch}" min="2017"
+										max="2050">
+										<p:ajax process="@this" />
+									</p:spinner>
+								</h:panelGrid>
+								<h:panelGrid columns="1">
+									<p:commandButton type="submit" value="Tạo mới" process="@this"
+										id="btnew" action="#{personalPerformanceOthersBean.reset()}"
+										icon="ui-icon-document" />
+								</h:panelGrid>
+								<h:panelGrid columns="1">
+									<p:commandButton type="submit" value="Lưu/cập nhật"
+										disabled="#{personalPerformanceOthersBean.kPIPerson.signResultKPI}"
+										process="@form"
+										action="#{personalPerformanceOthersBean.createOrUpdate()}"
+										update=":messages" icon="ui-icon-disk" />
+								</h:panelGrid>
+								<h:panelGrid columns="2" style="width:100%" cellspacing="10">
+									<p:selectOneMenu
+										value="#{personalPerformanceOthersBean.departmentSearch}"
+										converter="abstractConverter" effect="fade" var="t"
+										style="width:150px;" id="iddeps" filter="true"
+										filterMatchMode="custom" filterFunction="customFilter">
+										<f:selectItems
+											value="#{personalPerformanceOthersBean.departmentSearchs}"
+											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+										<p:column>
+											<h:outputText value="#{t.code}" />
+										</p:column>
+										<p:column>
+											<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
+										</p:column>
+									</p:selectOneMenu>
+								</h:panelGrid>
+								<p:commandButton value="Tìm" style="float:right;"
+									icon="ui-icon-search" update="tableid" process="@form"
+									oncomplete="PF('dtlistkpiperson').clearFilters()"
+									actionListener="#{personalPerformanceOthersBean.searchItem()}" />
+								<p:tooltip for="xoact" value="Xoá KPI cá nhân" />
+								<p:commandButton value="Xóa" id="xoact" process="@this"
+									update=":messages,:menuformid"
+									action="#{personalPerformanceOthersBean.delete()}">
+									<p:confirm header="Xác nhận"
+										message="Bạn có chắc muốn xoá không?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGrid>
+						</p:panel>
+						<div style="clear: both" />
+						<p:dataTable value="#{personalPerformanceOthersBean.kPIPersons}"
+							widgetVar="dtlistkpiperson" styleClass="tableparent"
+							rowKey="#{item.id}"
+							filteredValue="#{personalPerformanceOthersBean.kPIPersonFilters}"
+							selection="#{personalPerformanceOthersBean.kPIPersonEdit}"
+							selectionMode="single" id="tableid" var="item">
+							<p:ajax event="rowSelect"
+								listener="#{personalPerformanceOthersBean.showEdit}"
+								update=":menuformid:tv:detail" />
+							<p:column headerText="Duyệt ĐK"
+								style="width:25px;text-align:center">
+								<p:selectBooleanCheckbox value="#{item.signKPI}" disabled="true" />
+							</p:column>
+							<p:column headerText="Duyệt KQ"
+								style="width:25px;text-align:center">
+								<p:selectBooleanCheckbox value="#{item.signResultKPI}"
+									disabled="true" />
+							</p:column>
+
+							<p:column headerText="Tháng"
+								style="width:30px; text-align:center">
+								<p:tooltip for="mlist" value="ID: #{item.id}" />
+								<h:outputText value="#{item.kmonth}" id="mlist" />
+							</p:column>
+							<p:column headerText="Năm" style="width:30px;text-align:center">
+								<h:outputText value="#{item.kyear}" />
+							</p:column>
+							<p:column headerText="Tổng điểm"
+								style="width:30px;text-align:center">
+								<h:outputText value="#{item.total/100}">
+									<f:convertNumber pattern="##0%" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Nhân viên" style="width:130px"
+								filterBy="#{item.nameEmp}"
+								filterFunction="#{abstractCustomFilter.filterByText}">
+								<h:outputText value="#{item.nameEmp}" />
+							</p:column>
+							<f:facet name="footer">
+								<div style="clear: both;" />
+							</f:facet>
+						</p:dataTable>
+					</h:form>
+				</p:tab>
+				<p:tab title="Chi tiết">
+					<h:form id="detail">
+						<p:panel
+							style="float:right; border:0px; margin-top:-53px !important">
+							<p:selectBooleanCheckbox itemLabel="Duyệt đăng ký KPI"
+								disabled="true" styleClass="selectbllb"
+								value="#{personalPerformanceOthersBean.kPIPerson.signKPI}">
+							</p:selectBooleanCheckbox>
+							<p:selectBooleanCheckbox itemLabel="Duyệt kết quả KPI"
+								disabled="true" styleClass="selectbllb"
+								value="#{personalPerformanceOthersBean.kPIPerson.signResultKPI}">
+							</p:selectBooleanCheckbox>
+						</p:panel>
+						<p:fieldset>
+							<p:fieldset legend="Thời gian*" styleClass="noneformatfs"
+								style="width:20%;float:left; height:60px">
+								<h:panelGrid columns="2" styleClass="noneformat" cellspacing="5"
+									columnClasses="w30,w30">
+									<h:panelGrid columns="2" styleClass="noneformat"
+										columnClasses="w20,w80">
+										<p:outputLabel value="Tháng" />
+										<p:spinner min="1" max="12" size="4"
+											disabled="#{personalPerformanceOthersBean.kPIPerson.signKPI}"
+											value="#{personalPerformanceOthersBean.kPIPerson.kmonth}" />
+									</h:panelGrid>
+									<h:panelGrid columns="2" styleClass="noneformat"
+										columnClasses="w20,w80">
+										<p:outputLabel value="Năm" />
+										<p:spinner size="5" min="2017" max="2050"
+											disabled="#{personalPerformanceOthersBean.kPIPerson.signKPI}"
+											value="#{personalPerformanceOthersBean.kPIPerson.kyear}" />
+									</h:panelGrid>
+								</h:panelGrid>
+							</p:fieldset>
+							<p:fieldset legend="Đơn vị/Phòng ban - Nhân viên*"
+								style="width:28%;float:left; height:60px"
+								styleClass="noneformatfs">
+								<p:panelGrid columns="2" columnClasses="w95, w5" id="ifjobdep"
+									style="width:100%">
+									<h:panelGrid columns="1">
+										<h:outputText
+											value="#{personalPerformanceOthersBean.member.department.name}" />
+										<h:outputText
+											value="#{personalPerformanceOthersBean.member.name}" />
+									</h:panelGrid>
+									<p:commandLink>
+										<h:outputText class="fa fa-fw fa-edit" />
+									</p:commandLink>
+								</p:panelGrid>
+							</p:fieldset>
+							<p:fieldset legend="Ngày duyệt tiêu chí"
+								styleClass="noneformatfs"
+								style="width:12%;float:left; height:60px">
+								<p:calendar styleClass="subw40" locale="vi"
+									disabled="#{personalPerformanceOthersBean.kPIPerson.signKPI}"
+									value="#{personalPerformanceOthersBean.kPIPerson.dateRecei}"
+									pattern="#{applicationBean.cf.formatDate}"
+									showButtonPanel="true" navigator="true" showOn="button"
+									mask="#{applicationBean.cf.maskDate}" />
+							</p:fieldset>
+							<p:fieldset legend="Ngày duyệt kết quả" styleClass="noneformatfs"
+								style="width:12%;float:left; height:60px">
+								<p:calendar styleClass="subw40" locale="vi"
+									value="#{personalPerformanceOthersBean.kPIPerson.dateAssignResult}"
+									disabled="#{personalPerformanceOthersBean.kPIPerson.signResultKPI}"
+									pattern="#{applicationBean.cf.formatDate}"
+									showButtonPanel="true" navigator="true" showOn="button"
+									mask="#{applicationBean.cf.maskDate}" />
+							</p:fieldset>
+							<p:fieldset legend="Tổng điểm" styleClass="noneformatfs"
+								style="width:20%;float:left; height:60px">
+								<h:outputText
+									value="#{personalPerformanceOthersBean.kPIPerson.total/100}"
+									style="color: #b12fc0; font-size: 2.5em; font-weight: bold;text-align:center;">
+									<f:convertNumber pattern="##0%" />
+								</h:outputText>
+							</p:fieldset>
+							<p:fieldset legend="Ghi chú" styleClass="noneformatfs"
+								style="width:49%;float:left; height:55px">
+								<p:inputTextarea cols="20" rows="2"
+									disabled="#{personalPerformanceOthersBean.kPIPerson.signKPI}"
+									value="#{personalPerformanceOthersBean.kPIPerson.note}" />
+							</p:fieldset>
+							<p:fieldset
+								style="background:cadetblue; width:47%;float:left; height:45px;margin-top:10px"
+								styleClass="noneformatfs">
+								<div style="float: right; margin-top: 10px">
+									<p:commandButton type="submit" value="Tính kết quả"
+										process="@form" style="background:#fbe4c6"
+										disabled="#{personalPerformanceOthersBean.kPIPerson.signResultKPI}"
+										actionListener="#{personalPerformanceOthersBean.caculatorResult()}"
+										update=":menuformid:tv:detail" icon="ui-icon-calculator" />
+									<p:commandButton type="submit" value="Lưu/cập nhật"
+										disabled="#{personalPerformanceOthersBean.kPIPerson.signResultKPI}"
+										process="@form"
+										action="#{personalPerformanceOthersBean.createOrUpdate()}"
+										update=":messages" icon="ui-icon-disk" />
+									<p:commandButton type="submit" value="Tạo mới" process="@this"
+										action="#{personalPerformanceOthersBean.reset()}"
+										update=":menuformid:tv:detail" icon="ui-icon-document" />
+
+									<p:commandButton id="remote" icon="ui-icon-print" value="In"
+										styleClass="bthei40" process="@form"
+										actionListener="#{personalPerformanceOthersBean.process()}" />
+
+
+									<p:commandButton ajax="false" value="xem" style="display:none"
+										type="submit" onclick="this.form.target='_blank'" id="report"
+										action="#{personalPerformanceOthersBean.printOnly()}" />
+									<p:commandButton type="submit" value="Copy" process="@this"
+										actionListener="#{personalPerformanceOthersBean.copy()}"
+										update=":messages" icon="ui-icon-copy" />
+								</div>
+							</p:fieldset>
+						</p:fieldset>
+						<p:fieldset>
+							<p:panel id="totalhvid"
+								style="float:right; border:0px; margin-top:-20px !important;margin-bottom:-30px !important; background:none">
+								<h:outputText value="Trọng số: " />
+								<h:outputText value="100%"
+									style="margin:0px 50px 0px 10px; color: red; font-size: 1.2em; font-weight: bold;">
+								</h:outputText>
+								<h:outputText value="Trọng số đạt được: " />
+								<h:outputText
+									value="#{personalPerformanceOthersBean.kPIPerson.totalHV/100}"
+									style="margin:0px 0px 0px 10px; color: red; font-size: 1.2em; font-weight: bold; ">
+									<f:convertNumber pattern="##0%" />
+								</h:outputText>
+
+							</p:panel>
+							<p:fieldset legend="Thái độ hành vi" toggleable="true"
+								toggleSpeed="500" collapsed="false"
+								style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;margin-top:10px"
+								styleClass="toggleabldetail">
+								<p:dataTable var="item" styleClass="tableformat1" id="tableidHV"
+									scrollable="true"
+									value="#{personalPerformanceOthersBean.kpiPersonOfMonthAdds}"
+									scrollWidth="1085">
+									<f:facet name="header">
+										<p:commandButton
+											action="#{personalPerformanceOthersBean.showBehaviour()}"
+											oncomplete="PF('dialogBeh').show();" process="@this"
+											rendered="#{!personalPerformanceOthersBean.kPIPerson.signResultKPI}"
+											value="Thêm thái độ hành vi" style="float:left"
+											update=":dialogBehid" icon="ui-icon-plus" />
+										<div style="clear: both;" />
+									</f:facet>
+									<p:column headerText="..." style="width:6px; text-align:center">
+										<p:commandButton icon="ui-icon-closethick"
+											rendered="#{!personalPerformanceOthersBean.kPIPerson.signResultKPI}"
+											style="margin-left: -9px;background: none;border: none; box-shadow: none;"
+											update="tableidHV" styleClass="btnoneformat" process="@this"
+											actionListener="#{personalPerformanceOthersBean.removeDetailAdd(item.no)}" />
+									</p:column>
+									<p:column headerText="STT" width="5" style="text-align:center">
+										<p:outputLabel value="#{item.no}" rows="2"
+											style="text-align:center" />
+									</p:column>
+									<p:column headerText="Tiêu chí/ Mục tiêu đánh giá" width="170">
+										<p:outputLabel value="#{item.contentAppreciate}" rows="2"
+											autoResize="false" />
+									</p:column>
+									<p:column headerText="Điểm trừ (%)" width="60"
+										style="text-align:center">
+										<h:outputText value="#{item.ratioComplete/100}" rows="2"
+											style="text-align:center">
+											<f:convertNumber pattern="##0%" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Điểm trừ nhân trọng số (%)" width="60"
+										style="text-align:center">
+										<h:outputText value="#{item.ratioCompleteIsWeighted/100}"
+											rows="2" style="text-align:center">
+											<f:convertNumber pattern="##0%" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+							</p:fieldset>
+							<br />
+						</p:fieldset>
+						<br />
+						<h:outputText value="Chú ý*:" style="font-weight: bold;" />
+						<br />
+						<h:outputText
+							value="- Nhập giá trị các tham số vào các cột (A,B,C,..) theo công thức để tính." />
+						<br />
+						<h:outputText
+							value="- Dữ liệu ngày nhập theo định dạng dd/MM/yyyy (ví dụ: 01/05/2018, 31/12/2018)." />
+						<br />
+						<h:outputText
+							value="- Dữ liệu tỉ lệ % thì nhập phần số bỏ dấu % (ví dụ: 70% nhập 70)." />
+						<br />
+						<h:outputText
+							value="- Ký tự ngăn cách số thập phân là dấu chấm (ví dụ: 9.200)." />
+					</h:form>
+				</p:tab>
+			</p:tabView>
+		</h:form>
+		<p:dialog widgetVar="dialogCopy" resizable="false"
+			closeOnEscape="true" header="Copy sang tháng?">
+			<h:form id="dialogCopyid">
+				<h:panelGrid columns="4" style="width:100%" cellspacing="4"
+					cellpadding="10">
+					<p:outputLabel value="Tháng" />
+					<p:spinner size="10"
+						value="#{personalPerformanceOthersBean.monthCopy}" min="1"
+						max="12">
+						<p:ajax process="@this" />
+					</p:spinner>
+					<p:outputLabel value="Năm" />
+					<p:spinner size="10"
+						value="#{personalPerformanceOthersBean.yearCopy}" min="2017"
+						max="2050">
+						<p:ajax process="@this" />
+					</p:spinner>
+				</h:panelGrid>
+				<p:separator />
+				<div style="width: 100%; text-align: center">
+					<p:commandButton value="Chọn" oncomplete="PF('dialogCopy').hide()"
+						action="#{personalPerformanceOthersBean.createCopy()}"
+						update=":menuformid,:messages" />
+				</div>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dialogConfirm" resizable="false" width="400"
+			closeOnEscape="true" header="Đã có KPI trong tháng">
+			<h:form>
+				<h:outputText value="Bạn có muốn thay thế bằng dữ liệu mới không?" />
+				<p:separator />
+				<p:commandButton value="OK" oncomplete="PF('dialogConfirm').hide()"
+					action="#{personalPerformanceOthersBean.createAndDelete()}"
+					update=":messages,:menuformid:tv:detail" />
+				<p:commandButton value="Cancel"
+					oncomplete="PF('dialogConfirm').hide()" />
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dialogConfirmCopy" resizable="false" width="400"
+			closeOnEscape="true" header="Đã có KPI trong tháng">
+			<h:form>
+				<h:outputText value="Bạn có muốn thay thế bằng dữ liệu mới không?" />
+				<p:separator />
+				<p:commandButton value="OK"
+					oncomplete="PF('dialogConfirmCopy').hide()"
+					action="#{personalPerformanceOthersBean.createAndDeleteCopy()}"
+					update=":messages,:menuformid:tv:detail" />
+				<p:commandButton value="Cancel"
+					oncomplete="PF('dialogConfirmCopy').hide()" />
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dialogBeh" resizable="false" width="700"
+			closeOnEscape="true" header="Bảng thái độ - hành vi">
+			<h:form id="dialogBehid">
+				<p:dataTable
+					value="#{personalPerformanceOthersBean.behaviourPersons}"
+					lazy="true" paginatorPosition="bottom"
+					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+					rowKey="#{item.id}" scrollable="true" style="width:100%"
+					id="tablebehid" scrollHeight="370" widgetVar="databehtb"
+					resizableColumns="true" var="item">
+					<f:facet name="header">
+						<div style="float: right">
+							<p:commandButton type="submit" value="Đưa vào KPI"
+								update=":menuformid:tv:detail:tableidHV"
+								action="#{personalPerformanceOthersBean.addBehaviour()}"
+								icon="ui-icon-arrowreturnthick-1-s" />
+						</div>
+						<div style="clear: both;" />
+					</f:facet>
+					<p:column headerText="..." style="width:20px;">
+						<p:selectBooleanCheckbox value="#{item.select}"
+							rendered="#{!item.header}">
+							<p:ajax process="@this" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column headerText="STT" style="width:20px">
+						<h:outputText value="#{item.code}"
+							styleClass="#{item.header==true?'textboldoutput':''}" />
+					</p:column>
+					<p:column headerText="Nội dung" style="text-align:left">
+						<h:outputText value="#{item.content}"
+							styleClass="#{item.header==true?'textboldoutput':''}" />
+					</p:column>
+					<p:column headerText="Điểm trừ" width="80"
+						style="text-align:center">
+						<h:outputText value="#{item.header!=true?item.minusPoint/100:''}">
+							<f:convertNumber pattern="##0%" />
+						</h:outputText>
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

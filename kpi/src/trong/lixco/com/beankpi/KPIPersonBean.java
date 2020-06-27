@@ -560,18 +560,31 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 			if (kpiCompOld.isSignKPI()) {
 				noticeError("KPI đã duyệt không thêm được.");
 			} else {
-				List<KPIPersonalPerformance> listKPIPersonalPerformanceSelected = getListKPIPersonalPerformanceSelected();
-				for (int i = 0; i < listKPIPersonalPerformanceSelected.size(); i++) {
-					// check xem item nao duoc chon
-					KPIPersonOfMonth item = new KPIPersonOfMonth();
-					item.setKPIPerformance(true);
-					item.setContentAppreciate(listKPIPersonalPerformanceSelected.get(i).getContent());
-					item.setCodeFormula(listKPIPersonalPerformanceSelected.get(i).getComputation());
-					item.setFormulaKPI(listKPIPersonalPerformanceSelected.get(i).getFormulaKPI());
-					kpiPersonOfMonths.add(item);
-				}
+//				List<KPIPersonalPerformance> listKPIPersonalPerformanceSelected = getListKPIPersonalPerformanceSelected();
+//				for (int i = 0; i < listKPIPersonalPerformanceSelected.size(); i++) {
+//					// check xem item nao duoc chon
+//					KPIPersonOfMonth item = new KPIPersonOfMonth();
+//					item.setKPIPerformance(true);
+//					item.setContentAppreciate(listKPIPersonalPerformanceSelected.get(i).getContent());
+//					item.setCodeFormula(listKPIPersonalPerformanceSelected.get(i).getComputation());
+//					item.setFormulaKPI(listKPIPersonalPerformanceSelected.get(i).getFormulaKPI());
+//					kpiPersonOfMonths.add(item);
+//				}
 				//Cap nhat list kpi hieu suat de selected khong bi lap
-				
+				for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
+					for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
+						if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).isSelect()) {
+							// check xem item nao duoc chon
+							KPIPersonOfMonth item = new KPIPersonOfMonth();
+							item.setKPIPerformance(true);
+							item.setContentAppreciate(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent());
+							item.setCodeFormula(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getComputation());
+							item.setFormulaKPI(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getFormulaKPI());
+							kpiPersonOfMonths.add(item);
+							listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).setSelect(false);
+						}
+					}
+				}
 				//End
 				for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
 //					kpiPersonOfMonths.get(i).setNoid(i + 1);

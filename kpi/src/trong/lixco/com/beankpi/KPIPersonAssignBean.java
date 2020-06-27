@@ -249,7 +249,7 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 								positionJobService);
 						pk.setHeaderGroupCode("I");
 						pk.setHeaderGroupName("Phẩm chất - thái độ - hành vi");
-						pk.setHeaderGroupWeighted(30.0);
+						pk.setHeaderGroupWeighted(10.0);
 						printKPIs.add(pk);
 					}
 					printKPIPRs.addAll(printKPIs);
@@ -304,7 +304,7 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 				PrintKPI pk = new PrintKPI(expds.get(0), true, empPJobService, memberServicePublic, positionJobService);
 				pk.setHeaderGroupCode("I");
 				pk.setHeaderGroupName("Phẩm chất - thái độ - hành vi");
-				pk.setHeaderGroupWeighted(30.0);
+				pk.setHeaderGroupWeighted(10.0);
 				printKPIs.add(pk);
 			}
 			printKPIs.sort(Comparator.comparing(PrintKPI::getHeaderGroupCode).thenComparing(PrintKPI::getNo));
@@ -497,7 +497,7 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 				KPIPersonOfMonth item = new KPIPersonOfMonth();
 				item.setBehaviour(true);
 				item.setRatioComplete(-behaviourPersons.get(i).getMinusPoint());
-				item.setRatioCompleteIsWeighted((-behaviourPersons.get(i).getMinusPoint() * 30) / 100);
+				item.setRatioCompleteIsWeighted((-behaviourPersons.get(i).getMinusPoint() * 10) / 100);
 				item.setContentAppreciate(behaviourPersons.get(i).getContent());
 				kpiPersonOfMonthAdds.add(item);
 			}
@@ -1109,12 +1109,12 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 		}
 	}
 
-	int totalHV = 30;
+	int totalHV = 10;
 	double totalCV = 0;
 
 	public void caculatorResult() {
 		totalCV = 0;
-		totalHV = 30;
+		totalHV = 10;
 		for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
 			KPIPersonOfMonth item = kpiPersonOfMonths.get(i);
 			// Lay bo cong thuc xem tinh theo sua dung cong thuc nao
@@ -1239,7 +1239,7 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 
 			}
 		}
-		totalCV = totalCV * 70 / 100;
+		totalCV = totalCV * 90 / 100;
 		for (int i = 0; i < kpiPersonOfMonthAdds.size(); i++) {
 			if (kpiPersonOfMonthAdds.get(i).getContentAppreciate() != null
 					&& !"".equals(kpiPersonOfMonthAdds.get(i).getContentAppreciate().trim()))

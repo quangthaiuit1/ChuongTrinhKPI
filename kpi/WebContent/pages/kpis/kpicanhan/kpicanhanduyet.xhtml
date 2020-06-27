@@ -257,7 +257,7 @@
 							<p:panel id="totalhvid"
 								style="float:right; border:0px; margin-top:-20px !important;margin-bottom:-30px !important; background:none">
 								<h:outputText value="Tổng điểm: " />
-								<h:outputText value="30%"
+								<h:outputText value="10%"
 									style="margin:0px 50px 0px 10px; color: red; font-size: 1.2em; font-weight: bold;">
 								</h:outputText>
 								<h:outputText value="Điểm đạt được: " />
@@ -320,7 +320,7 @@
 							<p:panel id="totalcvid"
 								style="float:right; border:0px; margin-top:-20px !important;margin-bottom:-30px !important; background:none;">
 								<h:outputText value="Tổng điểm: " />
-								<h:outputText value="70%"
+								<h:outputText value="90%"
 									style="margin:0px 50px 0px 10px; color: red; font-size: 1.2em; font-weight: bold;">
 								</h:outputText>
 								<h:outputText value="Điểm đạt được: " />
@@ -391,7 +391,8 @@
 									</p:column>
 									<p:column headerText="Tiêu chí/ Mục tiêu đánh giá" width="200"
 										visible="#{kPIPersonAssignBean.list[2]}">
-										<p:cellEditor>
+										<h:outputText value="#{item.contentAppreciate}" rendered="#{item.KPIPerformance}"/>
+										<p:cellEditor rendered="#{item.KPIPerformance == false}">
 											<f:facet name="output">
 												<h:outputText value="#{item.contentAppreciate}" />
 											</f:facet>
@@ -421,6 +422,12 @@
 											</f:facet>
 										</p:cellEditor>
 									</p:column>
+									<p:column headerText="KPI hiệu suất" width="32">
+										<center>
+											<h:outputText rendered="#{item.KPIPerformance}"
+												styleClass="ui-icon ui-icon-check" />
+										</center>
+									</p:column>
 									<p:column headerText="Phương pháp đo" width="100"
 										visible="#{kPIPersonAssignBean.list[4]}">
 										<p:outputLabel value="#{item.codeFormula}" rows="4"
@@ -430,7 +437,7 @@
 											disabled="#{kPIPersonAssignBean.kPIPerson.signKPI}"
 											actionListener="#{kPIPersonAssignBean.showListFormula(item)}"
 											update=":dialogformula">
-											<h:outputText value="&#8801;" />
+											<h:outputText value="&#8801;" rendered="#{item.KPIPerformance == false}"/>
 										</p:commandLink>
 									</p:column>
 									<p:column headerText="A"

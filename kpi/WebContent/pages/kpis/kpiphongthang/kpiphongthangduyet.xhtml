@@ -218,7 +218,8 @@
 							</p:column>
 							<p:column headerText="Mục tiêu" width="280"
 								visible="#{kPIDepMonthAssignBean.list[2]}">
-								<p:cellEditor>
+								<h:outputText value="#{item.contentAppreciate}" rendered="#{item.KPIPerformance}"/>
+								<p:cellEditor rendered="#{item.KPIPerformance == false}">
 									<f:facet name="output">
 										<h:outputText value="#{item.contentAppreciate}" />
 									</f:facet>
@@ -249,6 +250,12 @@
 									</f:facet>
 								</p:cellEditor>
 							</p:column>
+							<p:column headerText="KPI hiệu suất" width="32">
+								<center>
+									<h:outputText rendered="#{item.KPIPerformance}"
+										styleClass="ui-icon ui-icon-check" />
+								</center>
+							</p:column>
 							<p:column headerText="Tiêu chí đánh giá" width="120"
 								visible="#{kPIDepMonthAssignBean.list[4]}">
 								<p:cellEditor>
@@ -269,7 +276,7 @@
 								<p:commandLink style="float:right" process="@this"
 									disabled="#{kPIDepMonthAssignBean.kpiDepMonth.signKPI}"
 									actionListener="#{kPIDepMonthAssignBean.showListFormula(item)}"
-									update=":dialogformula,:messages">
+									update=":dialogformula,:messages" rendered="#{item.KPIPerformance == false}">
 									<h:outputText value="&#8801;" />
 								</p:commandLink>
 							</p:column>

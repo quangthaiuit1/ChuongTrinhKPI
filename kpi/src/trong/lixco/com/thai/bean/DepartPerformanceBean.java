@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Row;
@@ -24,6 +26,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 
@@ -255,8 +258,7 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 				kpiDepPerformanceCreate.setComputation(formulaKPITemp.getCode());
 				kpiDepPerformanceCreate.setFormulaKPI(formulaKPITemp);
 				kpiDepPerformanceCreate.setYear(year);
-				Date createdDate = new Date();
-				kpiDepPerformanceCreate.setCreatedDate(createdDate);
+				kpiDepPerformanceCreate.setCreatedDate(new Date());
 				kpiDepPerformanceCreate.setCreatedUser(member.getName());
 				kpiDepPerformanceCreate.setDisable(false);
 				kpiDepPerformanceCreate.setOldData(false);
@@ -275,7 +277,27 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 
 	}
 	// end import file excel
-
+	public void fileDuLieuKPICaNhanMau() {
+		try {
+			PrimeFaces.current().executeScript("target='_blank';monitorDownload( showStatus , hideStatus)");
+			String filename = "KPIPhong_dulieumau";
+			HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance()
+					.getExternalContext().getResponse();
+			httpServletResponse.addHeader("Content-disposition", "attachment; filename=" + filename + ".xlsx");
+			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+			String file = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/maufile/kpiphong.xlsx");
+			InputStream inputStream = new FileInputStream(file);
+			byte[] buffer = new byte[1024];
+			int len;
+			while ((len = inputStream.read(buffer)) != -1) {
+				servletOutputStream.write(buffer, 0, len);
+			}
+			FacesContext.getCurrentInstance().responseComplete();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	// Thai
 	@Inject
 	DepPerformanceService DEPARTMENT_PERFORMANCE_SERVICE;

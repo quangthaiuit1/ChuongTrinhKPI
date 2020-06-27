@@ -16,7 +16,7 @@
 					<h:panelGrid id="info">
 						<p:outputLabel value="Phòng ban" />
 						<p:inputText value="#{departPerformanceBean.nameDepart()}"
-							disabled="true" />
+							readonly="true" />
 						<p:outputLabel value="Năm*:" />
 						<p:spinner size="10" min="2017" max="2050"
 							value="#{departPerformanceBean.kpiDepPerformance.year}">
@@ -29,7 +29,7 @@
 							<h:panelGrid columns="2" cellpadding="2">
 								<p:inputTextarea
 									value="#{departPerformanceBean.kpiDepPerformance.formulaKPI.code}"
-									disabled="true" />
+									readonly="true" />
 								<p:commandLink style="float:right" process="@this"
 									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
 									actionListener="#{departPerformanceBean.showListFormula(departPerformanceBean.kpiDepPerformance)}"
@@ -53,7 +53,11 @@
 						action="#{departPerformanceBean.delete()}">
 						<p:confirm icon="ui-icon-alert" />
 					</p:commandButton>
-					<p:separator/>
+					<p:commandButton value="File excel mẫu" immediate="true"
+						styleClass="btlink"
+						onclick="monitorDownload( showStatus , hideStatus)"
+						actionListener="#{departPerformanceBean.fileDuLieuKPICaNhanMau()}" />
+					<p:separator />
 					<!-- Upload file excel -->
 					<h:form enctype="multipart/form-data">
 						<p:fileUpload

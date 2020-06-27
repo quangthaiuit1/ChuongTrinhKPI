@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Row;
@@ -25,11 +27,11 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 
 import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.text.IDNA.Info;
 
 import trong.lixco.com.account.servicepublics.Department;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublic;
@@ -41,9 +43,7 @@ import trong.lixco.com.ejb.servicekpi.OrientationPersonService;
 import trong.lixco.com.ejb.servicekpi.PositionJobService;
 import trong.lixco.com.ejb.thai.kpi.PersonalPerformanceService;
 import trong.lixco.com.jpa.entitykpi.FormulaKPI;
-import trong.lixco.com.jpa.entitykpi.OrientationPerson;
 import trong.lixco.com.jpa.entitykpi.PositionJob;
-import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
 import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
 import trong.lixco.com.util.Notify;
@@ -326,11 +326,10 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 	private FormulaKPIService FORMULA_KPI_SERVICE;
 	public void echoAsCSVFile(Sheet sheet) {
 		Row row = null;
-		Date createdDate = new Date();
+
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 			row = sheet.getRow(i);
 			try {
-				System.out.println(i);
 				int codePJob = (int)Double.parseDouble(row.getCell(0).toString());
 				String content = row.getCell(1).toString();
 				int formulaKPIIdInt = (int)Double.parseDouble(row.getCell(2).toString());
@@ -342,7 +341,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 				FormulaKPI formulaKPITemp = FORMULA_KPI_SERVICE.findById(formulaKPIIdLong);
 				kpiPersonalPerformanceCreate.setComputation(formulaKPITemp.getCode());
 				kpiPersonalPerformanceCreate.setFormulaKPI(formulaKPITemp);
-				kpiPersonalPerformanceCreate.setCreatedDate(createdDate);
+				kpiPersonalPerformanceCreate.setCreatedDate(new Date());
 				kpiPersonalPerformanceCreate.setCreatedUser(member.getName());
 				kpiPersonalPerformanceCreate.setDisable(false);
 				kpiPersonalPerformanceCreate.setOldData(false);
@@ -362,6 +361,27 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	}
 	// end import file excel
+	public void fileDuLieuKPICaNhanMau() {
+		try {
+			PrimeFaces.current().executeScript("target='_blank';monitorDownload( showStatus , hideStatus)");
+			String filename = "KPICaNhan_dulieumau";
+			HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance()
+					.getExternalContext().getResponse();
+			httpServletResponse.addHeader("Content-disposition", "attachment; filename=" + filename + ".xlsx");
+			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+			String file = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/maufile/kpinhanvien.xlsx");
+			InputStream inputStream = new FileInputStream(file);
+			byte[] buffer = new byte[1024];
+			int len;
+			while ((len = inputStream.read(buffer)) != -1) {
+				servletOutputStream.write(buffer, 0, len);
+			}
+			FacesContext.getCurrentInstance().responseComplete();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	//
 	public int getYear() {
 		return year;
