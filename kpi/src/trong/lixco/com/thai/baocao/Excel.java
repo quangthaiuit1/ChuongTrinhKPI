@@ -34,7 +34,6 @@ public class Excel extends AbstractBean<KPIPerson> {
 		// TODO Auto-generated method stub
 
 	}
-
 	@Override
 	protected Logger getLogger() {
 		// TODO Auto-generated method stub
@@ -94,7 +93,7 @@ public class Excel extends AbstractBean<KPIPerson> {
 //			rownum++;
 //			row = sheet.createRow(rownum);
 //
-//			// EmpNo (A)
+//			// EmpNo (A) 
 //			cell = row.createCell(0, CellType.STRING);
 //			cell.setCellValue(emp.getEmpNo());
 //			// EmpName (B)

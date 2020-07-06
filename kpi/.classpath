@@ -20,5 +20,6 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/kpi-ejb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/kpi-jpa"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/FontReport.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

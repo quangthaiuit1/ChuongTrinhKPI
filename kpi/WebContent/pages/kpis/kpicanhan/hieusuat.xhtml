@@ -35,6 +35,9 @@
 								</p:commandLink>
 							</h:panelGrid>
 						</p:panel>
+						<p:outputLabel value="Điểm trừ:" />
+						<p:inputTextarea cols="24" rows="1"
+							value="#{personalPerformanceBean.kpiPersonalPerformance.minuspoint}" />
 						<p:outputLabel value="Ghi chú:" />
 						<p:inputTextarea cols="24" rows="4"
 							value="#{personalPerformanceBean.kpiPersonalPerformance.note}" />
@@ -126,6 +129,9 @@
 								<p:column headerText="Cách tính" width="160"
 									visible="#{kPIDepMonthBean.list[5]}">
 									<p:outputLabel value="#{item.formulaKPI.code}" rows="2" />
+								</p:column>
+								<p:column headerText="Điểm trừ" style="width:80px">
+									<h:outputText value="#{item.minuspoint}" />
 								</p:column>
 								<p:column headerText="Ghi chú" style="width:300px">
 									<h:outputText value="#{item.note}" />

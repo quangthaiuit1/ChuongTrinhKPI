@@ -2,10 +2,12 @@
 <!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="personalMonth" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bbf823c1-4c6c-47e8-8073-598fa034c7d7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="listKPIDepartMonthByYearDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="nameEmp" class="java.lang.String"/>
+	<field name="nameDepart" class="java.lang.String"/>
+	<field name="result" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -25,17 +27,17 @@
 			</rectangle>
 			<staticText>
 				<reportElement x="4" y="13" width="216" height="26" forecolor="#0E5EC7" uuid="a3468dd6-a4fc-4715-8ebd-4ae74d3b26df"/>
-				<textElement textAlignment="Center">
-					<font size="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<text><![CDATA[CÔNG TY CỔ PHẦN BỘT GIẶT LIX]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="222" y="13" width="327" height="26" forecolor="#0E5EC7" uuid="42c90a05-df83-434f-a03f-7403150cf033"/>
-				<textElement textAlignment="Center">
-					<font size="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[BẢNG TỔNG HỢP KPI CÁ NHÂN NĂM]]></text>
+				<text><![CDATA[BẢNG TỔNG HỢP KẾT QUẢ KPI PHÒNG]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -49,7 +51,9 @@
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport" isBold="true"/>
+				</textElement>
 				<text><![CDATA[Họ và tên]]></text>
 			</staticText>
 			<staticText>
@@ -57,83 +61,72 @@
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[Đơn vị]]></text>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tháng 1]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="230" y="21" width="80" height="19" forecolor="#0E5EC7" uuid="6ace1722-c9b6-466f-bcec-75c42abdb7b4"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[KPI phòng 40%]]></text>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tháng 2]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="311" y="21" width="80" height="19" forecolor="#0E5EC7" uuid="8bb87d28-d3ee-4ed0-8596-33c584f53d39"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[KPI cá nhân 60%]]></text>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tháng 3]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="390" y="21" width="80" height="19" forecolor="#0E5EC7" uuid="4ef786e0-2038-4359-ae28-eddd7bc3f516"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[Tổng điểm]]></text>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tháng 4]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="470" y="21" width="79" height="19" forecolor="#0E5EC7" uuid="fd666c87-3183-47b0-bf2e-a77d2d9e7381"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[Xếp loại]]></text>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tháng 5]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="68" splitType="Stretch">
+		<band height="71" splitType="Stretch">
+			<rectangle>
+				<reportElement x="4" y="0" width="545" height="71" uuid="0efbadef-edd6-45d6-a6fe-c0f669566d5d"/>
+			</rectangle>
 			<textField>
-				<reportElement x="4" y="1" width="115" height="30" forecolor="#0E5EC7" uuid="2d30dbd6-0bb0-4458-a5b6-b75b88278a6d"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<reportElement x="4" y="0" width="116" height="30" uuid="4832a71b-da6e-4d19-aeba-e75fd18d6b0d"/>
+				<textElement>
+					<font fontName="FontReport"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nameDepart}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="120" y="1" width="110" height="30" forecolor="#0E5EC7" uuid="5db7bbc2-f3eb-4be8-b449-eba52e98a10b"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<reportElement x="120" y="0" width="110" height="30" uuid="f2bad5d8-79e0-46b6-97a5-3278f9ef5758"/>
+				<textElement>
+					<font fontName="FontReport"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{result}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="230" y="1" width="80" height="30" forecolor="#0E5EC7" uuid="5a096c03-a7b6-43fb-b946-73f5fe69e74e"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="311" y="1" width="79" height="30" forecolor="#0E5EC7" uuid="d5c6f654-cc83-43b9-ad57-c01ad96f3a8f"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="391" y="1" width="79" height="30" forecolor="#0E5EC7" uuid="dbbabb69-c18c-4dd6-af50-763b52fd532f"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="470" y="1" width="79" height="30" forecolor="#0E5EC7" uuid="d8e4c6a5-7435-4d4c-89b4-cc7ae41b061c"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="3" y="1" width="116" height="30" uuid="f01b636a-5850-4764-9cb1-ae32eafe2a03"/>
-				<textFieldExpression><![CDATA[$F{nameEmp}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="-99" y="23" width="100" height="30" uuid="cd18fdb5-0688-4568-bfc3-0f45ad945de0"/>
-				<text><![CDATA[nameEmp]]></text>
-			</staticText>
 		</band>
 	</detail>
 	<summary>
@@ -144,6 +137,27 @@
 					<pen lineWidth="3.0" lineStyle="Double"/>
 				</graphicElement>
 			</rectangle>
+			<staticText>
+				<reportElement x="46" y="26" width="100" height="30" uuid="67016490-d926-43d1-ab96-23cc69e60f2c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport"/>
+				</textElement>
+				<text><![CDATA[Tổng giám đốc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="26" width="100" height="30" uuid="171b0abc-0478-4b7f-9969-b4068e5361f2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport"/>
+				</textElement>
+				<text><![CDATA[Phó Tổng giám đốc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="26" width="100" height="30" uuid="c2055f70-b297-4f5f-858c-c0a30ccf3dfa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="FontReport"/>
+				</textElement>
+				<text><![CDATA[Phòng Nhân sự]]></text>
+			</staticText>
 		</band>
 	</summary>
 </jasperReport>

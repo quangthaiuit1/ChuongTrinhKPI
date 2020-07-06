@@ -3,6 +3,7 @@ encoding//WebContent/resources/reports/kpis/kpicomp.jrxml=UTF-8
 encoding//WebContent/resources/reports/kpis/kpidep.jrxml=UTF-8
 encoding//WebContent/resources/reports/kpis/kpidepmonth.jrxml=UTF-8
 encoding//WebContent/resources/reports/kpis/kpiperson.jrxml=UTF-8
+encoding//WebContent/resources/thaireports/kpi/personalMonth.jrxml=UTF-8
 encoding//src/trong/lixco/com/account/servicepublics/AbstractEntity.java=UTF-8
 encoding//src/trong/lixco/com/account/servicepublics/Account.java=UTF-8
 encoding//src/trong/lixco/com/account/servicepublics/AccountServicePublic.java=UTF-8

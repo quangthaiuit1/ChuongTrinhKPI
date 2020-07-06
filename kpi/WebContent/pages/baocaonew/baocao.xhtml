@@ -16,7 +16,7 @@
 	font-weight: bold;
 }
 </style>
-		<h3 style="margin: 0px">KPI cá nhân (Nhóm khác)</h3>
+		<h3 style="margin: 0px">Báo cáo</h3>
 		<p:separator />
 		<h:form id="menuformid">
 			<p:tabView id="tv" widgetVar="myTab">
@@ -26,13 +26,19 @@
 							style="float:right; border:0px; margin-top:-65px !important;background:none;">
 							<h:panelGrid id="mainGrid" columns="9"
 								style="float:left; margin-bottom:5px">
-								<h:panelGrid columns="4" style="width:100%" cellspacing="10">
-									<p:outputLabel value="Tháng" />
-									<p:spinner size="10"
-										value="#{personalPerformanceOthersBean.monthSearch}" min="1"
-										max="12">
-										<p:ajax process="@this" />
-									</p:spinner>
+								<h:panelGrid columns="6" style="width:100%" cellspacing="10">
+									<p:outputLabel value="Tháng: " />
+									<p:selectOneMenu id="month"
+										value="#{personalPerformanceOthersBean.monthSelected}">
+										<f:selectItem itemLabel="Chọn" itemValue="" />
+										<f:selectItems value="#{personalPerformanceOthersBean.months}" />
+									</p:selectOneMenu>
+									<p:outputLabel value="Quý: " />
+									<p:selectOneMenu id="quy"
+										value="#{personalPerformanceOthersBean.quySelected}">
+										<f:selectItem itemLabel="Chọn" itemValue="" />
+										<f:selectItems value="#{personalPerformanceOthersBean.quys}" />
+									</p:selectOneMenu>
 									<p:outputLabel value="Năm" />
 									<p:spinner size="10"
 										value="#{personalPerformanceOthersBean.yearSearch}" min="2017"
@@ -40,46 +46,17 @@
 										<p:ajax process="@this" />
 									</p:spinner>
 								</h:panelGrid>
-								<h:panelGrid columns="1">
-									<p:commandButton type="submit" value="Tạo mới" process="@this"
-										id="btnew" action="#{personalPerformanceOthersBean.reset()}"
-										icon="ui-icon-document" />
-								</h:panelGrid>
-								<h:panelGrid columns="1">
-									<p:commandButton type="submit" value="Lưu/cập nhật"
-										disabled="#{personalPerformanceOthersBean.kPIPerson.signResultKPI}"
-										process="@form"
-										action="#{personalPerformanceOthersBean.createOrUpdate()}"
-										update=":messages" icon="ui-icon-disk" />
-								</h:panelGrid>
-								<h:panelGrid columns="2" style="width:100%" cellspacing="10">
-									<p:selectOneMenu
-										value="#{personalPerformanceOthersBean.departmentSearch}"
-										converter="abstractConverter" effect="fade" var="t"
-										style="width:150px;" id="iddeps" filter="true"
-										filterMatchMode="custom" filterFunction="customFilter">
-										<f:selectItems
-											value="#{personalPerformanceOthersBean.departmentSearchs}"
-											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
-										<p:column>
-											<h:outputText value="#{t.code}" />
-										</p:column>
-										<p:column>
-											<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
-										</p:column>
-									</p:selectOneMenu>
-								</h:panelGrid>
 								<p:commandButton value="Tìm" style="float:right;"
 									icon="ui-icon-search" update="tableid" process="@form"
 									oncomplete="PF('dtlistkpiperson').clearFilters()"
 									actionListener="#{personalPerformanceOthersBean.searchItem()}" />
-								<p:tooltip for="xoact" value="Xoá KPI cá nhân" />
-								<p:commandButton value="Xóa" id="xoact" process="@this"
-									update=":messages,:menuformid"
-									action="#{personalPerformanceOthersBean.delete()}">
-									<p:confirm header="Xác nhận"
-										message="Bạn có chắc muốn xoá không?" icon="ui-icon-alert" />
-								</p:commandButton>
+								<p:commandButton type="submit" value="In PDF" ajax="false"
+									style="background:#fbe4c6"
+									actionListener="#{pDF.showPDF()}" onclick="this.form.target='_blank'"
+									icon="ui-icon-calculator" />
+								<p:commandButton type="submit" value="In Excel" process="@form" style="background:#fbe4c6"
+									actionListener="#{excel.printExcel()}" update=":messages"
+									icon="ui-icon-disk" />
 							</h:panelGrid>
 						</p:panel>
 						<div style="clear: both" />
@@ -219,11 +196,9 @@
 										disabled="#{personalPerformanceOthersBean.kPIPerson.signResultKPI}"
 										actionListener="#{personalPerformanceOthersBean.caculatorResult()}"
 										update=":menuformid:tv:detail" icon="ui-icon-calculator" />
-									<p:commandButton type="submit" value="In Excel"
-										process="@form"
-										actionListener="#{excel.printExcel()}"
-										update=":messages" icon="ui-icon-disk" />
-										
+									<p:commandButton type="submit" value="In Excel" process="@form"
+										actionListener="#{excel.printExcel()}" update=":messages"
+										icon="ui-icon-disk" />
 								</div>
 							</p:fieldset>
 						</p:fieldset>
