@@ -314,6 +314,31 @@ public class KPIPersonService extends AbstractService<KPIPerson> {
 		List<KPIPerson> result = em.createQuery(cq).getResultList();
 		return result;
 	}
+	
+	
+	public KPIPerson findRangeNew(String codeEmp, int month, int year) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
+		List<Predicate> predicates = new LinkedList<Predicate>();
+		Root<KPIPerson> root = cq.from(KPIPerson.class);
+		if (codeEmp != null) {
+			predicates.add(cb.equal(root.get("codeEmp"), codeEmp));
+		}
+		if (month != 0) {
+			predicates.add(cb.equal(root.get("kmonth"), month));
+		}
+		if (year != 0) {
+			predicates.add(cb.equal(root.get("kyear"), year));
+		}
+		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+		List<KPIPerson> result = em.createQuery(cq).getResultList();
+		if (!result.isEmpty()) {
+			result.get(0).getKpiPersonOfMonths().size();
+			return result.get(0);
+		}
+		return null;
+	}
+	
 
 	public List<KPIPerson> findRange(String codeEmp, int month, int year, List<String> codeEmps) {
 		if (codeEmps != null && codeEmps.size() != 0) {

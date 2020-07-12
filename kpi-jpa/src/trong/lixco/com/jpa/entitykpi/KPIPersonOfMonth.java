@@ -43,7 +43,7 @@ public class KPIPersonOfMonth extends AbstractEntity {
 
 	// check KPI hieu suat
 	@Column(name = "is_kpi_performance")
-	private boolean isKPIPerformance;
+	private boolean isKPIPerformance = false;
 
 	public int getNo() {
 		return no;

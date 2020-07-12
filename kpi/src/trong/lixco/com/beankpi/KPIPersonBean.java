@@ -542,18 +542,6 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 //		showDialogOrien();
 //	}
 
-	public List<KPIPersonalPerformance> getListKPIPersonalPerformanceSelected() {
-		List<KPIPersonalPerformance> temp = new ArrayList<>();
-		for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
-			for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
-				if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).isSelect()) {
-					temp.add(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j));
-				}
-			}
-		}
-		return temp;
-	}
-
 	public void getListKPIPerformance() {
 		try {
 			KPIPerson kpiCompOld = kPIPersonService.findById(kPIPerson.getId());
@@ -780,6 +768,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 				if (allowSave(date)) {
 					List<KPIPerson> temps = kPIPersonService.findRange(kPIPerson.getCodeEmp(), kPIPerson.getKmonth(),
 							kPIPerson.getKyear());
+					//check kpi da duoc tao hay chua
 					if (temps.size() != 0) {
 						boolean status = false;
 						for (int i = 0; i < temps.size(); i++) {

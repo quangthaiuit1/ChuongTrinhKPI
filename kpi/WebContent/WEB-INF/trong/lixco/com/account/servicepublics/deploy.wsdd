@@ -1,0 +1,122 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from AccountServicePublicService WSDL service -->
+
+  <service name="AccountServicePublicPort" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://servicepublics.account.com.lixco.trong/"/>
+      <parameter name="wsdlServiceElement" value="AccountServicePublicService"/>
+      <parameter name="schemaUnqualified" value="http://servicepublics.account.com.lixco.trong/"/>
+      <parameter name="wsdlServicePort" value="AccountServicePublicPort"/>
+      <parameter name="className" value="trong.lixco.com.account.servicepublics.AccountServicePublicServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="AccountServicePublic"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:account"
+        type="java:trong.lixco.com.account.servicepublics.Account"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:menu"
+        type="java:trong.lixco.com.account.servicepublics.Menu"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:department"
+        type="java:trong.lixco.com.account.servicepublics.Department"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:member"
+        type="java:trong.lixco.com.account.servicepublics.Member"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:singleSignOn"
+        type="java:trong.lixco.com.account.servicepublics.SingleSignOn"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:role"
+        type="java:trong.lixco.com.account.servicepublics.Role"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:formList"
+        type="java:trong.lixco.com.account.servicepublics.FormList"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:privateConfig"
+        type="java:trong.lixco.com.account.servicepublics.PrivateConfig"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:userRight"
+        type="java:trong.lixco.com.account.servicepublics.UserRight"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:levelDep"
+        type="java:trong.lixco.com.account.servicepublics.LevelDep"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:program"
+        type="java:trong.lixco.com.account.servicepublics.Program"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://servicepublics.account.com.lixco.trong/"
+        qname="ns:abstractEntity"
+        type="java:trong.lixco.com.account.servicepublics.AbstractEntity"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

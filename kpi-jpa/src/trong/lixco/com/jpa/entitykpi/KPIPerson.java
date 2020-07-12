@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlTransient;
 /**
  * @author vantrong
  * @Time 16-04-2018 12:08:21
@@ -82,7 +83,6 @@ public class KPIPerson extends AbstractEntity {
 	public void setSignResultKPI(boolean isSignResultKPI) {
 		this.isSignResultKPI = isSignResultKPI;
 	}
-
 	public List<KPIPersonOfMonth> getKpiPersonOfMonths() {
 		return kpiPersonOfMonths;
 	}

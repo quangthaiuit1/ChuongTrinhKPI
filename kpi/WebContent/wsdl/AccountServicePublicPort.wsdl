@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://servicepublics.account.com.lixco.trong/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AccountServicePublicService" targetNamespace="http://servicepublics.account.com.lixco.trong/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" targetNamespace="http://servicepublics.account.com.lixco.trong/" version="1.0">
+
+  <xs:element name="create" type="tns:create"/>
+
+  <xs:element name="createResponse" type="tns:createResponse"/>
+
+  <xs:element name="createSSO" type="tns:createSSO"/>
+
+  <xs:element name="createSSOResponse" type="tns:createSSOResponse"/>
+
+  <xs:element name="delete" type="tns:delete"/>
+
+  <xs:element name="deleteResponse" type="tns:deleteResponse"/>
+
+  <xs:element name="deleteSSO" type="tns:deleteSSO"/>
+
+  <xs:element name="deleteSSOResponse" type="tns:deleteSSOResponse"/>
+
+  <xs:element name="findAllNotAccount" type="tns:findAllNotAccount"/>
+
+  <xs:element name="findAllNotAccountResponse" type="tns:findAllNotAccountResponse"/>
+
+  <xs:element name="findByDepartment" type="tns:findByDepartment"/>
+
+  <xs:element name="findByDepartmentResponse" type="tns:findByDepartmentResponse"/>
+
+  <xs:element name="findById" type="tns:findById"/>
+
+  <xs:element name="findByIdResponse" type="tns:findByIdResponse"/>
+
+  <xs:element name="findMember" type="tns:findMember"/>
+
+  <xs:element name="findMemberResponse" type="tns:findMemberResponse"/>
+
+  <xs:element name="findMenuByProgram" type="tns:findMenuByProgram"/>
+
+  <xs:element name="findMenuByProgramResponse" type="tns:findMenuByProgramResponse"/>
+
+  <xs:element name="findProgramByAccount" type="tns:findProgramByAccount"/>
+
+  <xs:element name="findProgramByAccountResponse" type="tns:findProgramByAccountResponse"/>
+
+  <xs:element name="findRoleByAccPro" type="tns:findRoleByAccPro"/>
+
+  <xs:element name="findRoleByAccProResponse" type="tns:findRoleByAccProResponse"/>
+
+  <xs:element name="findSSOById" type="tns:findSSOById"/>
+
+  <xs:element name="findSSOByIdResponse" type="tns:findSSOByIdResponse"/>
+
+  <xs:element name="findSSOByValue" type="tns:findSSOByValue"/>
+
+  <xs:element name="findSSOByValueResponse" type="tns:findSSOByValueResponse"/>
+
+  <xs:element name="findUserRightByAccPro" type="tns:findUserRightByAccPro"/>
+
+  <xs:element name="findUserRightByAccProResponse" type="tns:findUserRightByAccProResponse"/>
+
+  <xs:element name="find_User" type="tns:find_User"/>
+
+  <xs:element name="find_UserResponse" type="tns:find_UserResponse"/>
+
+  <xs:element name="find_User_Pass" type="tns:find_User_Pass"/>
+
+  <xs:element name="find_User_PassResponse" type="tns:find_User_PassResponse"/>
+
+  <xs:element name="find_User_Pass_Ext" type="tns:find_User_Pass_Ext"/>
+
+  <xs:element name="find_User_Pass_ExtResponse" type="tns:find_User_Pass_ExtResponse"/>
+
+  <xs:element name="update" type="tns:update"/>
+
+  <xs:element name="updateResponse" type="tns:updateResponse"/>
+
+  <xs:complexType name="find_User_Pass_Ext">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg2" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="find_User_Pass_ExtResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="account">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element name="admin" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="member" type="tns:member"/>
+          <xs:element name="notice" type="xs:boolean"/>
+          <xs:element name="online" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="password" type="xs:string"/>
+          <xs:element minOccurs="0" name="privateConfig" type="tns:privateConfig"/>
+          <xs:element minOccurs="0" name="userName" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractEntity">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="createdDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="createdUser" type="xs:string"/>
+      <xs:element name="disable" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="id" type="xs:long"/>
+      <xs:element minOccurs="0" name="modifiedDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="note" type="xs:string"/>
+      <xs:element name="select" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="member">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="account" type="tns:account"/>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="department" type="tns:department"/>
+          <xs:element minOccurs="0" name="email" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+          <xs:element name="personalOther" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="sign" type="xs:base64Binary"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="department">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="codeMem" type="xs:string"/>
+          <xs:element minOccurs="0" name="department" type="tns:department"/>
+          <xs:element minOccurs="0" name="levelDep" type="tns:levelDep"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="levelDep">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element name="level" type="xs:int"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="privateConfig">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element name="decimalNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="decimalPattent" type="xs:string"/>
+          <xs:element minOccurs="0" name="decimalSeparator" type="xs:string"/>
+          <xs:element minOccurs="0" name="pattentDate" type="xs:string"/>
+          <xs:element name="showHeader" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="thousandSeparator" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="findById">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:long"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findByIdResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findSSOById">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:long"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findSSOByIdResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:singleSignOn"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="singleSignOn">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="value" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="findProgramByAccount">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findProgramByAccountResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:program"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="program">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="fullname" type="xs:string"/>
+          <xs:element name="indexProgram" type="xs:short"/>
+          <xs:element minOccurs="0" name="logo" type="xs:base64Binary"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+          <xs:element minOccurs="0" name="serveraddress" type="xs:string"/>
+          <xs:element minOccurs="0" name="serveraddressPublic" type="xs:string"/>
+          <xs:element minOccurs="0" name="uRL" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="findByDepartment">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:department"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findByDepartmentResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findMember">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:member"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findMemberResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findUserRightByAccPro">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+      <xs:element minOccurs="0" name="arg1" type="tns:program"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findUserRightByAccProResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:userRight"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="userRight">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element name="allow" type="xs:boolean"/>
+          <xs:element name="delete" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="formList" type="tns:formList"/>
+          <xs:element name="insert" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="role" type="tns:role"/>
+          <xs:element name="update" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="formList">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+          <xs:element minOccurs="0" name="program" type="tns:program"/>
+          <xs:element minOccurs="0" name="uRL" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="role">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+          <xs:element minOccurs="0" name="program" type="tns:program"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="findAllNotAccount">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findAllNotAccountResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="deleteSSO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:singleSignOn"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="deleteSSOResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="createSSO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:singleSignOn"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="createSSOResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:singleSignOn"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="create">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="createResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="find_User_Pass">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="find_User_PassResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findSSOByValue">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findSSOByValueResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:singleSignOn"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="find_User">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="find_UserResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findRoleByAccPro">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+      <xs:element minOccurs="0" name="arg1" type="tns:program"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findRoleByAccProResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:role"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="delete">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="deleteResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findMenuByProgram">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:program"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findMenuByProgramResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:menu"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="menu">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="icon" type="xs:string"/>
+          <xs:element minOccurs="0" name="moTa" type="xs:string"/>
+          <xs:element minOccurs="0" name="parent" type="tns:menu"/>
+          <xs:element minOccurs="0" name="program" type="tns:program"/>
+          <xs:element minOccurs="0" name="tenHienThi" type="xs:string"/>
+          <xs:element minOccurs="0" name="url" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="update">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="find_User_Pass_Ext">
+    <wsdl:part element="tns:find_User_Pass_Ext" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findByIdResponse">
+    <wsdl:part element="tns:findByIdResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAllNotAccountResponse">
+    <wsdl:part element="tns:findAllNotAccountResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findProgramByAccount">
+    <wsdl:part element="tns:findProgramByAccount" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateResponse">
+    <wsdl:part element="tns:updateResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findByDepartment">
+    <wsdl:part element="tns:findByDepartment" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUserRightByAccPro">
+    <wsdl:part element="tns:findUserRightByAccPro" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteSSO">
+    <wsdl:part element="tns:deleteSSO" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="find_User_PassResponse">
+    <wsdl:part element="tns:find_User_PassResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findSSOByValue">
+    <wsdl:part element="tns:findSSOByValue" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findSSOByIdResponse">
+    <wsdl:part element="tns:findSSOByIdResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="find_User">
+    <wsdl:part element="tns:find_User" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findRoleByAccProResponse">
+    <wsdl:part element="tns:findRoleByAccProResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="find_User_Pass_ExtResponse">
+    <wsdl:part element="tns:find_User_Pass_ExtResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createResponse">
+    <wsdl:part element="tns:createResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteSSOResponse">
+    <wsdl:part element="tns:deleteSSOResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findById">
+    <wsdl:part element="tns:findById" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findSSOById">
+    <wsdl:part element="tns:findSSOById" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteResponse">
+    <wsdl:part element="tns:deleteResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findSSOByValueResponse">
+    <wsdl:part element="tns:findSSOByValueResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findProgramByAccountResponse">
+    <wsdl:part element="tns:findProgramByAccountResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findMemberResponse">
+    <wsdl:part element="tns:findMemberResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findMenuByProgramResponse">
+    <wsdl:part element="tns:findMenuByProgramResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findMember">
+    <wsdl:part element="tns:findMember" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAllNotAccount">
+    <wsdl:part element="tns:findAllNotAccount" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="find_UserResponse">
+    <wsdl:part element="tns:find_UserResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createSSO">
+    <wsdl:part element="tns:createSSO" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="create">
+    <wsdl:part element="tns:create" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="find_User_Pass">
+    <wsdl:part element="tns:find_User_Pass" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUserRightByAccProResponse">
+    <wsdl:part element="tns:findUserRightByAccProResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findRoleByAccPro">
+    <wsdl:part element="tns:findRoleByAccPro" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createSSOResponse">
+    <wsdl:part element="tns:createSSOResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="delete">
+    <wsdl:part element="tns:delete" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findByDepartmentResponse">
+    <wsdl:part element="tns:findByDepartmentResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findMenuByProgram">
+    <wsdl:part element="tns:findMenuByProgram" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="update">
+    <wsdl:part element="tns:update" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="AccountServicePublic">
+    <wsdl:operation name="find_User_Pass_Ext">
+      <wsdl:input message="tns:find_User_Pass_Ext" name="find_User_Pass_Ext">
+    </wsdl:input>
+      <wsdl:output message="tns:find_User_Pass_ExtResponse" name="find_User_Pass_ExtResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findById">
+      <wsdl:input message="tns:findById" name="findById">
+    </wsdl:input>
+      <wsdl:output message="tns:findByIdResponse" name="findByIdResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findSSOById">
+      <wsdl:input message="tns:findSSOById" name="findSSOById">
+    </wsdl:input>
+      <wsdl:output message="tns:findSSOByIdResponse" name="findSSOByIdResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findProgramByAccount">
+      <wsdl:input message="tns:findProgramByAccount" name="findProgramByAccount">
+    </wsdl:input>
+      <wsdl:output message="tns:findProgramByAccountResponse" name="findProgramByAccountResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findByDepartment">
+      <wsdl:input message="tns:findByDepartment" name="findByDepartment">
+    </wsdl:input>
+      <wsdl:output message="tns:findByDepartmentResponse" name="findByDepartmentResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findMember">
+      <wsdl:input message="tns:findMember" name="findMember">
+    </wsdl:input>
+      <wsdl:output message="tns:findMemberResponse" name="findMemberResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUserRightByAccPro">
+      <wsdl:input message="tns:findUserRightByAccPro" name="findUserRightByAccPro">
+    </wsdl:input>
+      <wsdl:output message="tns:findUserRightByAccProResponse" name="findUserRightByAccProResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findAllNotAccount">
+      <wsdl:input message="tns:findAllNotAccount" name="findAllNotAccount">
+    </wsdl:input>
+      <wsdl:output message="tns:findAllNotAccountResponse" name="findAllNotAccountResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deleteSSO">
+      <wsdl:input message="tns:deleteSSO" name="deleteSSO">
+    </wsdl:input>
+      <wsdl:output message="tns:deleteSSOResponse" name="deleteSSOResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createSSO">
+      <wsdl:input message="tns:createSSO" name="createSSO">
+    </wsdl:input>
+      <wsdl:output message="tns:createSSOResponse" name="createSSOResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="create">
+      <wsdl:input message="tns:create" name="create">
+    </wsdl:input>
+      <wsdl:output message="tns:createResponse" name="createResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="find_User_Pass">
+      <wsdl:input message="tns:find_User_Pass" name="find_User_Pass">
+    </wsdl:input>
+      <wsdl:output message="tns:find_User_PassResponse" name="find_User_PassResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findSSOByValue">
+      <wsdl:input message="tns:findSSOByValue" name="findSSOByValue">
+    </wsdl:input>
+      <wsdl:output message="tns:findSSOByValueResponse" name="findSSOByValueResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="find_User">
+      <wsdl:input message="tns:find_User" name="find_User">
+    </wsdl:input>
+      <wsdl:output message="tns:find_UserResponse" name="find_UserResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findRoleByAccPro">
+      <wsdl:input message="tns:findRoleByAccPro" name="findRoleByAccPro">
+    </wsdl:input>
+      <wsdl:output message="tns:findRoleByAccProResponse" name="findRoleByAccProResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="delete">
+      <wsdl:input message="tns:delete" name="delete">
+    </wsdl:input>
+      <wsdl:output message="tns:deleteResponse" name="deleteResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findMenuByProgram">
+      <wsdl:input message="tns:findMenuByProgram" name="findMenuByProgram">
+    </wsdl:input>
+      <wsdl:output message="tns:findMenuByProgramResponse" name="findMenuByProgramResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <wsdl:input message="tns:update" name="update">
+    </wsdl:input>
+      <wsdl:output message="tns:updateResponse" name="updateResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="AccountServicePublicServiceSoapBinding" type="tns:AccountServicePublic">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="find_User_Pass_Ext">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="find_User_Pass_Ext">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="find_User_Pass_ExtResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findById">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findById">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findByIdResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findSSOById">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findSSOById">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findSSOByIdResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findProgramByAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findProgramByAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findProgramByAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findByDepartment">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findByDepartment">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findByDepartmentResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findMember">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findMember">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findMemberResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUserRightByAccPro">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findUserRightByAccPro">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findUserRightByAccProResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findAllNotAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findAllNotAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findAllNotAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deleteSSO">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="deleteSSO">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="deleteSSOResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createSSO">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createSSO">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createSSOResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="create">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="create">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="find_User_Pass">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="find_User_Pass">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="find_User_PassResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findSSOByValue">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findSSOByValue">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findSSOByValueResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="find_User">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="find_User">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="find_UserResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findRoleByAccPro">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findRoleByAccPro">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findRoleByAccProResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="delete">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="delete">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="deleteResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findMenuByProgram">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findMenuByProgram">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findMenuByProgramResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="update">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AccountServicePublicService">
+    <wsdl:port binding="tns:AccountServicePublicServiceSoapBinding" name="AccountServicePublicPort">
+      <soap:address location="http://localhost:8280/kpi-web/services/AccountServicePublicPort"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
