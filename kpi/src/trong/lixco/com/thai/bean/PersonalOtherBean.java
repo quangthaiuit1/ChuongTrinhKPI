@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,6 +57,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 	private List<PositionJob> positionJobs;
 	private List<KPIPersonalPerformance> listKPIPersonalByEmployee;
 	private List<KPIPersonalOtherDetail> listKPIPersonalOtherDetailUpdate;
+	private List<KPIPersonalOtherDetail> details;
 	@Inject
 	private PersonalPerformanceService PERSONAL_PERFORMANCE_SERVICE;
 	// end them hanh vi
@@ -155,7 +157,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 			// kiem tra xem da duoc tao moi chua
 //			boolean isCreated = false;
 			List<KPIPersonalOther> personalOtherIsCreated = PERSONAL_OTHER_SERVICE
-					.find(memberPlaying.getDepartment().getName(), monthSearch, yearSearch);
+					.find(memberPlaying.getDepartment().getName(), monthSearch, yearSearch, null);
 			if (!personalOtherIsCreated.isEmpty()) {
 				noticeError("KPI tháng " + monthSearch + " năm " + yearSearch + " đã được tạo");
 			} else {
@@ -183,9 +185,66 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 		}
 	}
 
-	public void updateListKPIPersonalOther() {
+	public void showDetailKPI(KPIPersonalOther selected) {
+		this.personSelected = selected;
+		this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.execute("PF('widgetKPIPersonalOtherBehaviour').show();");
+	}
+
+	// Xoa chi tiet diem tru
+	public void removeDetail(KPIPersonalOtherDetail remove) {
+		KPIPersonalOtherDetail deleted = remove;
 		try {
-			List<KPIPersonalOtherDetail> otherDetailsTemp = this.personSelected.getKpiPersonalOtherDetails();
+			KPIPersonalOther temp = remove.getKpiPersonalOther();
+			double total = temp.getTotal() + remove.getMinuspoint();
+			temp.setTotal(total);
+			boolean checkDelete = PERSONAL_OTHER_DETAIL_SERVICE.delete(deleted);
+			if (checkDelete) {
+				KPIPersonalOther checkUpdate = PERSONAL_OTHER_SERVICE.update(temp);
+				if (checkUpdate != null) {
+					notice("Thành công");
+					kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+					this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+
+				}else {
+					noticeError("Lỗi không cập nhật được");
+				}
+			} else {
+				noticeError("Lỗi");
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+//	public void saveDetailRemove() {
+//		try {
+//			// get kpiperson tu DB len de update list kpipersonOfMonth
+//			List<KPIPerson> temps = kPIPersonService.findRange(personSelecting.getCodeEmp(),
+//					personSelecting.getKmonth(), personSelecting.getKyear());
+//			KPIPerson temp = temps.get(0);
+//			temp.setKpiPersonOfMonths(listDetail);
+//			temp.setModifiedDate(new Date());
+//			KPIPerson resultUpdate = kPIPersonService.updateAssign(temp);
+//			if (resultUpdate != null) {
+//				notice("Cập nhật thành công");
+//			} else {
+//				noticeError("Xảy ra lỗi");
+//			}
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		}
+//
+//	}
+
+	public void updateListKPIPersonalOther() {
+		List<KPIPersonalOtherDetail> listDetailAdd = new ArrayList<>();
+		try {
+			KPIPersonalOther otherQuery = (PERSONAL_OTHER_SERVICE.find(null, monthSearch, yearSearch,
+					this.personSelected.getCodeEmp())).get(0);
+			List<KPIPersonalOtherDetail> otherDetailsTemp = otherQuery.getKpiPersonalOtherDetails();
 			// Cap nhat list kpi hieu suat de selected khong bi lap
 			for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
 				for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
@@ -201,10 +260,10 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 
 						// check duoi DB co list detail chua
 						if (otherDetailsTemp.size() == 0) {
-							item.setKpiPersonalOther(personSelected);
-							otherDetailsTemp.add(item);
-							double totalTemp2 = this.personSelected.getTotal() - item.getMinuspoint();
-							this.personSelected.setTotal(totalTemp2);
+							item.setKpiPersonalOther(otherQuery);
+							listDetailAdd.add(item);
+							double totalTemp2 = otherQuery.getTotal() - item.getMinuspoint();
+							otherQuery.setTotal(totalTemp2);
 						} else {
 							for (int k = 0; k < otherDetailsTemp.size(); k++) {
 								if (otherDetailsTemp.get(k).getContent().equals(item.getContent())) {
@@ -212,10 +271,11 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 								}
 							}
 							if (isExist == false) {
-								item.setKpiPersonalOther(personSelected);
-								otherDetailsTemp.add(item);
-								double totalTemp2 = this.personSelected.getTotal() - item.getMinuspoint();
-								this.personSelected.setTotal(totalTemp2);
+								item.setKpiPersonalOther(otherQuery);
+//								otherDetailsTemp.add(item);
+								listDetailAdd.add(item);
+								double totalTemp2 = otherQuery.getTotal() - item.getMinuspoint();
+								otherQuery.setTotal(totalTemp2);
 							}
 						}
 
@@ -268,7 +328,9 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 					}
 				}
 			}
-			KPIPersonalOther statusUpdate = PERSONAL_OTHER_SERVICE.update(this.personSelected);
+			otherQuery.setKpiPersonalOtherDetails(listDetailAdd);
+			KPIPersonalOther statusUpdate = PERSONAL_OTHER_SERVICE.update(otherQuery);
+			kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
 			if (statusUpdate != null) {
 				notice("Thành công");
 			} else {
@@ -285,6 +347,14 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 	protected Logger getLogger() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public List<KPIPersonalOtherDetail> getDetails() {
+		return details;
+	}
+
+	public void setDetails(List<KPIPersonalOtherDetail> details) {
+		this.details = details;
 	}
 
 	public int getMonthSearch() {

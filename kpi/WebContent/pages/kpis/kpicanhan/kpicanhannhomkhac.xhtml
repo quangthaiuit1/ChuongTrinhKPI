@@ -105,8 +105,8 @@
 							<p:column headerText="Chi tiết"
 								style="width:30px;text-align:center">
 								<p:commandLink id="cmlDetail" type="submit"
-									actionListener="#{personalPerformanceOthersBean.showDetailBehaviour(item)}"
-									update=":formDialogKPIPersonalOtherBehaviour,:messages"
+									actionListener="#{personalOtherBean.showDetailKPI(item)}"
+									update=":formDialogKPIPersonalOtherBehaviour:tableidHV,:messages"
 									process="@this" style="margin-right:20px;">
 									<h:outputText value="Xem"
 										style="font-style:italic;color:blue;font-weight:bold" />
@@ -120,19 +120,6 @@
 				</p:tab>
 			</p:tabView>
 		</h:form>
-
-		<p:dialog widgetVar="dialogConfirm" resizable="false" width="400"
-			closeOnEscape="true" header="Đã có KPI trong tháng">
-			<h:form>
-				<h:outputText value="Bạn có muốn thay thế bằng dữ liệu mới không?" />
-				<p:separator />
-				<p:commandButton value="OK" oncomplete="PF('dialogConfirm').hide()"
-					action="#{personalPerformanceOthersBean.createAndDelete()}"
-					update=":messages" />
-				<p:commandButton value="Cancel"
-					oncomplete="PF('dialogConfirm').hide()" />
-			</h:form>
-		</p:dialog>
 
 		<p:dialog widgetVar="widgetKPIPersonalOther" resizable="false"
 			width="700" closeOnEscape="true" id="idKPIPersonalOtherBehaviour"
@@ -201,32 +188,28 @@
 					rowsPerPageTemplate="20,40,60" sortBy="#{item.id}"
 					expandableRowGroups="true" style="width:100%"
 					paginatorPosition="bottom" scrollHeight="370"
-					value="#{personalPerformanceOthersBean.listDetail}">
-					<f:facet name="header">
-						<p:commandButton
-							actionListener="#{personalPerformanceOthersBean.saveDetailRemove()}"
-							value="Lưu/cập nhật" style="float:right"
-							update=":formDialogKPIPersonalOtherBehaviour" icon="fa fa-save" />
-						<div style="clear: both;" />
-					</f:facet>
+					value="#{personalOtherBean.details}" rowIndexVar="rowIndex">
+					
 					<p:column headerText="..." style="width:6px; text-align:center">
 						<p:commandButton icon="ui-icon-closethick"
-							rendered="#{!personalPerformanceOthersBean.kPIPerson.signResultKPI}"
 							style="margin-left: -9px;background: none;border: none; box-shadow: none;"
-							update="tableidHV" styleClass="btnoneformat" process="@this"
-							actionListener="#{personalPerformanceOthersBean.removeDetail(item)}" />
+							update=":menuformid:tv:list:tableid,tableidHV" styleClass="btnoneformat" process="@this"
+							actionListener="#{personalOtherBean.removeDetail(item)}" />
 					</p:column>
 					<p:column headerText="STT" width="5" style="text-align:center">
-						<p:outputLabel value="#{item.no}" rows="2"
+						<p:outputLabel value="#{rowIndex+1}" rows="2"
 							style="text-align:center" />
 					</p:column>
 					<p:column headerText="Tiêu chí/ Mục tiêu đánh giá" width="170">
-						<p:outputLabel value="#{item.contentAppreciate}" rows="2"
+						<p:outputLabel value="#{item.content}" rows="2"
 							autoResize="false" />
+					</p:column>
+					<p:column headerText="Số lượng" width="50">
+						<p:inputText value="1"/>
 					</p:column>
 					<p:column headerText="Điểm trừ (%)" width="60"
 						style="text-align:center">
-						<h:outputText value="#{item.weighted/100}" rows="2"
+						<h:outputText value="#{item.minuspoint/100}" rows="2"
 							style="text-align:center">
 							<f:convertNumber pattern="##0%" />
 						</h:outputText>

@@ -85,7 +85,7 @@ public class PersonalOtherService extends AbstractService<KPIPersonalOther> {
 		return resultsFinal;
 	}
 
-	public List<KPIPersonalOther> find(String nameDepart, int kmonth, int kyear) {
+	public List<KPIPersonalOther> find(String nameDepart, int kmonth, int kyear, String employeeCode) {
 		// primary
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<KPIPersonalOther> cq = cb.createQuery(KPIPersonalOther.class);
@@ -94,6 +94,10 @@ public class PersonalOtherService extends AbstractService<KPIPersonalOther> {
 			if (nameDepart != null) {
 				Predicate nameDepartQuery = cb.equal(root.get("nameDepart"),nameDepart);
 				queries.add(nameDepartQuery);
+			}
+			if (employeeCode != null) {
+				Predicate employeeCodeQuery = cb.equal(root.get("codeEmp"),employeeCode);
+				queries.add(employeeCodeQuery);
 			}
 			if (kmonth != 0) {
 				Predicate kmonthQuery = cb.equal(root.get("kMonth"),kmonth);
