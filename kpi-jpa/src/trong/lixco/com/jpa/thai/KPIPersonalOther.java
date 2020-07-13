@@ -20,6 +20,8 @@ public class KPIPersonalOther extends AbstractEntity{
 	private int kMonth;
 	private int kYear;
 	private double total;
+	@Column(name = "is_sign_result")
+	private boolean isSignResult=false;//Duyet ket qua KPI
 	
 	@OneToMany(cascade = CascadeType.ALL,mappedBy = "kpiPersonalOther")
 	private List<KPIPersonalOtherDetail> kpiPersonalOtherDetails;
@@ -65,5 +67,11 @@ public class KPIPersonalOther extends AbstractEntity{
 	}
 	public void setNameDepart(String nameDepart) {
 		this.nameDepart = nameDepart;
+	}
+	public boolean isSignResult() {
+		return isSignResult;
+	}
+	public void setSignResult(boolean isSignResult) {
+		this.isSignResult = isSignResult;
 	}
 }

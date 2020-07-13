@@ -184,7 +184,6 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 			noticeError("Không có quyền");
 		}
 	}
-
 	public void showDetailKPI(KPIPersonalOther selected) {
 		this.personSelected = selected;
 		this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
@@ -218,7 +217,24 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 			// TODO: handle exception
 		}
 	}
-
+	
+	//cap nhat duyet ket qua kpi
+	public void updateSignResult() {
+		notify = new Notify(FacesContext.getCurrentInstance());
+		Date date = new Date(monthSearch, yearSearch, 1);
+		if(allowUpdate(date)) {
+			for (KPIPersonalOther k : kpiPersonalOthers) {
+				KPIPersonalOther checkUpdate = PERSONAL_OTHER_SERVICE.update(k);
+				if(checkUpdate == null) {
+					System.out.println("Loi");
+				}
+			}
+			kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+			notice("Thanh cong");
+		}else {
+			noticeError("Không có quyền cập nhật");
+		}
+	}
 //	public void saveDetailRemove() {
 //		try {
 //			// get kpiperson tu DB len de update list kpipersonOfMonth

@@ -16,7 +16,7 @@
 	font-weight: bold;
 }
 </style>
-		<h3 style="margin: 0px">KPI cá nhân (Nhóm khác)</h3>
+		<h3 style="margin: 0px">Duyệt KPI cá nhân (Nhóm khác)</h3>
 		<p:separator />
 		<h:form id="menuformid">
 			<p:tabView id="tv" widgetVar="myTab">
@@ -41,8 +41,8 @@
 									</p:spinner>
 								</h:panelGrid>
 								<h:panelGrid columns="1">
-									<p:commandButton type="submit" value="Tạo mới" process="@this"
-										id="btnew" action="#{personalOtherBean.create()}"
+									<p:commandButton type="submit" value="Lưu/cập nhật" process="@this"
+										id="btnew" action="#{personalOtherBean.updateSignResult()}"
 										update="tableid" icon="ui-icon-document" />
 								</h:panelGrid>
 								<h:panelGrid columns="2" style="width:100%" cellspacing="10">
@@ -69,11 +69,11 @@
 							widgetVar="dtlistkpiperson" styleClass="tableparent"
 							filteredValue="#{personalPerformanceOthersBean.kPIPersonFilters}"
 							id="tableid" var="item">
-							<p:ajax event="rowSelect"
-								listener="#{personalPerformanceOthersBean.showEdit}" />
 							<p:column headerText="Duyệt KQ"
 								style="width:25px;text-align:center">
-								<p:selectBooleanCheckbox value="#{abc}" />
+								<p:selectBooleanCheckbox styleClass="selectbllb"
+									value="#{}">
+								</p:selectBooleanCheckbox>
 							</p:column>
 							<p:column headerText="Tháng"
 								style="width:10px; text-align:center">
@@ -134,8 +134,7 @@
 						<div style="float: right">
 							<p:commandButton type="submit" value="Lưu/cập nhật"
 								action="#{personalOtherBean.updateListKPIPersonalOther()}"
-								update=":menuformid:tv:list:tableid"
-								icon="fa fa-save" />
+								update=":menuformid:tv:list:tableid" icon="fa fa-save" />
 						</div>
 						<div style="clear: both;" />
 					</f:facet>
@@ -189,11 +188,12 @@
 					expandableRowGroups="true" style="width:100%"
 					paginatorPosition="bottom" scrollHeight="370"
 					value="#{personalOtherBean.details}" rowIndexVar="rowIndex">
-					
+
 					<p:column headerText="..." style="width:6px; text-align:center">
 						<p:commandButton icon="ui-icon-closethick"
 							style="margin-left: -9px;background: none;border: none; box-shadow: none;"
-							update=":menuformid:tv:list:tableid,tableidHV" styleClass="btnoneformat" process="@this"
+							update=":menuformid:tv:list:tableid,tableidHV"
+							styleClass="btnoneformat" process="@this"
 							actionListener="#{personalOtherBean.removeDetail(item)}" />
 					</p:column>
 					<p:column headerText="STT" width="5" style="text-align:center">
@@ -201,8 +201,7 @@
 							style="text-align:center" />
 					</p:column>
 					<p:column headerText="Tiêu chí/ Mục tiêu đánh giá" width="170">
-						<p:outputLabel value="#{item.content}" rows="2"
-							autoResize="false" />
+						<p:outputLabel value="#{item.content}" rows="2" autoResize="false" />
 					</p:column>
 					<p:column headerText="Điểm trừ (%)" width="60"
 						style="text-align:center">
