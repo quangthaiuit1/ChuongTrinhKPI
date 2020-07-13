@@ -4,4 +4,5 @@
 kpi-jpa/target/classes/*
 kpi-jpa/build/classes/*
 kpi-ejb/build/classes/*
-kpi/target/m2e-wtp/web-resources/META-INF/
+kpi/target/m2e-wtp/web-resources/META-INF/*
+kpi/target/classes/*
