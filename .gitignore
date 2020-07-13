@@ -2,3 +2,5 @@
 ./metadata/
 .metadata/
 kpi-jpa/target/classes/*
+
+kpi/target/m2e-wtp/web-resources/META-INF/
