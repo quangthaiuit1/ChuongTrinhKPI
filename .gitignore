@@ -6,3 +6,13 @@ kpi-jpa/build/classes/*
 kpi-ejb/build/classes/*
 kpi/target/m2e-wtp/web-resources/META-INF/*
 kpi/target/classes/*
+
+kpi-ear/.settings/
+
+kpi-ejb/.settings/
+
+kpi/.settings/
+
+*.class
+
+kpi-jpa/.settings/
