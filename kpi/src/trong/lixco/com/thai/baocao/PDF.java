@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -48,6 +49,8 @@ import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
 import trong.lixco.com.jpa.entitykpi.KPIPerson;
 import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
 import trong.lixco.com.jpa.entitykpi.ParamReportDetail;
+import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
+import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
 import trong.lixco.com.util.Notify;
 
 @ManagedBean
@@ -127,7 +130,24 @@ public class PDF extends AbstractBean<KPIPerson> {
 		dataSource = KPI_DEPARTMENT_MONTH.findKPIDepYear(2020, null);
 //		this.PDF(dataSource);
 	}
-
+//	public void getList() {
+//		listKPIPersonalByEmployee = PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
+//		Map<String, List<KPIPersonalPerformance>> datagroups11 = listKPIPersonalByEmployee.stream()
+//				.collect(Collectors.groupingBy(a -> a.getCodePJob(), Collectors.toList()));
+//
+//		listKPIPersonalByEmployee = new ArrayList<>();
+//		for (String key : datagroups11.keySet()) {
+//			List<KPIPersonalPerformance> invs = datagroups11.get(key);
+//			try {
+//				InfoPersonalPerformance tgi = new InfoPersonalPerformance();
+//				tgi.setPositionJobName(POSITION_JOB_SERVICE.findByCode(key).getName());
+//				tgi.setPersonalPerformances(invs);
+//				listInfoPersonalPerformances.add(tgi);
+//			} catch (Exception e) {
+//				// TODO: handle exception
+//			}
+//		}
+//	}
 	public void showPDF() throws JRException, IOException {
 		/* Convert List to JRBeanCollectionDataSource */
 		

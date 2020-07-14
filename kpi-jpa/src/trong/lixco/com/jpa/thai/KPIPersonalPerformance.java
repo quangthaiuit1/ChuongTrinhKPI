@@ -14,7 +14,8 @@ public class KPIPersonalPerformance extends AbstractEntity {
 	private String content;//noi dung
 	private String codePJob;//Chuc vu (trong KPI theo mo ta cong viec)
 	private String computation;
-	private double minuspoint;// so diem bi tru
+	private double minuspoint = 0;// so diem bi tru
+	private int quantity = 1; //so luong
 	
 	@ManyToOne
 	private FormulaKPI formulaKPI;//cong thuc tinh
@@ -70,5 +71,11 @@ public class KPIPersonalPerformance extends AbstractEntity {
 	}
 	public void setMinuspoint(double minuspoint) {
 		this.minuspoint = minuspoint;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 }

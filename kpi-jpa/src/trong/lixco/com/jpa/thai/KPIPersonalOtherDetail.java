@@ -9,8 +9,11 @@ import trong.lixco.com.jpa.entitykpi.AbstractEntity;
 @Entity
 @Table(name = "personal_other_detail")
 public class KPIPersonalOtherDetail extends AbstractEntity{
+	
 	private String content;
 	private double minuspoint;
+	private int quantity;
+	
 	@ManyToOne
 	private KPIPersonalOther kpiPersonalOther;
 	
@@ -32,5 +35,11 @@ public class KPIPersonalOtherDetail extends AbstractEntity{
 	}
 	public void setKpiPersonalOther(KPIPersonalOther kpiPersonalOther) {
 		this.kpiPersonalOther = kpiPersonalOther;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 }

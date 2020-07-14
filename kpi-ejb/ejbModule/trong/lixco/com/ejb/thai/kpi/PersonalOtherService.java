@@ -45,6 +45,14 @@ public class PersonalOtherService extends AbstractService<KPIPersonalOther> {
 		return KPIPersonalOther.class;
 	}
 
+	
+//	@Override
+//	public KPIPersonalOther findById(long id) {
+//		KPIPersonalOther result=findById(id);
+//		result.getKpiPersonalOtherDetails().size();
+//		return result;
+//	}
+
 	public List<KPIPersonalOther> find(List<String> codeEmps, int kmonth, int kyear) {
 		// primary
 		CriteriaBuilder cb = em.getCriteriaBuilder();

@@ -315,7 +315,6 @@ public class KPIPersonService extends AbstractService<KPIPerson> {
 		return result;
 	}
 	
-	
 	public KPIPerson findRangeNew(String codeEmp, int month, int year) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
