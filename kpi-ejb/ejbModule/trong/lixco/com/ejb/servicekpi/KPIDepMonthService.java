@@ -24,6 +24,7 @@ import javax.persistence.criteria.Root;
 import trong.lixco.com.ejb.service.AbstractService;
 import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
 import trong.lixco.com.jpa.entitykpi.KPIDepOfMonth;
+import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
@@ -94,6 +95,31 @@ public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
 		List<KPIDepMonth> results = query.getResultList();
 		return results;
 	}
+	//thai
+	public List<KPIDepMonth> find(String codeDepart, int year) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepMonth> cq = cb.createQuery(KPIDepMonth.class);
+		Root<KPIDepMonth> root = cq.from(KPIDepMonth.class);
+		List<Predicate> queries = new ArrayList<>();
+		if (year != 0) {
+			Predicate answerTypeQuery = cb.equal(root.get("year"), year);
+			queries.add(answerTypeQuery);
+		}
+		if (codeDepart != null) {
+			Predicate departmentNameQuery = cb.equal(root.get("codeDepart"), codeDepart);
+			queries.add(departmentNameQuery);
+		}
+		Predicate data[] = new Predicate[queries.size()];
+		for (int i = 0; i < queries.size(); i++) {
+			data[i] = queries.get(i);
+		}
+		Predicate finalPredicate = cb.and(data);
+		cq.where(finalPredicate);
+		TypedQuery<KPIDepMonth> query = em.createQuery(cq);
+		return query.getResultList();
+	}
+	//end thai
 
 	public List<KPIDepMonth> findKPIDepYear(int year, String codeDepart) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();

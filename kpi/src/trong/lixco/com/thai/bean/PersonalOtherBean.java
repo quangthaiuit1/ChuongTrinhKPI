@@ -143,6 +143,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 					// TODO: handle exception
 				}
 			}
+			//kiem tra bang other_detail row nao co set selecte = true;
 			for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
 				this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
 				for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
@@ -157,7 +158,6 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 					}
 				}
 			}
-//			
 
 			// End Thai
 			RequestContext context = RequestContext.getCurrentInstance();

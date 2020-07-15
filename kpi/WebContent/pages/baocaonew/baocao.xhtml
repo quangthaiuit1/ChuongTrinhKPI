@@ -52,7 +52,7 @@
 									actionListener="#{personalPerformanceOthersBean.searchItem()}" />
 								<p:commandButton type="submit" value="In PDF" ajax="false"
 									style="background:#fbe4c6"
-									actionListener="#{pDF.showPDF()}" onclick="this.form.target='_blank'"
+									actionListener="#{pDF.showReportNew()}" onclick="this.form.target='_blank'"
 									icon="ui-icon-calculator" />
 								<p:commandButton type="submit" value="In Excel" process="@form" style="background:#fbe4c6"
 									actionListener="#{excel.printExcel()}" update=":messages"

@@ -1,7 +1,8 @@
 package trong.lixco.com.thai.bean.entities;
 
-public class DepartmentTotalMonth {
-	private String nameDepart;
+public class PersonalYear {
+	private String nameEmp;
+	private String nameDepartment;
 	private double thang1;
 	private double thang2;
 	private double thang3;
@@ -15,11 +16,17 @@ public class DepartmentTotalMonth {
 	private double thang11;
 	private double thang12;
 	
-	public String getNameDepart() {
-		return nameDepart;
+	public String getNameDepartment() {
+		return nameDepartment;
 	}
-	public void setNameDepart(String nameDepart) {
-		this.nameDepart = nameDepart;
+	public void setNameDepartment(String nameDepartment) {
+		this.nameDepartment = nameDepartment;
+	}
+	public String getNameEmp() {
+		return nameEmp;
+	}
+	public void setNameEmp(String nameEmp) {
+		this.nameEmp = nameEmp;
 	}
 	public double getThang1() {
 		return thang1;
