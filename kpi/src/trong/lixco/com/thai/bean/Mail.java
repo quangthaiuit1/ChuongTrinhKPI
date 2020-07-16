@@ -38,7 +38,7 @@
 //			employee = employeeServicePublic.findByCode(codeEmplyee);
 //
 //			if (codeEmplyee != null && codeEmplyee != "") {
-//
+//				//config mail server
 //				Properties props = System.getProperties();
 //				props.put("mail.smtp.host", "mail.lixco.com");
 //				props.put("mail.smtp.port", "25");

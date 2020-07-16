@@ -50,11 +50,20 @@
 									icon="ui-icon-search" update="tableid" process="@form"
 									oncomplete="PF('dtlistkpiperson').clearFilters()"
 									actionListener="#{personalPerformanceOthersBean.searchItem()}" />
-								<p:commandButton type="submit" value="In PDF" ajax="false"
+								<p:commandButton type="submit" value="Phòng năm" ajax="false"
 									style="background:#fbe4c6"
-									actionListener="#{pDF.showReportNew()}" onclick="this.form.target='_blank'"
-									icon="ui-icon-calculator" />
-								<p:commandButton type="submit" value="In Excel" process="@form" style="background:#fbe4c6"
+									actionListener="#{pDF.showReportDepartmentYear()}"
+									onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+								<p:commandButton type="submit" value="Cá nhân năm" ajax="false"
+									style="background:#fbe4c6"
+									actionListener="#{pDF.showReportPersonalYear()}"
+									onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+								<p:commandButton type="submit" value="Cá nhân quý" ajax="false"
+									style="background:#fbe4c6"
+									actionListener="#{pDF.showReportPersonalQuy()}"
+									onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+								<p:commandButton type="submit" value="In Excel" process="@form"
+									style="background:#fbe4c6"
 									actionListener="#{excel.printExcel()}" update=":messages"
 									icon="ui-icon-disk" />
 							</h:panelGrid>

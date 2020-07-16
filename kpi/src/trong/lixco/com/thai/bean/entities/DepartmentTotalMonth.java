@@ -14,7 +14,22 @@ public class DepartmentTotalMonth {
 	private double thang10;
 	private double thang11;
 	private double thang12;
+	private double kpiAvgYear;
+	private double kpiYear;
 	
+	
+	public double getKpiYear() {
+		return kpiYear;
+	}
+	public void setKpiYear(double kpiYear) {
+		this.kpiYear = kpiYear;
+	}
+	public double getKpiAvgYear() {
+		return kpiAvgYear;
+	}
+	public void setKpiAvgYear(double kpiAvgYear) {
+		this.kpiAvgYear = kpiAvgYear;
+	}
 	public String getNameDepart() {
 		return nameDepart;
 	}
