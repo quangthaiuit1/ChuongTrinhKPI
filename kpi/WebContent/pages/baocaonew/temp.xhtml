@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/pages/home.xhtml">
+
+	<ui:define name="content">
+		<style>
+.selectbllb .ui-chkbox-label {
+	font-size: 1.2em;
+	margin-left: 20px;
+	font-weight: bold;
+}
+</style>
+		<h3 style="margin: 0px">Báo cáo</h3>
+		<p:separator />
+		<h:form id="menuformid">
+			<p:tabView id="tv" widgetVar="myTab">
+				<p:tab title="Báo cáo KPI phòng">
+					<h:form id="dialogKPIDepartmentYear">
+						<center>
+							<h:panelGrid columns="3" style="width:100%" cellspacing="1">
+								<p:outputLabel value="Năm" />
+								<p:spinner size="10" value="#{pDF.yearSelectedDepartment}"
+									min="2017" max="2050">
+									<p:ajax process="@this" />
+								</p:spinner>
+								<p:commandButton type="submit" value="In PDF" ajax="false"
+									style="background:#fbe4c6"
+									actionListener="#{pDF.showReportDepartmentYear()}"
+									onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+							</h:panelGrid>
+						</center>
+					</h:form>
+				</p:tab>
+				<p:tab title="Báo cáo KPI cá nhân tháng">
+					<h:form id="formPersonalMonth">
+						<h:panelGrid columns="7" style="width:100%" cellspacing="1">
+							<p:outputLabel value="Tháng: " />
+							<p:selectOneMenu id="month" value="#{pDF.monthSelectedPersonal}">
+								<f:selectItem itemLabel="Chọn" itemValue="" />
+								<f:selectItems value="#{pDF.months}" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Năm" />
+							<p:spinner size="10" value="#{pDF.yearSelectedPersonal1}"
+								min="2017" max="2050">
+								<p:ajax process="@this" />
+							</p:spinner>
+							<p:commandButton type="submit" value="In PDF" ajax="false"
+								style="background:#fbe4c6"
+								actionListener="#{pDF.showReportPersonalYear()}"
+								onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						</h:panelGrid>
+					</h:form>
+				</p:tab>
+				<p:tab title="Báo cáo KPI cá nhân quý">
+					<h:form id="formPersonalQuy">
+						<center>
+							<h:panelGrid columns="5" style="width:100%" cellspacing="1">
+								<p:outputLabel value="Quý: " />
+								<p:selectOneMenu id="quy" value="#{pDF.quySelectedPersonal}">
+									<f:selectItem itemLabel="Chọn" itemValue="" />
+									<f:selectItems value="#{pDF.quys}" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Năm" />
+								<p:spinner size="10" value="#{pDF.yearSelectedPersonal2}"
+									min="2017" max="2050">
+									<p:ajax process="@this" />
+								</p:spinner>
+								<p:commandButton type="submit" value="In PDF" ajax="false"
+									style="background:#fbe4c6"
+									actionListener="#{pDF.showReportPersonalQuy()}"
+									onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+							</h:panelGrid>
+						</center>
+					</h:form>
+				</p:tab>
+				<p:tab title="Báo cáo KPI cá nhân năm">
+					<h:form id="formPersonalYear">
+						<h:panelGrid columns="7" style="width:100%" cellspacing="1">
+							<p:outputLabel value="Năm" />
+							<p:spinner size="10" value="#{pDF.yearSelectedPersonal3}"
+								min="2017" max="2050">
+								<p:ajax process="@this" />
+							</p:spinner>
+							<p:commandButton type="submit" value="In PDF" ajax="false"
+								style="background:#fbe4c6"
+								actionListener="#{pDF.showReportPersonalYear()}"
+								onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						</h:panelGrid>
+					</h:form>
+				</p:tab>
+
+			</p:tabView>
+		</h:form>
+		<!-- Phong nam -->
+		<p:dialog widgetVar="widgetKPIDepartmentYear" resizable="false"
+			width="700" height="200" closeOnEscape="true"
+			header="Báo cáo KPI phòng" modal="true">
+			<p:separator />
+			<h:form id="dialogKPIDepartmentYear">
+				<center>
+					<h:panelGrid columns="3" style="width:50%" cellspacing="1">
+						<p:outputLabel value="Năm" />
+						<p:spinner size="10" value="#{pDF.yearSelectedDepartment}"
+							min="2017" max="2050">
+							<p:ajax process="@this" />
+						</p:spinner>
+						<p:commandButton type="submit" value="In PDF" ajax="false"
+							style="background:#fbe4c6"
+							actionListener="#{pDF.showReportDepartmentYear()}"
+							onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+					</h:panelGrid>
+				</center>
+			</h:form>
+		</p:dialog>
+		<!-- Ca nhan thang -->
+		<p:dialog widgetVar="widgetKPIPersonalMonth" resizable="false"
+			width="700" height="200" closeOnEscape="true"
+			header="Báo cáo KPI phòng" modal="true">
+			<p:separator />
+			<h:form id="dialogKPIPersonalMonth">
+				<center>
+					<h:form id="formPersonalYear">
+						<h:panelGrid columns="7" style="width:70%" cellspacing="1">
+							<p:outputLabel value="Tháng: " />
+							<p:selectOneMenu id="month" value="#{pDF.monthSelectedPersonal}">
+								<f:selectItem itemLabel="Chọn" itemValue="" />
+								<f:selectItems value="#{pDF.months}" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Năm" />
+							<p:spinner size="10" value="#{pDF.yearSelectedPersonal1}"
+								min="2017" max="2050">
+								<p:ajax process="@this" />
+							</p:spinner>
+							<p:commandButton type="submit" value="In PDF" ajax="false"
+								style="background:#fbe4c6"
+								actionListener="#{pDF.showReportPersonalYear()}"
+								onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						</h:panelGrid>
+					</h:form>
+				</center>
+			</h:form>
+		</p:dialog>
+		<!-- Ca nhan quy -->
+		<p:dialog widgetVar="widgetKPIPersonalQuy" resizable="false"
+			width="700" height="200" closeOnEscape="true"
+			header="Báo cáo KPI phòng" modal="true">
+			<p:separator />
+			<h:form id="dialogKPIPersonalQuy">
+				<center>
+					<h:form id="formPersonalYear">
+						<h:panelGrid columns="7" style="width:70%" cellspacing="1">
+							<p:outputLabel value="Quý: " />
+							<p:selectOneMenu id="quy" value="#{pDF.quySelectedPersonal}">
+								<f:selectItem itemLabel="Chọn" itemValue="" />
+								<f:selectItems value="#{pDF.quys}" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Năm" />
+							<p:spinner size="10" value="#{pDF.yearSelectedPersonal2}"
+								min="2017" max="2050">
+								<p:ajax process="@this" />
+							</p:spinner>
+							<p:commandButton type="submit" value="In PDF" ajax="false"
+								style="background:#fbe4c6"
+								actionListener="#{pDF.showReportPersonalQuy()}"
+								onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						</h:panelGrid>
+					</h:form>
+				</center>
+			</h:form>
+		</p:dialog>
+		<!-- Ca nhan nam -->
+		<p:dialog widgetVar="widgetKPIPersonalYear" resizable="false"
+			width="700" height="200" closeOnEscape="true"
+			header="Báo cáo KPI phòng" modal="true">
+			<p:separator />
+			<h:form id="dialogKPIPersonalYear">
+				<center>
+					<h:form id="formPersonalYear3">
+						<h:panelGrid columns="7" style="width:70%" cellspacing="1">
+							<p:outputLabel value="Năm" />
+							<p:spinner size="10" value="#{pDF.yearSelectedPersonal3}"
+								min="2017" max="2050">
+								<p:ajax process="@this" />
+							</p:spinner>
+							<p:commandButton type="submit" value="In PDF" ajax="false"
+								style="background:#fbe4c6"
+								actionListener="#{pDF.showReportPersonalYear()}"
+								onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						</h:panelGrid>
+					</h:form>
+				</center>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

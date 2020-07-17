@@ -13,6 +13,7 @@
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="listKPIDepartMonthByYearDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="year" class="java.lang.Integer"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -60,12 +61,19 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="FontReport" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[BẢNG TỔNG HỢP KẾT QUẢ KPI PHÒNG]]></text>
+				<text><![CDATA[BẢNG TỔNG HỢP KẾT QUẢ KPI PHÒNG NĂM]]></text>
 			</staticText>
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="46" y="31" width="95" height="41" uuid="7eb2e105-7463-43fb-9241-5863ca11983a"/>
 				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="643" y="5" width="60" height="25" forecolor="#0E5EC7" uuid="d501448f-e6cf-4f02-aa51-3a6c47238378"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="FontReport" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
