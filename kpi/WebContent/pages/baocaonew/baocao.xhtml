@@ -18,47 +18,41 @@
 </style>
 		<h3 style="margin: 0px">Báo cáo</h3>
 		<p:separator />
-		<h:form id="menuformid">
-			<p:tabView id="tv" widgetVar="myTab">
-				<p:tab title="Danh Sách">
-					<h:form id="list">
-						<p:panel
-							style="float:right; border:0px; margin-top:-65px !important;background:none;">
-							<h:panelGrid id="mainGrid" columns="9"
-								style="float:left; margin-bottom:5px">
-								<p:commandButton type="submit" value="Báo cáo KPI phòng"
-									onclick="PF('widgetKPIDepartmentYear').show()"
-									update="
+		<h:form id="list">
+			<p:panel
+				style="float:right; border:0px; margin-top:-35px !important;background:none;">
+				<h:panelGrid id="mainGrid" columns="9"
+					style="float:left; margin-bottom:5px">
+					<p:commandButton type="submit" value="Báo cáo KPI phòng"
+						onclick="PF('widgetKPIDepartmentYear').show()"
+						update="
 									:dialogKPIDepartmentYear,:messages"
-									process="@this" icon="fa fa-file-pdf-o" />
-								<p:commandButton type="submit" value="BC KPI cá nhân tháng"
-									onclick="PF('widgetKPIPersonalMonth').show()"
-									update="
+						process="@this" icon="fa fa-file-pdf-o" />
+					<p:commandButton type="submit" value="BC KPI cá nhân tháng"
+						onclick="PF('widgetKPIPersonalMonth').show()"
+						update="
 									:dialogKPIPersonalYear,:messages"
-									process="@this" icon="fa fa-file-pdf-o" />
-								<p:commandButton type="submit" value="BC KPI cá nhân quý"
-									onclick="PF('widgetKPIPersonalQuy').show()"
-									update="
+						process="@this" icon="fa fa-file-pdf-o" />
+					<p:commandButton type="submit" value="BC KPI cá nhân quý"
+						onclick="PF('widgetKPIPersonalQuy').show()"
+						update="
 									:dialogKPIPersonalYear,:messages"
-									process="@this" icon="fa fa-file-pdf-o" />
-								<p:commandButton type="submit" value="BC KPI cá nhân năm"
-									onclick="PF('widgetKPIPersonalYear').show()"
-									update="
+						process="@this" icon="fa fa-file-pdf-o" />
+					<p:commandButton type="submit" value="BC KPI cá nhân năm"
+						onclick="PF('widgetKPIPersonalYear').show()"
+						update="
 									:dialogKPIPersonalYear,:messages"
-									process="@this" icon="fa fa-file-pdf-o" />
-							</h:panelGrid>
-						</p:panel>
-					</h:form>
-				</p:tab>
-			</p:tabView>
+						process="@this" icon="fa fa-file-pdf-o" />
+				</h:panelGrid>
+			</p:panel>
 		</h:form>
 		<!-- Phong nam -->
 		<p:dialog widgetVar="widgetKPIDepartmentYear" resizable="false"
-			width="700" height="200" closeOnEscape="true"
+			width="300" height="70" closeOnEscape="true"
 			header="Báo cáo KPI phòng" modal="true">
 			<h:form id="dialogKPIDepartmentYear">
 				<center>
-					<h:panelGrid columns="3" style="width:50%">
+					<h:panelGrid columns="3" style="width:100%">
 						<p:outputLabel value="Năm: " />
 						<p:spinner size="10" value="#{reportBean.yearSelectedDepartment}"
 							min="2017" max="2050">
@@ -75,13 +69,14 @@
 		</p:dialog>
 		<!-- Ca nhan thang -->
 		<p:dialog widgetVar="widgetKPIPersonalMonth" resizable="false"
-			width="700" height="200" closeOnEscape="true"
-			header="Báo cáo KPI phòng" modal="true">
+			width="400" height="70" closeOnEscape="true"
+			header="Báo cáo KPI cá nhân theo tháng" modal="true">
 			<h:form id="dialogKPIPersonalMonth">
 				<center>
-					<h:panelGrid columns="7" style="width:70%" cellspacing="1">
+					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
 						<p:outputLabel value="Tháng: " />
-						<p:selectOneMenu id="month" value="#{reportBean.monthSelectedPersonal}">
+						<p:selectOneMenu id="month"
+							value="#{reportBean.monthSelectedPersonal}">
 							<f:selectItems value="#{reportBean.months}" />
 						</p:selectOneMenu>
 						<p:outputLabel value="Năm" />
@@ -100,13 +95,14 @@
 		</p:dialog>
 		<!-- Ca nhan quy -->
 		<p:dialog widgetVar="widgetKPIPersonalQuy" resizable="false"
-			width="700" height="200" closeOnEscape="true"
-			header="Báo cáo KPI phòng" modal="true">
+			width="400" height="70" closeOnEscape="true"
+			header="Báo cáo KPI cá nhân theo quý" modal="true">
 			<h:form id="dialogKPIPersonalQuy">
 				<center>
-					<h:panelGrid columns="7" style="width:70%" cellspacing="1">
+					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
 						<p:outputLabel value="Quý: " />
-						<p:selectOneMenu id="quy" value="#{reportBean.quySelectedPersonal}">
+						<p:selectOneMenu id="quy"
+							value="#{reportBean.quySelectedPersonal}">
 							<f:selectItems value="#{reportBean.quys}" />
 						</p:selectOneMenu>
 						<p:outputLabel value="Năm" />
@@ -125,11 +121,11 @@
 		</p:dialog>
 		<!-- Ca nhan nam -->
 		<p:dialog widgetVar="widgetKPIPersonalYear" resizable="false"
-			width="700" height="200" closeOnEscape="true"
-			header="Báo cáo KPI phòng" modal="true">
+			width="300" height="70" closeOnEscape="true"
+			header="Báo cáo KPI cá nhân năm" modal="true">
 			<h:form id="dialogKPIPersonalYear">
 				<center>
-					<h:panelGrid columns="7" style="width:70%" cellspacing="1">
+					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
 						<p:outputLabel value="Năm" />
 						<p:spinner size="10" value="#{reportBean.yearSelectedPersonal3}"
 							min="2017" max="2050">
