@@ -142,33 +142,29 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	}
 
 	public void showReportPersonalMonth() throws JRException, IOException {
-		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
-				.getRealPath("/resources/thaireports/kpi/personalMonth.jasper");
-		List<PersonalMonth> dataReportPersonalQuy = createDataReportKPIPersonalMonth(this.monthSelectedPersonal,
+		List<PersonalMonth> dataReportPersonalMonth = createDataReportKPIPersonalMonth(this.monthSelectedPersonal,
 				this.yearSelectedPersonal1);
+		if (!dataReportPersonalMonth.isEmpty()) {
+			String reportPath = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/thaireports/kpi/personalMonth.jasper");
+			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalMonth);
+			Map<String, Object> importParam = new HashMap<String, Object>();
 
-		JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalQuy);
-		Map<String, Object> importParam = new HashMap<String, Object>();
-
-		String image = FacesContext.getCurrentInstance().getExternalContext()
-				.getRealPath("/resources/gfx/lixco_logo.png");
-		importParam.put("logo", image);
-		importParam.put("year", yearSelectedPersonal1);
-		importParam.put("month", monthSelectedPersonal);
-		
-		
-		//***** Data null thi xu ly nhu the nao
-		if(beanDataSource.next()) {
+			String image = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/gfx/lixco_logo.png");
+			importParam.put("logo", image);
+			importParam.put("year", yearSelectedPersonal1);
+			importParam.put("month", monthSelectedPersonal);
 			importParam.put("listKPIDepartmentYear", beanDataSource);
-		}else {
-			importParam.put("listKPIDepartmentYear", new JREmptyDataSource());
+			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			OutputStream outputStream;
+			outputStream = facesContext.getExternalContext().getResponseOutputStream();
+			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+			facesContext.responseComplete();
+		} else {
+			noticeError("Không có dữ liệu");
 		}
-		JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		OutputStream outputStream;
-		outputStream = facesContext.getExternalContext().getResponseOutputStream();
-		JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-		facesContext.responseComplete();
 	}
 
 //
@@ -177,78 +173,89 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 				.getRealPath("/resources/thaireports/kpi/personalQuy.jasper");
 		List<PersonalQuy> dataReportPersonalQuy = createDataReportKPIPersonalQuy(this.quySelectedPersonal,
 				this.yearSelectedPersonal2);
+		//check neu list rong~
+		if(!dataReportPersonalQuy.isEmpty()) {
+			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalQuy);
+			Map<String, Object> importParam = new HashMap<String, Object>();
 
-		JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalQuy);
-		Map<String, Object> importParam = new HashMap<String, Object>();
-
-		String image = FacesContext.getCurrentInstance().getExternalContext()
-				.getRealPath("/resources/gfx/lixco_logo.png");
-		importParam.put("logo", image);
-		importParam.put("year", yearSelectedPersonal2);
-		importParam.put("quy", quySelectedPersonal);
-		importParam.put("firstMonth", dataReportPersonalQuy.get(0).getFirstMonth());
-		importParam.put("secondMonth", dataReportPersonalQuy.get(0).getSecondndMonth());
-		importParam.put("thirdMonth", dataReportPersonalQuy.get(0).getThirdMonth());
-		importParam.put("listKPIDepartmentYear", beanDataSource);
-		JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		OutputStream outputStream;
-		outputStream = facesContext.getExternalContext().getResponseOutputStream();
-		JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-		facesContext.responseComplete();
+			String image = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/gfx/lixco_logo.png");
+			importParam.put("logo", image);
+			importParam.put("year", yearSelectedPersonal2);
+			importParam.put("quy", quySelectedPersonal);
+			importParam.put("firstMonth", dataReportPersonalQuy.get(0).getFirstMonth());
+			importParam.put("secondMonth", dataReportPersonalQuy.get(0).getSecondndMonth());
+			importParam.put("thirdMonth", dataReportPersonalQuy.get(0).getThirdMonth());
+			importParam.put("listKPIDepartmentYear", beanDataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			OutputStream outputStream;
+			outputStream = facesContext.getExternalContext().getResponseOutputStream();
+			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+			facesContext.responseComplete();
+		}else {
+			noticeError("Không có dữ liệu");
+		}
 	}
 
 	public void showReportPersonalYear() throws JRException, IOException {
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/personalYear.jasper");
 		List<PersonalYear> dataReportPersonalYear = createDataReportKPIPersonalYear(this.yearSelectedPersonal3);
+		if(!dataReportPersonalYear.isEmpty()) {
+			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalYear);
+			Map<String, Object> importParam = new HashMap<String, Object>();
 
-		JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalYear);
-		Map<String, Object> importParam = new HashMap<String, Object>();
-
-		String image = FacesContext.getCurrentInstance().getExternalContext()
-				.getRealPath("/resources/gfx/lixco_logo.png");
-		importParam.put("logo", image);
-		importParam.put("year", yearSelectedPersonal3);
-		importParam.put("listKPIDepartmentYear", beanDataSource);
-		JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		OutputStream outputStream;
-		outputStream = facesContext.getExternalContext().getResponseOutputStream();
-		JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-		facesContext.responseComplete();
+			String image = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/gfx/lixco_logo.png");
+			importParam.put("logo", image);
+			importParam.put("year", yearSelectedPersonal3);
+			importParam.put("listKPIDepartmentYear", beanDataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			OutputStream outputStream;
+			outputStream = facesContext.getExternalContext().getResponseOutputStream();
+			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+			facesContext.responseComplete();
+		}else {
+			noticeError("Không có dữ liệu");
+		}
 	}
 
 	public void showReportDepartmentYear() throws JRException, IOException {
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/departmentYear.jasper");
 		List<DepartmentTotalMonth> dataReportDepartmentYear = createDataReportKPIDepartmentYear(yearSelectedDepartment);
+		if(!dataReportDepartmentYear.isEmpty()) {
+			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportDepartmentYear);
+			Map<String, Object> importParam = new HashMap<String, Object>();
 
-		JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportDepartmentYear);
-		Map<String, Object> importParam = new HashMap<String, Object>();
-
-		String image = FacesContext.getCurrentInstance().getExternalContext()
-				.getRealPath("/resources/gfx/lixco_logo.png");
-		importParam.put("logo", image);
-		importParam.put("year", yearSelectedDepartment);
-		importParam.put("listKPIDepartmentYear", beanDataSource);
-		JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		OutputStream outputStream;
-		outputStream = facesContext.getExternalContext().getResponseOutputStream();
-		JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-//		//print excel
-//		JRXlsxExporter exporter = new JRXlsxExporter();
-//		exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-//		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("D:\\demo\\sample_report.xlsx"));
-//		//Set configuration as you like it!!
-//		SimpleXlsxExporterConfiguration configuration = null;
-//        configuration = new SimpleXlsxExporterConfiguration();
-//        configuration.setKeepWorkbookTemplateSheets(true);
-//        exporter.setConfiguration(configuration);
-//        exporter.exportReport();
-//		//end excel
-		facesContext.responseComplete();
+			String image = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/gfx/lixco_logo.png");
+			importParam.put("logo", image);
+			importParam.put("year", yearSelectedDepartment);
+			importParam.put("listKPIDepartmentYear", beanDataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			OutputStream outputStream;
+			outputStream = facesContext.getExternalContext().getResponseOutputStream();
+			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+//			//print excel
+//			JRXlsxExporter exporter = new JRXlsxExporter();
+//			exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+//			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("D:\\demo\\sample_report.xlsx"));
+//			//Set configuration as you like it!!
+//			SimpleXlsxExporterConfiguration configuration = null;
+//	        configuration = new SimpleXlsxExporterConfiguration();
+//	        configuration.setKeepWorkbookTemplateSheets(true);
+//	        exporter.setConfiguration(configuration);
+//	        exporter.exportReport();
+//			//end excel
+			facesContext.responseComplete();
+		}else {
+			noticeError("Không có dữ liệu");
+		}
+		
 	}
 
 	// Entity bao cao KPI ca nhan nam
