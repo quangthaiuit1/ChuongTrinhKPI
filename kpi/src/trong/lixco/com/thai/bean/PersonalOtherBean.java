@@ -18,6 +18,7 @@ import org.jboss.logging.Logger;
 import org.joda.time.LocalDate;
 import org.primefaces.context.RequestContext;
 
+import trong.lixco.com.account.servicepublics.Department;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublic;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublicProxy;
 import trong.lixco.com.account.servicepublics.Member;
@@ -36,12 +37,15 @@ import trong.lixco.com.jpa.entitykpi.PositionJob;
 import trong.lixco.com.jpa.thai.KPIPersonalOther;
 import trong.lixco.com.jpa.thai.KPIPersonalOtherDetail;
 import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
+import trong.lixco.com.servicepublic.EmployeeDTO;
+import trong.lixco.com.servicepublic.EmployeeServicePublic;
+import trong.lixco.com.servicepublic.EmployeeServicePublicProxy;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
 import trong.lixco.com.util.Notify;
 
 @Named
 @org.omnifaces.cdi.ViewScoped
-public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements Serializable {
+public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 
 	private static final long serialVersionUID = 1L;
 	// list all nhan vien cua phong ban thuoc nhom khac
@@ -75,7 +79,8 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 	private PersonalOtherDetailService PERSONAL_OTHER_DETAIL_SERVICE;
 	@Inject
 	private KPIPersonService KPI_PERSON_SERVICE;
-	MemberServicePublic MEMBER_SERVICE_PUBLIC;
+	private EmployeeServicePublic EMPLOYEE_SERVICE_PUBLIC;
+	private MemberServicePublic MEMBER_SERVICE_PUBLIC;
 	DepartmentServicePublic DEPARTMENT_SERVICE_PUBLIC;
 	
 
@@ -89,11 +94,16 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 
 		listKPIPersonalOtherDetailUpdate = new ArrayList<>();
 
+		EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
 		MEMBER_SERVICE_PUBLIC = new MemberServicePublicProxy();
 		DEPARTMENT_SERVICE_PUBLIC = new DepartmentServicePublicProxy();
 		memberPlaying = getAccount().getMember();
 		// get all member is personal other
-		personalOthers = createAllCodeMemberOther();
+		try {
+			personalOthers = createAllCodeMemberOther();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
 	}
 
@@ -127,33 +137,35 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 				listCodePJob.add(positionJobs.get(i).getCode());
 			}
 			// Tao list info
-			listKPIPersonalByEmployee = PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
-			Map<String, List<KPIPersonalPerformance>> datagroups11 = listKPIPersonalByEmployee.stream()
-					.collect(Collectors.groupingBy(a -> a.getCodePJob(), Collectors.toList()));
+			if(!listCodePJob.isEmpty()) {
+				listKPIPersonalByEmployee = PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
+				Map<String, List<KPIPersonalPerformance>> datagroups11 = listKPIPersonalByEmployee.stream()
+						.collect(Collectors.groupingBy(a -> a.getCodePJob(), Collectors.toList()));
 
-			listKPIPersonalByEmployee = new ArrayList<>();
-			for (String key : datagroups11.keySet()) {
-				List<KPIPersonalPerformance> invs = datagroups11.get(key);
-				try {
-					InfoPersonalPerformance tgi = new InfoPersonalPerformance();
-					tgi.setPositionJobName(POSITION_JOB_SERVICE.findByCode(key).getName());
-					tgi.setPersonalPerformances(invs);
-					listInfoPersonalPerformances.add(tgi);
-				} catch (Exception e) {
-					// TODO: handle exception
+				listKPIPersonalByEmployee = new ArrayList<>();
+				for (String key : datagroups11.keySet()) {
+					List<KPIPersonalPerformance> invs = datagroups11.get(key);
+					try {
+						InfoPersonalPerformance tgi = new InfoPersonalPerformance();
+						tgi.setPositionJobName(POSITION_JOB_SERVICE.findByCode(key).getName());
+						tgi.setPersonalPerformances(invs);
+						listInfoPersonalPerformances.add(tgi);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
 				}
-			}
-			//kiem tra bang other_detail row nao co set selecte = true;
-			for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
-				this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
-				for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
-					for (int k = 0; k < details.size(); k++) {
-						if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent()
-								.equals(details.get(k).getContent())) {
-							listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).setSelect(true);
-							listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
-									.setQuantity(details.get(k).getQuantity());
-							break;
+				//kiem tra bang other_detail row nao co set selecte = true;
+				for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
+					this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+					for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
+						for (int k = 0; k < details.size(); k++) {
+							if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent()
+									.equals(details.get(k).getContent())) {
+								listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).setSelect(true);
+								listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
+										.setQuantity(details.get(k).getQuantity());
+								break;
+							}
 						}
 					}
 				}
@@ -166,29 +178,36 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 			notify.warning("Chưa lưu thông tin phòng ban/nhân viên!");
 		}
 	}
-	public List<String> createAllCodeMemberOther() {
+	//tra ve danh sach nhom khac
+	public List<String> createAllCodeMemberOther() throws RemoteException {
 		List<String> personalOthersTemp = new ArrayList<>();
+		Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findId(memberPlaying.getDepartment().getId());
 		try {
 			// toan bo nhan vien nhom khac
-			List<Member> allMemberOther = new ArrayList<>();
+			List<EmployeeDTO> allMemberOther = new ArrayList<>();
 			//tat ca nhan vien binh thuong
-			List<Member> allMemberNormal = new ArrayList<>();
-			Member[] allMemberTemp = MEMBER_SERVICE_PUBLIC.findByCodeDepart(memberPlaying.getDepartment().getCode());
+			List<EmployeeDTO> allMemberNormal = new ArrayList<>();
+			
+			//Phong ban
+			List<String> depList = new ArrayList<>();
+			depList.add(memberPlaying.getDepartment().getCode());
+			String[] depArray = depList.toArray(new String[depList.size()]);
+			EmployeeDTO[] allMemberTemp = EMPLOYEE_SERVICE_PUBLIC.findByDep(depArray);
 			//tat ca nhan vien
-			List<Member> allMember = Arrays.asList(allMemberTemp);
+			List<EmployeeDTO> allMember = Arrays.asList(allMemberTemp);
 			for(int i = 0; i < allMember.size(); i++) {
 				KPIPerson temp = KPI_PERSON_SERVICE.findRangeNew(allMember.get(i).getCode(), monthSearch, yearSearch);
 				//kiem tra co hay khong
 				if(temp != null) {
 					allMemberNormal.add(allMember.get(i));
 				}else {
-					if(!allMember.get(i).getName().equals("Administrator") && allMember.get(i).isDisable() == false) {
+					if(!allMember.get(i).getCode().equals(depTemp.getCodeMem())) {
 						allMemberOther.add(allMember.get(i));
 					}
 				}
 			}
 			//Tao list tring toan bo code employee nhom khac
-			for(Member m : allMemberOther) {
+			for(EmployeeDTO m : allMemberOther) {
 				personalOthersTemp.add(m.getCode());
 			}
 			return personalOthersTemp;
@@ -198,17 +217,18 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 		}
 	}
 	public void create() throws RemoteException {
+		this.personalOthers = this.createAllCodeMemberOther();
 		if (allowSave(null)) {
 			//check cho phep tao tu ngay 10
 			if(daySearch <= 10) {
 				noticeError("Chỉ được tạo sau ngày 10");
 			}else {
 				for (int i = 0; i < personalOthers.size(); i++) {
-					Member memberTemp = MEMBER_SERVICE_PUBLIC.findByCode(personalOthers.get(i));
+					EmployeeDTO memberTemp = EMPLOYEE_SERVICE_PUBLIC.findByCode(personalOthers.get(i));
 					KPIPersonalOther temp = new KPIPersonalOther();
 					temp.setCodeEmp(personalOthers.get(i));
 					temp.setNameEmp(memberTemp.getName());
-					temp.setNameDepart(memberTemp.getDepartment().getName());
+					temp.setNameDepart(memberTemp.getNameDepart());
 					temp.setkMonth(monthSearch);
 					temp.setkYear(yearSearch);
 					temp.setTotal(100);
@@ -309,6 +329,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 				noticeError("Loi xay ra");
 			}
 		}
+		
 		if (status == false) {
 			// Them moi
 			List<KPIPersonalOtherDetail> listDetailAdd = new ArrayList<>();
@@ -316,9 +337,11 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 				KPIPersonalOther otherQuery = (PERSONAL_OTHER_SERVICE.find(null, monthSearch, yearSearch,
 						this.personSelected.getCodeEmp())).get(0);
 				int dem = 0;
+				boolean checkIsSelect = false;
 				for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
 					for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
 						if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).isSelect()) {
+							checkIsSelect = true;
 							KPIPersonalOtherDetail item = new KPIPersonalOtherDetail();
 							item.setContent(
 									listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent());
@@ -339,6 +362,9 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 						}
 					}
 				}
+				if(checkIsSelect == false) {
+					otherQuery.setTotal(100);
+				}
 				otherQuery.setKpiPersonalOtherDetails(listDetailAdd);
 				// check kpi da duyet ket qua chua
 				if (otherQuery.isSignResult()) {
@@ -348,6 +374,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 					kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
 					if (statusUpdate != null) {
 						notice("Thành công");
+						
 					} else {
 						noticeError("Lỗi");
 					}
@@ -458,6 +485,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> implements
 				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
 				if (statusUpdate != null) {
 					notice("Thành công");
+					kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
 				} else {
 					noticeError("Lỗi");
 				}

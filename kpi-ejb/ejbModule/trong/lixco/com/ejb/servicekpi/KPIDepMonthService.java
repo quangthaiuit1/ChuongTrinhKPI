@@ -95,7 +95,8 @@ public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
 		List<KPIDepMonth> results = query.getResultList();
 		return results;
 	}
-	//thai
+
+	// thai
 	public List<KPIDepMonth> find(String codeDepart, int year) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -119,7 +120,31 @@ public class KPIDepMonthService extends AbstractService<KPIDepMonth> {
 		TypedQuery<KPIDepMonth> query = em.createQuery(cq);
 		return query.getResultList();
 	}
-	//end thai
+
+	public List<KPIDepMonth> find(int month, int year) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIDepMonth> cq = cb.createQuery(KPIDepMonth.class);
+		Root<KPIDepMonth> root = cq.from(KPIDepMonth.class);
+		List<Predicate> queries = new ArrayList<>();
+		if (year != 0) {
+			Predicate answerTypeQuery = cb.equal(root.get("year"), year);
+			queries.add(answerTypeQuery);
+		}
+		if(month != 0) {
+			Predicate departmentMonthQuery = cb.equal(root.get("month"), month);
+			queries.add(departmentMonthQuery);
+		}
+		Predicate data[] = new Predicate[queries.size()];
+		for (int i = 0; i < queries.size(); i++) {
+			data[i] = queries.get(i);
+		}
+		Predicate finalPredicate = cb.and(data);
+		cq.where(finalPredicate);
+		TypedQuery<KPIDepMonth> query = em.createQuery(cq);
+		return query.getResultList();
+	}
+	// end thai
 
 	public List<KPIDepMonth> findKPIDepYear(int year, String codeDepart) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();

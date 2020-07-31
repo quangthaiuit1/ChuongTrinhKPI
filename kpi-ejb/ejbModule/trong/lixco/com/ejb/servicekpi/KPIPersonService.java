@@ -334,8 +334,10 @@ public class KPIPersonService extends AbstractService<KPIPerson> {
 		if (!result.isEmpty()) {
 			result.get(0).getKpiPersonOfMonths().size();
 			return result.get(0);
+		}else {
+			return null;
 		}
-		return null;
+		
 	}
 	
 

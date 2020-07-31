@@ -24,6 +24,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.docx4j.org.xhtmlrenderer.pdf.ITextRenderer;
 import org.jboss.logging.Logger;
 import org.joda.time.LocalDate;
+import org.quartz.SchedulerException;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
@@ -47,6 +48,7 @@ import trong.lixco.com.ejb.servicekpi.KPIPersonService;
 import trong.lixco.com.jpa.entitykpi.KPIDep;
 import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
 import trong.lixco.com.jpa.entitykpi.KPIPerson;
+import trong.lixco.com.servicepublic.DepartmentDTO;
 import trong.lixco.com.servicepublic.EmployeeDTO;
 import trong.lixco.com.servicepublic.EmployeeServicePublic;
 import trong.lixco.com.servicepublic.EmployeeServicePublicProxy;
@@ -54,6 +56,8 @@ import trong.lixco.com.thai.bean.entities.DepartmentTotalMonth;
 import trong.lixco.com.thai.bean.entities.PersonalMonth;
 import trong.lixco.com.thai.bean.entities.PersonalQuy;
 import trong.lixco.com.thai.bean.entities.PersonalYear;
+import trong.lixco.com.thai.bean.entities.Reminder;
+import trong.lixco.com.thai.mail.CommonService;
 import trong.lixco.com.util.Notify;
 
 @ManagedBean
@@ -98,6 +102,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 
 	@Override
 	protected void initItem() {
+
 		sf = new SimpleDateFormat("dd/MM/yyyy");
 		LocalDate lc = new LocalDate();
 		monthSelectedPersonal = lc.getMonthOfYear();
@@ -107,6 +112,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		yearSelectedPersonal3 = lc.getYear();
 		DEPARTMENT_SERVICE_PUBLIC = new DepartmentServicePublicProxy();
 		EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
+		
 		allCodeDepartment = new ArrayList<>();
 		allCodeEmployee = new ArrayList<>();
 
@@ -114,6 +120,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		// danh sach phong ban tai ho chi minh
 		try {
 			Department[] allDepartmentArray = DEPARTMENT_SERVICE_PUBLIC.findAll();
+			allDepartmentArray = CommonService.findAll();
 			allDepartmentList = Arrays.asList(allDepartmentArray);
 			allDepartment = new ArrayList<>();
 			for (int i = 0; i < allDepartmentArray.length; i++) {
@@ -140,7 +147,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		}
 		// end
 	}
-
+	
 	public void showReportPersonalMonth() throws JRException, IOException {
 		List<PersonalMonth> dataReportPersonalMonth = createDataReportKPIPersonalMonth(this.monthSelectedPersonal,
 				this.yearSelectedPersonal1);
@@ -173,8 +180,8 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 				.getRealPath("/resources/thaireports/kpi/personalQuy.jasper");
 		List<PersonalQuy> dataReportPersonalQuy = createDataReportKPIPersonalQuy(this.quySelectedPersonal,
 				this.yearSelectedPersonal2);
-		//check neu list rong~
-		if(!dataReportPersonalQuy.isEmpty()) {
+		// check neu list rong~
+		if (!dataReportPersonalQuy.isEmpty()) {
 			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalQuy);
 			Map<String, Object> importParam = new HashMap<String, Object>();
 
@@ -193,7 +200,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			outputStream = facesContext.getExternalContext().getResponseOutputStream();
 			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
 			facesContext.responseComplete();
-		}else {
+		} else {
 			noticeError("Không có dữ liệu");
 		}
 	}
@@ -202,7 +209,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/personalYear.jasper");
 		List<PersonalYear> dataReportPersonalYear = createDataReportKPIPersonalYear(this.yearSelectedPersonal3);
-		if(!dataReportPersonalYear.isEmpty()) {
+		if (!dataReportPersonalYear.isEmpty()) {
 			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalYear);
 			Map<String, Object> importParam = new HashMap<String, Object>();
 
@@ -217,7 +224,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			outputStream = facesContext.getExternalContext().getResponseOutputStream();
 			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
 			facesContext.responseComplete();
-		}else {
+		} else {
 			noticeError("Không có dữ liệu");
 		}
 	}
@@ -226,7 +233,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/departmentYear.jasper");
 		List<DepartmentTotalMonth> dataReportDepartmentYear = createDataReportKPIDepartmentYear(yearSelectedDepartment);
-		if(!dataReportDepartmentYear.isEmpty()) {
+		if (!dataReportDepartmentYear.isEmpty()) {
 			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportDepartmentYear);
 			Map<String, Object> importParam = new HashMap<String, Object>();
 
@@ -252,10 +259,10 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 //	        exporter.exportReport();
 //			//end excel
 			facesContext.responseComplete();
-		}else {
+		} else {
 			noticeError("Không có dữ liệu");
 		}
-		
+
 	}
 
 	// Entity bao cao KPI ca nhan nam
