@@ -9,6 +9,7 @@
 	<parameter name="thirdMonth" class="java.lang.String"/>
 	<parameter name="secondMonth" class="java.lang.String"/>
 	<parameter name="firstMonth" class="java.lang.String"/>
+	<parameter name="department" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -62,25 +63,39 @@
 				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="222" y="30" width="96" height="14" forecolor="#0E5EC7" uuid="3a7e948f-c2c0-4baf-8305-262ef712055a"/>
+				<reportElement x="189" y="30" width="96" height="14" forecolor="#0E5EC7" uuid="3a7e948f-c2c0-4baf-8305-262ef712055a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<text><![CDATA[Khu vực   :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="222" y="44" width="84" height="20" forecolor="#0E5EC7" uuid="266efb98-4c18-4621-bbfb-a2962d1e1dcb"/>
+				<reportElement x="189" y="44" width="84" height="20" forecolor="#0E5EC7" uuid="266efb98-4c18-4621-bbfb-a2962d1e1dcb"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<text><![CDATA[Thời điểm: Quý]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="302" y="44" width="52" height="20" forecolor="#0E5EC7" uuid="5eca0cbe-724e-4d76-8635-be03de5e5723"/>
+				<reportElement x="269" y="44" width="52" height="20" forecolor="#0E5EC7" uuid="5eca0cbe-724e-4d76-8635-be03de5e5723"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="FontReport" size="12" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{quy}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="323" y="30" width="60" height="14" forecolor="#0E5EC7" uuid="7ad14380-8e0e-472b-9002-39fbd6bf7b20"/>
+				<textElement>
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<text><![CDATA[Phòng ban:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="383" y="30" width="178" height="14" forecolor="#0E5EC7" uuid="b7465765-57f9-437f-bc0e-466561e0268c"/>
+				<textElement>
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{department}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

@@ -5,20 +5,26 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.logging.Logger;
+import org.omnifaces.cdi.ViewScoped;
 
+import trong.lixco.com.account.servicepublics.AccountServicePublic;
+import trong.lixco.com.account.servicepublics.AccountServicePublicProxy;
 import trong.lixco.com.account.servicepublics.Department;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublic;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublicProxy;
+import trong.lixco.com.account.servicepublics.LockTableServicePublic;
+import trong.lixco.com.account.servicepublics.LockTableServicePublicProxy;
 import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
 
 @Named
-@org.omnifaces.cdi.ViewScoped
+@ViewScoped
 public class Reminder extends AbstractBean<KPIDepMonth>{
 	private static final long serialVersionUID = 1L;
 	private List<KPIDepMonth> allKpiDepByMonth;
@@ -84,10 +90,16 @@ public class Reminder extends AbstractBean<KPIDepMonth>{
 		return c.getTimeInMillis() - System.currentTimeMillis();
 	}
 
+	AccountServicePublic accountServicePublic;
+
+	private LockTableServicePublic lockTableServicePublic;
 	public void excute() {
 		try {
 //			Department[] allDepartmentArray = CommonService.findAll();
-			initItem();
+//			initItem();
+				lockTableServicePublic = new LockTableServicePublicProxy();
+				accountServicePublic = new AccountServicePublicProxy();
+
 			DEPARTMENT_SERVICE_PUBLIC = new DepartmentServicePublicProxy();
 			Department[] allDepartmentArr = DEPARTMENT_SERVICE_PUBLIC.findAll();
 			List<Department> departmentHCMList = new ArrayList<>();

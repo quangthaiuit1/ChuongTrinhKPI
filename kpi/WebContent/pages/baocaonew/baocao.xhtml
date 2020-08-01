@@ -69,7 +69,7 @@
 		</p:dialog>
 		<!-- Ca nhan thang -->
 		<p:dialog widgetVar="widgetKPIPersonalMonth" resizable="false"
-			width="400" height="70" closeOnEscape="true"
+			width="600" height="70" closeOnEscape="true"
 			header="Báo cáo KPI cá nhân theo tháng" modal="true">
 			<h:form id="dialogKPIPersonalMonth">
 				<center>
@@ -78,6 +78,23 @@
 						<p:selectOneMenu id="month"
 							value="#{reportBean.monthSelectedPersonal}">
 							<f:selectItems value="#{reportBean.months}" />
+						</p:selectOneMenu>
+						<p:selectOneMenu
+							value="#{reportBean.departmentSelectedPersonalMonth}"
+							converter="abstractConverter" effect="fade" var="t"
+							style="width:150px;" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<p:ajax process="@this" />
+							<f:selectItem itemLabel="--Tất cả phòng ban--"
+								itemValue="#{null}" />
+							<f:selectItems value="#{reportBean.departments}" var="item"
+								itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
+							</p:column>
 						</p:selectOneMenu>
 						<p:outputLabel value="Năm" />
 						<p:spinner size="10" value="#{reportBean.yearSelectedPersonal1}"
@@ -95,15 +112,32 @@
 		</p:dialog>
 		<!-- Ca nhan quy -->
 		<p:dialog widgetVar="widgetKPIPersonalQuy" resizable="false"
-			width="400" height="70" closeOnEscape="true"
+			width="600" height="70" closeOnEscape="true"
 			header="Báo cáo KPI cá nhân theo quý" modal="true">
 			<h:form id="dialogKPIPersonalQuy">
 				<center>
-					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
+					<h:panelGrid columns="6" style="width:100%" cellspacing="1">
 						<p:outputLabel value="Quý: " />
 						<p:selectOneMenu id="quy"
 							value="#{reportBean.quySelectedPersonal}">
 							<f:selectItems value="#{reportBean.quys}" />
+						</p:selectOneMenu>
+						<p:selectOneMenu
+							value="#{reportBean.departmentSelectedPersonalQuy}"
+							converter="abstractConverter" effect="fade" var="t"
+							style="width:150px;" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<p:ajax process="@this" />
+							<f:selectItem itemLabel="--Tất cả phòng ban--"
+								itemValue="#{null}" />
+							<f:selectItems value="#{reportBean.departments}" var="item"
+								itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
+							</p:column>
 						</p:selectOneMenu>
 						<p:outputLabel value="Năm" />
 						<p:spinner size="10" value="#{reportBean.yearSelectedPersonal2}"
@@ -121,11 +155,28 @@
 		</p:dialog>
 		<!-- Ca nhan nam -->
 		<p:dialog widgetVar="widgetKPIPersonalYear" resizable="false"
-			width="300" height="70" closeOnEscape="true"
+			width="500" height="70" closeOnEscape="true"
 			header="Báo cáo KPI cá nhân năm" modal="true">
 			<h:form id="dialogKPIPersonalYear">
 				<center>
 					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
+						<p:selectOneMenu
+							value="#{reportBean.departmentSelectedPersonalYear}"
+							converter="abstractConverter" effect="fade" var="t"
+							style="width:150px;" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<p:ajax process="@this" />
+							<f:selectItem itemLabel="--Tất cả phòng ban--"
+								itemValue="#{null}" />
+							<f:selectItems value="#{reportBean.departments}" var="item"
+								itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
+							</p:column>
+						</p:selectOneMenu>
 						<p:outputLabel value="Năm" />
 						<p:spinner size="10" value="#{reportBean.yearSelectedPersonal3}"
 							min="2017" max="2050">

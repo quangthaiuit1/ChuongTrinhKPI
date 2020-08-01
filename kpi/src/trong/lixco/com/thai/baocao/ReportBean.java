@@ -58,6 +58,7 @@ import trong.lixco.com.thai.bean.entities.PersonalQuy;
 import trong.lixco.com.thai.bean.entities.PersonalYear;
 import trong.lixco.com.thai.bean.entities.Reminder;
 import trong.lixco.com.thai.mail.CommonService;
+import trong.lixco.com.util.DepartmentUtil;
 import trong.lixco.com.util.Notify;
 
 @ManagedBean
@@ -88,6 +89,8 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	private int yearSelectedPersonal2;
 	private int yearSelectedPersonal3;
 
+	private List<Department> departments;
+
 	private SimpleDateFormat sf;
 	private List<Department> allDepartmentList;
 	private int[] quys = { 1, 2, 3, 4 };
@@ -99,6 +102,10 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 
 	// Tao list code department de test
 	private List<EmployeeDTO> allEmloyee;
+	private Department departmentSelectedPersonalYear;
+	private Department departmentSelectedPersonalQuy;
+	private Department departmentSelectedPersonalMonth;
+	private String[] allCodeDepartmentArray;
 
 	@Override
 	protected void initItem() {
@@ -112,9 +119,13 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		yearSelectedPersonal3 = lc.getYear();
 		DEPARTMENT_SERVICE_PUBLIC = new DepartmentServicePublicProxy();
 		EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
-		
+		departmentSelectedPersonalYear = new Department();
+		departmentSelectedPersonalQuy = new Department();
+		departmentSelectedPersonalMonth = new Department();
+
 		allCodeDepartment = new ArrayList<>();
 		allCodeEmployee = new ArrayList<>();
+		departments = new ArrayList<Department>();
 
 		// handle get list department from Department table // lam the nao de lay duoc
 		// danh sach phong ban tai ho chi minh
@@ -134,23 +145,36 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 				}
 			}
 
-			String[] allCodeDepartmentArray = new String[allCodeDepartment.size()];
+			allCodeDepartmentArray = new String[allCodeDepartment.size()];
 			allCodeDepartmentArray = allCodeDepartment.toArray(allCodeDepartmentArray);
 
 			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
 			for (EmployeeDTO e : allEmployeeArray) {
 				allCodeEmployee.add(e.getCode());
 			}
+
+			// Get phong ban cua a Trong
+			Department[] deps = DEPARTMENT_SERVICE_PUBLIC.getAllDepartSubByParent("10001");
+			for (int i = 0; i < deps.length; i++) {
+				if (deps[i].getLevelDep().getLevel() <= 2)
+					departments.add(deps[i]);
+			}
+			if (departments.size() != 0) {
+				departments = DepartmentUtil.sort(departments);
+			}
+
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// end
 	}
-	
+
 	public void showReportPersonalMonth() throws JRException, IOException {
+		String departmentName ="";
+		departmentName = getDepartmentName(departmentSelectedPersonalMonth);
 		List<PersonalMonth> dataReportPersonalMonth = createDataReportKPIPersonalMonth(this.monthSelectedPersonal,
-				this.yearSelectedPersonal1);
+				this.yearSelectedPersonal1,departmentSelectedPersonalMonth);
 		if (!dataReportPersonalMonth.isEmpty()) {
 			String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 					.getRealPath("/resources/thaireports/kpi/personalMonth.jasper");
@@ -162,6 +186,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			importParam.put("logo", image);
 			importParam.put("year", yearSelectedPersonal1);
 			importParam.put("month", monthSelectedPersonal);
+			importParam.put("department", departmentName);
 			importParam.put("listKPIDepartmentYear", beanDataSource);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
 			FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -178,8 +203,10 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	public void showReportPersonalQuy() throws JRException, IOException {
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/personalQuy.jasper");
+		String departmentName = "";
+		departmentName = getDepartmentName(departmentSelectedPersonalQuy);
 		List<PersonalQuy> dataReportPersonalQuy = createDataReportKPIPersonalQuy(this.quySelectedPersonal,
-				this.yearSelectedPersonal2);
+				this.yearSelectedPersonal2, departmentSelectedPersonalQuy);
 		// check neu list rong~
 		if (!dataReportPersonalQuy.isEmpty()) {
 			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalQuy);
@@ -190,6 +217,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			importParam.put("logo", image);
 			importParam.put("year", yearSelectedPersonal2);
 			importParam.put("quy", quySelectedPersonal);
+			importParam.put("department", departmentName);
 			importParam.put("firstMonth", dataReportPersonalQuy.get(0).getFirstMonth());
 			importParam.put("secondMonth", dataReportPersonalQuy.get(0).getSecondndMonth());
 			importParam.put("thirdMonth", dataReportPersonalQuy.get(0).getThirdMonth());
@@ -208,7 +236,12 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	public void showReportPersonalYear() throws JRException, IOException {
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/personalYear.jasper");
-		List<PersonalYear> dataReportPersonalYear = createDataReportKPIPersonalYear(this.yearSelectedPersonal3);
+		String departmentString = "";
+		// check phong ban nao
+		departmentString = getDepartmentName(departmentSelectedPersonalYear);
+
+		List<PersonalYear> dataReportPersonalYear = createDataReportKPIPersonalYear(this.departmentSelectedPersonalYear,
+				this.yearSelectedPersonal3);
 		if (!dataReportPersonalYear.isEmpty()) {
 			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalYear);
 			Map<String, Object> importParam = new HashMap<String, Object>();
@@ -217,6 +250,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 					.getRealPath("/resources/gfx/lixco_logo.png");
 			importParam.put("logo", image);
 			importParam.put("year", yearSelectedPersonal3);
+			importParam.put("department", departmentString);
 			importParam.put("listKPIDepartmentYear", beanDataSource);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
 			FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -266,14 +300,29 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	}
 
 	// Entity bao cao KPI ca nhan nam
-	public List<PersonalYear> createDataReportKPIPersonalYear(int yearSearch) throws RemoteException {
+	public List<PersonalYear> createDataReportKPIPersonalYear(Department department, int yearSearch)
+			throws RemoteException {
 		List<PersonalYear> personalYears = new ArrayList<>();
 		// search by code Emp and year -> all KPIPerson 2019
 
 		// ****cho nay lam sao lay duoc list nhan vien (- nhan vien thang do chua vo lam
 		// thang sau vo)
-//		List<KPIPerson> temp = KPI_PERSON_SERVICE.findRange(12, 2019);
-		// Tam thoi test bang list codeEmp cho san
+
+		// truong hop khong co phong ban
+		allCodeEmployee = new ArrayList<>();
+		if (department == null) {
+			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
+			for (EmployeeDTO e : allEmployeeArray) {
+				allCodeEmployee.add(e.getCode());
+			}
+		}
+		if (department != null) {
+			String[] tempDepartmentArr = { department.getCode() };
+			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
+			for (EmployeeDTO e : allEmployeeArray) {
+				allCodeEmployee.add(e.getCode());
+			}
+		}
 
 		for (String k : allCodeEmployee) {
 			// tao 1 item personalYear
@@ -284,61 +333,78 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			personalYearTemp.setNameDepartment(memberTemp.getNameDepart());
 			// list KPIPerson by Employee and year
 			List<KPIPerson> kpiPersonByCodeEmp = KPI_PERSON_SERVICE.findRange(memberTemp.getCode(), yearSearch);
+			// check employee do da co duoi db chua
+			if (!kpiPersonByCodeEmp.isEmpty()) {
+				for (int i = 0; i < kpiPersonByCodeEmp.size(); i++) {
+					int monthTemp = kpiPersonByCodeEmp.get(i).getKmonth();
+					switch (monthTemp) {
+					case 1:
+						personalYearTemp.setThang1(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 2:
+						personalYearTemp.setThang2(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 3:
+						personalYearTemp.setThang3(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 4:
+						personalYearTemp.setThang4(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 5:
+						personalYearTemp.setThang5(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 6:
+						personalYearTemp.setThang6(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 7:
+						personalYearTemp.setThang7(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 8:
+						personalYearTemp.setThang8(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 9:
+						personalYearTemp.setThang9(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 10:
+						personalYearTemp.setThang10(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 11:
+						personalYearTemp.setThang11(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
+					case 12:
+						personalYearTemp.setThang12(kpiPersonByCodeEmp.get(i).getTotal());
+						break;
 
-			for (int i = 0; i < kpiPersonByCodeEmp.size(); i++) {
-				int monthTemp = kpiPersonByCodeEmp.get(i).getKmonth();
-				switch (monthTemp) {
-				case 1:
-					personalYearTemp.setThang1(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 2:
-					personalYearTemp.setThang2(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 3:
-					personalYearTemp.setThang3(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 4:
-					personalYearTemp.setThang4(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 5:
-					personalYearTemp.setThang5(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 6:
-					personalYearTemp.setThang6(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 7:
-					personalYearTemp.setThang7(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 8:
-					personalYearTemp.setThang8(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 9:
-					personalYearTemp.setThang9(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 10:
-					personalYearTemp.setThang10(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 11:
-					personalYearTemp.setThang11(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
-				case 12:
-					personalYearTemp.setThang12(kpiPersonByCodeEmp.get(i).getTotal());
-					break;
+					default:
+						break;
+					}
 
-				default:
-					break;
 				}
-
+				personalYears.add(personalYearTemp);
 			}
-			personalYears.add(personalYearTemp);
 		}
 		return personalYears;
 	}
 
 	// Entity bao cao KPI ca nhan quy
-	public List<PersonalQuy> createDataReportKPIPersonalQuy(int quy, int year) throws RemoteException {
+	public List<PersonalQuy> createDataReportKPIPersonalQuy(int quy, int year, Department department)
+			throws RemoteException {
 		List<PersonalQuy> dataPersonalQuy = new ArrayList<>();
-
+		// Tim list nhan vien theo phong ban
+		allCodeEmployee = new ArrayList<>();
+		if (department == null) {
+			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
+			for (EmployeeDTO e : allEmployeeArray) {
+				allCodeEmployee.add(e.getCode());
+			}
+		}
+		if (department != null) {
+			String[] tempDepartmentArr = { department.getCode() };
+			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
+			for (EmployeeDTO e : allEmployeeArray) {
+				allCodeEmployee.add(e.getCode());
+			}
+		}
 		for (String k : allCodeEmployee) {
 			// tao 1 item personalYear
 			PersonalQuy personalQuyTemp = new PersonalQuy();
@@ -438,10 +504,23 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	}
 
 	// Entity bao cao KPI ca nhan thang
-	public List<PersonalMonth> createDataReportKPIPersonalMonth(int month, int year) {
+	public List<PersonalMonth> createDataReportKPIPersonalMonth(int month, int year, Department department) {
 		try {
 			List<PersonalMonth> dataPersonalMonth = new ArrayList<>();
-
+			allCodeEmployee = new ArrayList<>();
+			if (department == null) {
+				EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
+				for (EmployeeDTO e : allEmployeeArray) {
+					allCodeEmployee.add(e.getCode());
+				}
+			}
+			if (department != null) {
+				String[] tempDepartmentArr = { department.getCode() };
+				EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
+				for (EmployeeDTO e : allEmployeeArray) {
+					allCodeEmployee.add(e.getCode());
+				}
+			}
 			for (String k : allCodeEmployee) {
 				// tao 1 item personalYear
 				PersonalMonth personalMonthTemp = new PersonalMonth();
@@ -658,6 +737,14 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 //
 //	}
 
+	public String getDepartmentName(Department department) {
+		if (department != null) {
+			return department.getName();
+		} else {
+			return "Tất cả";
+		}
+	}
+
 	public void showPDF() throws JRException, IOException {
 		/* Convert List to JRBeanCollectionDataSource */
 
@@ -848,4 +935,45 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	public void setMonths(int[] months) {
 		this.months = months;
 	}
+
+	public List<Department> getAllDepartment() {
+		return allDepartment;
+	}
+
+	public void setAllDepartment(List<Department> allDepartment) {
+		this.allDepartment = allDepartment;
+	}
+
+	public Department getDepartmentSelectedPersonalYear() {
+		return departmentSelectedPersonalYear;
+	}
+
+	public void setDepartmentSelectedPersonalYear(Department departmentSelectedPersonalYear) {
+		this.departmentSelectedPersonalYear = departmentSelectedPersonalYear;
+	}
+
+	public Department getDepartmentSelectedPersonalQuy() {
+		return departmentSelectedPersonalQuy;
+	}
+
+	public void setDepartmentSelectedPersonalQuy(Department departmentSelectedPersonalQuy) {
+		this.departmentSelectedPersonalQuy = departmentSelectedPersonalQuy;
+	}
+
+	public Department getDepartmentSelectedPersonalMonth() {
+		return departmentSelectedPersonalMonth;
+	}
+
+	public void setDepartmentSelectedPersonalMonth(Department departmentSelectedPersonalMonth) {
+		this.departmentSelectedPersonalMonth = departmentSelectedPersonalMonth;
+	}
+
+	public List<Department> getDepartments() {
+		return departments;
+	}
+
+	public void setDepartments(List<Department> departments) {
+		this.departments = departments;
+	}
+
 }
