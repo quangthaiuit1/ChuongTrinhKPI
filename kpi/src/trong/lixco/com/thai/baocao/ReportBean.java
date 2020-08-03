@@ -20,11 +20,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.docx4j.org.xhtmlrenderer.pdf.ITextRenderer;
 import org.jboss.logging.Logger;
 import org.joda.time.LocalDate;
-import org.quartz.SchedulerException;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
@@ -38,9 +43,6 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import trong.lixco.com.account.servicepublics.Department;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublic;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublicProxy;
-import trong.lixco.com.account.servicepublics.Member;
-import trong.lixco.com.account.servicepublics.MemberServicePublic;
-import trong.lixco.com.account.servicepublics.MemberServicePublicProxy;
 import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.ejb.servicekpi.KPIDepService;
@@ -48,7 +50,6 @@ import trong.lixco.com.ejb.servicekpi.KPIPersonService;
 import trong.lixco.com.jpa.entitykpi.KPIDep;
 import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
 import trong.lixco.com.jpa.entitykpi.KPIPerson;
-import trong.lixco.com.servicepublic.DepartmentDTO;
 import trong.lixco.com.servicepublic.EmployeeDTO;
 import trong.lixco.com.servicepublic.EmployeeServicePublic;
 import trong.lixco.com.servicepublic.EmployeeServicePublicProxy;
@@ -56,7 +57,6 @@ import trong.lixco.com.thai.bean.entities.DepartmentTotalMonth;
 import trong.lixco.com.thai.bean.entities.PersonalMonth;
 import trong.lixco.com.thai.bean.entities.PersonalQuy;
 import trong.lixco.com.thai.bean.entities.PersonalYear;
-import trong.lixco.com.thai.bean.entities.Reminder;
 import trong.lixco.com.thai.mail.CommonService;
 import trong.lixco.com.util.DepartmentUtil;
 import trong.lixco.com.util.Notify;
@@ -171,10 +171,10 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	}
 
 	public void showReportPersonalMonth() throws JRException, IOException {
-		String departmentName ="";
+		String departmentName = "";
 		departmentName = getDepartmentName(departmentSelectedPersonalMonth);
 		List<PersonalMonth> dataReportPersonalMonth = createDataReportKPIPersonalMonth(this.monthSelectedPersonal,
-				this.yearSelectedPersonal1,departmentSelectedPersonalMonth);
+				this.yearSelectedPersonal1, departmentSelectedPersonalMonth);
 		if (!dataReportPersonalMonth.isEmpty()) {
 			String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 					.getRealPath("/resources/thaireports/kpi/personalMonth.jasper");
@@ -310,13 +310,13 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 
 		// truong hop khong co phong ban
 		allCodeEmployee = new ArrayList<>();
-		if (department == null) {
+		if (department == null || department.getCode() == null) {
 			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
 			for (EmployeeDTO e : allEmployeeArray) {
 				allCodeEmployee.add(e.getCode());
 			}
 		}
-		if (department != null) {
+		if (department != null && department.getCode() != null) {
 			String[] tempDepartmentArr = { department.getCode() };
 			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
 			for (EmployeeDTO e : allEmployeeArray) {
@@ -392,13 +392,13 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		List<PersonalQuy> dataPersonalQuy = new ArrayList<>();
 		// Tim list nhan vien theo phong ban
 		allCodeEmployee = new ArrayList<>();
-		if (department == null) {
+		if (department == null || department.getCode() == null) {
 			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
 			for (EmployeeDTO e : allEmployeeArray) {
 				allCodeEmployee.add(e.getCode());
 			}
 		}
-		if (department != null) {
+		if (department != null && department.getCode() != null) {
 			String[] tempDepartmentArr = { department.getCode() };
 			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
 			for (EmployeeDTO e : allEmployeeArray) {
@@ -508,13 +508,13 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		try {
 			List<PersonalMonth> dataPersonalMonth = new ArrayList<>();
 			allCodeEmployee = new ArrayList<>();
-			if (department == null) {
+			if (department == null || department.getCode() == null) {
 				EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
 				for (EmployeeDTO e : allEmployeeArray) {
 					allCodeEmployee.add(e.getCode());
 				}
 			}
-			if (department != null) {
+			if (department != null && department.getCode() != null) {
 				String[] tempDepartmentArr = { department.getCode() };
 				EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
 				for (EmployeeDTO e : allEmployeeArray) {
@@ -687,107 +687,12 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		}
 		return departmentTotalMonth;
 	}
-//	public void printOnly() {
-//		notify = new Notify(FacesContext.getCurrentInstance());
-//		try {
-//			String pathre = "/resources/reports/kpis/kpiperson.jasper";
-//			List<KPIPersonOfMonth> expds = kPIPersonService.findKPIPerson(kPIPerson);
-//			String reportPath = null;
-//			Map<String, Object> importParam = null;
-//			importParam = installConfigPersonReport();
-//			List<ParamReportDetail> paramnhaps = paramReportDetailService
-//					.findByParamReports_param_name("kpicanhanthang");
-//			for (ParamReportDetail pd : paramnhaps) {
-//				importParam.put(pd.getKey(), pd.getValue());
-//			}
-//			reportPath = FacesContext.getCurrentInstance().getExternalContext().getRealPath(pathre);
-//			importParam.put("REPORT_LOCALE", new Locale("vi", "VN"));
-//
-//			List<PrintKPI> printKPIs = new ArrayList<PrintKPI>();
-//			SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
-//			for (int i = 0; i < expds.size(); i++) {
-//				PrintKPI pr = new PrintKPI(expds.get(i), sf, empPJobService);
-//				printKPIs.add(pr);
-//			}
-//			boolean status = true;
-//			for (int i = 0; i < printKPIs.size(); i++) {
-//				if ("I".equals(printKPIs.get(i).getHeaderGroupCode())) {
-//					status = false;
-//					break;
-//				}
-//			}
-//			if (status && expds.size() != 0) {
-//				PrintKPI pk = new PrintKPI(expds.get(0), true, empPJobService);
-//				pk.setHeaderGroupCode("I");
-//				pk.setHeaderGroupName("Phẩm chất - thái độ - hành vi");
-//				pk.setHeaderGroupWeighted(30.0);
-//				printKPIs.add(pk);
-//			}
-//			printKPIs.sort(Comparator.comparing(PrintKPI::getHeaderGroupCode).thenComparing(PrintKPI::getNo));
-//
-//			JRDataSource beanDataSource = new JRBeanCollectionDataSource(printKPIs);
-//			jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
-//			data = JasperExportManager.exportReportToPdf(jasperPrint);
-//			mediaBean.setData(data);
-//			RequestContext context = RequestContext.getCurrentInstance();
-//			context.execute("PF('showpdfreport').show();");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//	}
 
 	public String getDepartmentName(Department department) {
 		if (department != null) {
 			return department.getName();
 		} else {
 			return "Tất cả";
-		}
-	}
-
-	public void showPDF() throws JRException, IOException {
-		/* Convert List to JRBeanCollectionDataSource */
-
-		List<KPIDepMonth> dataSource = new ArrayList<>();
-		dataSource = KPI_DEPARTMENT_MONTH.findKPIDepMonth(4, 2020, null);
-		JRBeanCollectionDataSource postJRBean = new JRBeanCollectionDataSource(dataSource);
-
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("listKPIDepartMonthByYearDataSource", postJRBean);
-		parameters.put("title", "BÁO CÁO");
-		parameters.put("REPORT_LOCALE", new Locale("vi", "VN"));
-		// pass logo
-//				BufferedImage image = ImageIO.read(getClass().getResource("resource/images/logo-lixco.png"));
-//				parameters.put("logo", image );
-
-//				JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataSource);
-
-		String jasperPath = FacesContext.getCurrentInstance().getExternalContext()
-				.getRealPath("/resources/thaireports/kpi/personalMonth.jasper");
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperPath, parameters, new JREmptyDataSource());
-//		FacesContext facesContext = FacesContext.getCurrentInstance();
-//		// Tao file PDF
-//		OutputStream outputStream;
-//		outputStream = facesContext.getExternalContext().getResponseOutputStream();
-		// Viet noi dung vao file PDF
-
-		try {
-//			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-			byte[] data = JasperExportManager.exportReportToPdf(jasperPrint);
-			showreport(data);
-//			JasperExportManager.exportReportToPdfFile(jasperPrint, "D:\\demo\\reportPersonalMonth.pdf");
-//			JRXlsxExporter exporter = new JRXlsxExporter();
-//			exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-//			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("D:\\demo\\sample_report.xlsx"));
-//			//Set configuration as you like it!!
-//			SimpleXlsxExporterConfiguration configuration = null;
-//	        configuration = new SimpleXlsxExporterConfiguration();
-//	        configuration.setKeepWorkbookTemplateSheets(true);
-//	        exporter.setConfiguration(configuration);
-//	        exporter.exportReport();
-//			facesContext.responseComplete();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -830,41 +735,443 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		}
 	}
 
-	public void createPDF(List<?> dataSource) throws JRException, IOException {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		// compiler report
-//		JasperReport reportPersonalMonth = JasperCompileManager.compileReport(FacesContext.getCurrentInstance()
-//				.getExternalContext().getRealPath("/resources/thaireports/kpi/personalMonth.jrxml"));
-		/* Convert List to JRBeanCollectionDataSource */
-		JRBeanCollectionDataSource postJRBean = new JRBeanCollectionDataSource(dataSource);
-
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("personalMonthDatasource", postJRBean);
-		parameters.put("titleCompanyName", "CÔNG TY CỔ PHẦN BỘT GIẶT LIX");
-		parameters.put("year", "2020");
-		parameters.put("REPORT_LOCALE", new Locale("vi", "VN"));
-//		// pass logo
-//			BufferedImage image = ImageIO.read(getClass().getResource("resources/gfx/lixco_logo.png"));
-//			parameters.put("logo", image );
-
-//			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataSource);
-
-		String jasperPath = FacesContext.getCurrentInstance().getExternalContext()
-				.getRealPath("/resources/thaireports/kpi/personalMonth.jasper");
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperPath, parameters, new JREmptyDataSource());
-		// Tao file PDF
-		OutputStream outputStream;
-		outputStream = facesContext.getExternalContext().getResponseOutputStream();
-		// Viet noi dung vao file PDF
-
-		try {
-			JasperExportManager.exportReportToPdfFile(jasperPrint, "D:\\demo\\reportPersonalMonth.pdf");
-//			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-			facesContext.responseComplete();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//EXCEL
+	private static XSSFCellStyle createStyleForTitle(XSSFWorkbook workbook) {
+		XSSFFont font = workbook.createFont();
+		font.setBold(true);
+		XSSFCellStyle style = workbook.createCellStyle();
+		style.setFont(font);
+		return style;
 	}
+
+	public void excelDepartmentYear() throws IOException {
+		List<DepartmentTotalMonth> dataReportDepartmentYear = createDataReportKPIDepartmentYear(yearSelectedDepartment);
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("KPI PHÒNG NĂM");
+
+		int rownum = 0;
+		Cell cell;
+		Row row;
+		XSSFCellStyle style = createStyleForTitle(workbook);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+
+		CellStyle styleContent = workbook.createCellStyle();
+		row = sheet.createRow(rownum);
+
+		// EmpNo
+		cell = row.createCell(0);
+		cell.setCellValue("Phòng ban");
+		// Salary
+		cell = row.createCell(1);
+		cell.setCellValue("Tháng 1");
+		cell.setCellStyle(style);
+		// Grade
+		cell = row.createCell(2);
+		cell.setCellValue("Tháng 2");
+		cell.setCellStyle(style);
+		// Bonus
+		cell = row.createCell(3);
+		cell.setCellValue("Tháng 3");
+		cell.setCellStyle(style);
+		cell = row.createCell(4);
+		cell.setCellValue("Tháng 4");
+		cell.setCellStyle(style);
+		// xep loai
+		cell = row.createCell(5);
+		cell.setCellValue("Tháng 5");
+		cell.setCellStyle(style);
+		// xep loai
+		cell = row.createCell(6);
+		cell.setCellValue("Tháng 6");
+		cell.setCellStyle(style);
+		// xep loai
+		cell = row.createCell(7);
+		cell.setCellValue("Tháng 7");
+		cell.setCellStyle(style);
+		// xep loai
+		cell = row.createCell(8);
+		cell.setCellValue("Tháng 8");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(9);
+		cell.setCellValue("Tháng 9");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(10);
+		cell.setCellValue("Tháng 10");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(11);
+		cell.setCellValue("Tháng 11");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(12);
+		cell.setCellValue("Tháng 12");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(13);
+		cell.setCellValue("KPI TB năm");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(14);
+		cell.setCellValue("KPI năm");
+		cell.setCellStyle(style);
+//		 Data
+		for (DepartmentTotalMonth kq : dataReportDepartmentYear) {
+			rownum++;
+			row = sheet.createRow(rownum);
+			// ho ten
+			cell = row.createCell(0);
+			cell.setCellValue(kq.getNameDepart());
+			// Don vi (B)
+			cell = row.createCell(1);
+			cell.setCellValue(kq.getThang1());
+
+			cell = row.createCell(2);
+			cell.setCellValue(kq.getThang2());
+
+			cell = row.createCell(3);
+			cell.setCellValue(kq.getThang3());
+
+			cell = row.createCell(4);
+			cell.setCellValue(kq.getThang4());
+
+			cell = row.createCell(5);
+			cell.setCellValue(kq.getThang5());
+
+			cell = row.createCell(6);
+			cell.setCellValue(kq.getThang6());
+
+			cell = row.createCell(7);
+			cell.setCellValue(kq.getThang7());
+
+			cell = row.createCell(8);
+			cell.setCellValue(kq.getThang8());
+
+			cell = row.createCell(9);
+			cell.setCellValue(kq.getThang9());
+
+			cell = row.createCell(10);
+			cell.setCellValue(kq.getThang10());
+
+			cell = row.createCell(11);
+			cell.setCellValue(kq.getThang11());
+
+			cell = row.createCell(12);
+			cell.setCellValue(kq.getThang12());
+
+			cell = row.createCell(13);
+			cell.setCellValue(kq.getKpiAvgYear());
+
+			cell = row.createCell(14);
+			cell.setCellValue(kq.getKpiYear());
+
+		}
+
+		String filename = "kpiphongnam.xlsx";
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		externalContext.setResponseContentType("application/vnd.ms-excel");
+		externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+		workbook.write(externalContext.getResponseOutputStream());
+		// cancel progress
+		facesContext.responseComplete();
+	}
+
+	// ca nhan nam
+	public void excelPersonalYear() throws IOException {
+		List<PersonalYear> dataReportPersonalYear = createDataReportKPIPersonalYear(this.departmentSelectedPersonalYear,
+				this.yearSelectedPersonal3);
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("KPI CÁ NHÂN NĂM");
+
+		int rownum = 0;
+		Cell cell;
+		Row row;
+		XSSFCellStyle style = createStyleForTitle(workbook);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+
+		row = sheet.createRow(rownum);
+
+		// EmpNo
+		cell = row.createCell(0);
+		cell.setCellValue("Họ và tên");
+		// xep loai// EmpName
+		cell = row.createCell(1);
+		cell.setCellValue("Đơn vị");
+		cell.setCellStyle(style);
+		// Salary
+		cell = row.createCell(2);
+		cell.setCellValue("Tháng 1");
+		cell.setCellStyle(style);
+		// Grade
+		cell = row.createCell(3);
+		cell.setCellValue("Tháng 2");
+		cell.setCellStyle(style);
+		// Bonus
+		cell = row.createCell(4);
+		cell.setCellValue("Tháng 3");
+		cell.setCellStyle(style);
+		cell = row.createCell(5);
+		cell.setCellValue("Tháng 4");
+		cell.setCellStyle(style);
+		// xep loai
+		cell = row.createCell(6);
+		cell.setCellValue("Tháng 5");
+		cell.setCellStyle(style);
+		// xep loai
+		cell = row.createCell(7);
+		cell.setCellValue("Tháng 6");
+		cell.setCellStyle(style);
+		// xep loai
+		cell = row.createCell(8);
+		cell.setCellValue("Tháng 7");
+		cell.setCellStyle(style);
+		// xep loai
+		cell = row.createCell(9);
+		cell.setCellValue("Tháng 8");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(10);
+		cell.setCellValue("Tháng 9");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(11);
+		cell.setCellValue("Tháng 10");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(12);
+		cell.setCellValue("Tháng 11");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(13);
+		cell.setCellValue("Tháng 12");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(14);
+		cell.setCellValue("Năm");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(15);
+		cell.setCellValue("Xếp loại");
+		cell.setCellStyle(style);
+
+		for (PersonalYear kq : dataReportPersonalYear) {
+			rownum++;
+			row = sheet.createRow(rownum);
+			// ho ten
+			cell = row.createCell(0);
+			cell.setCellValue(kq.getNameEmp());
+			// Don vi (B)
+			cell = row.createCell(1);
+			cell.setCellValue(kq.getNameDepartment());
+
+			cell = row.createCell(2);
+			cell.setCellValue(kq.getThang1());
+
+			cell = row.createCell(3);
+			cell.setCellValue(kq.getThang2());
+
+			cell = row.createCell(4);
+			cell.setCellValue(kq.getThang3());
+
+			cell = row.createCell(5);
+			cell.setCellValue(kq.getThang4());
+
+			cell = row.createCell(6);
+			cell.setCellValue(kq.getThang5());
+
+			cell = row.createCell(7);
+			cell.setCellValue(kq.getThang6());
+
+			cell = row.createCell(8);
+			cell.setCellValue(kq.getThang7());
+
+			cell = row.createCell(9);
+			cell.setCellValue(kq.getThang8());
+
+			cell = row.createCell(10);
+			cell.setCellValue(kq.getThang9());
+
+			cell = row.createCell(11);
+			cell.setCellValue(kq.getThang10());
+
+			cell = row.createCell(12);
+			cell.setCellValue(kq.getThang11());
+
+			cell = row.createCell(13);
+			cell.setCellValue(kq.getThang12());
+
+			cell = row.createCell(14);
+			cell.setCellValue("");
+
+			cell = row.createCell(15);
+			cell.setCellValue("");
+
+		}
+		String filename = "kpicanhannam.xlsx";
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		externalContext.setResponseContentType("application/vnd.ms-excel");
+		externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+		workbook.write(externalContext.getResponseOutputStream());
+		// cancel progress
+		facesContext.responseComplete();
+	}
+
+	// ca nhan quy
+	public void excelPersonalQuy() throws IOException {
+		List<PersonalQuy> dataReportPersonalQuy = createDataReportKPIPersonalQuy(this.quySelectedPersonal,
+				this.yearSelectedPersonal2, departmentSelectedPersonalQuy);
+
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("KPI CÁ NHÂN NĂM");
+
+		int rownum = 0;
+		Cell cell;
+		Row row;
+		XSSFCellStyle style = createStyleForTitle(workbook);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+
+		row = sheet.createRow(rownum);
+
+		// EmpNo
+		cell = row.createCell(0);
+		cell.setCellValue("Họ và tên");
+		// xep loai// EmpName
+		cell = row.createCell(1);
+		cell.setCellValue("Đơn vị");
+		cell.setCellStyle(style);
+		// Salary
+		cell = row.createCell(2);
+		cell.setCellValue(dataReportPersonalQuy.get(0).getFirstMonth());
+		cell.setCellStyle(style);
+		// Grade
+		cell = row.createCell(3);
+		cell.setCellValue(dataReportPersonalQuy.get(1).getSecondndMonth());
+		cell.setCellStyle(style);
+		// Bonus
+		cell = row.createCell(4);
+		cell.setCellValue(dataReportPersonalQuy.get(2).getThirdMonth());
+		cell.setCellStyle(style);
+
+		cell = row.createCell(5);
+		cell.setCellValue("Quý " + this.quySelectedPersonal);
+		cell.setCellStyle(style);
+
+		cell = row.createCell(6);
+		cell.setCellValue("Xếp loại");
+		cell.setCellStyle(style);
+
+		for (PersonalQuy kq : dataReportPersonalQuy) {
+			rownum++;
+			row = sheet.createRow(rownum);
+			// ho ten
+			cell = row.createCell(0);
+			cell.setCellValue(kq.getNameEmployee());
+			// Don vi (B)
+			cell = row.createCell(1);
+			cell.setCellValue(kq.getNameDepartment());
+
+			cell = row.createCell(2);
+			cell.setCellValue(kq.getResult1());
+
+			cell = row.createCell(3);
+			cell.setCellValue(kq.getResult2());
+
+			cell = row.createCell(4);
+			cell.setCellValue(kq.getResult3());
+
+			cell = row.createCell(5);
+			cell.setCellValue(kq.getAvgQuy());
+
+			cell = row.createCell(6);
+			cell.setCellValue(kq.getRate());
+
+		}
+		String filename = "kpicanhanquy.xlsx";
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		externalContext.setResponseContentType("application/vnd.ms-excel");
+		externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+		workbook.write(externalContext.getResponseOutputStream());
+		// cancel progress
+		facesContext.responseComplete();
+	}
+
+	// ca nhan thang
+	public void excelPersonalMonth() throws IOException {
+		List<PersonalMonth> dataReportPersonalMonth = createDataReportKPIPersonalMonth(this.monthSelectedPersonal,
+				this.yearSelectedPersonal1, departmentSelectedPersonalMonth);
+
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("KPI CÁ NHÂN THÁNG");
+
+		int rownum = 0;
+		Cell cell;
+		Row row;
+		XSSFCellStyle style = createStyleForTitle(workbook);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+
+		row = sheet.createRow(rownum);
+
+		// EmpNo
+		cell = row.createCell(0);
+		cell.setCellValue("Họ và tên");
+		// xep loai// EmpName
+		cell = row.createCell(1);
+		cell.setCellValue("Đơn vị");
+		cell.setCellStyle(style);
+		// Salary
+		cell = row.createCell(2);
+		cell.setCellValue("KPI Phòng 40%");
+		cell.setCellStyle(style);
+		// Grade
+		cell = row.createCell(3);
+		cell.setCellValue("KPI cá nhân 60%");
+		cell.setCellStyle(style);
+		// Bonus
+		cell = row.createCell(4);
+		cell.setCellValue("Tổng điểm");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(5);
+		cell.setCellValue("Xếp loại");
+		cell.setCellStyle(style);
+
+		for (PersonalMonth kq : dataReportPersonalMonth) {
+			rownum++;
+			row = sheet.createRow(rownum);
+			// ho ten
+			cell = row.createCell(0);
+			cell.setCellValue(kq.getEmployeeName());
+			// Don vi (B)
+			cell = row.createCell(1);
+			cell.setCellValue(kq.getDepartmentName());
+
+			cell = row.createCell(2);
+			cell.setCellValue(kq.getKpiDepartment());
+
+			cell = row.createCell(3);
+			cell.setCellValue(kq.getKpiPersonal());
+
+			cell = row.createCell(4);
+			cell.setCellValue(kq.getResult());
+
+			cell = row.createCell(5);
+			cell.setCellValue(kq.getRate());
+
+		}
+		String filename = "kpicanhanthang.xlsx";
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		externalContext.setResponseContentType("application/vnd.ms-excel");
+		externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+		workbook.write(externalContext.getResponseOutputStream());
+		// cancel progress
+		facesContext.responseComplete();
+	}
+//END EXCEL
 
 	@Override
 	protected Logger getLogger() {

@@ -15,7 +15,37 @@
 	margin-left: 20px;
 	font-weight: bold;
 }
+
+.animated .ui-progressbar-value {
+	background-image: url("#{resource['images/pbar-ani.gif']}");
+}
 </style>
+		<script type="text/javascript">
+    //<![CDATA[
+function start() {
+     
+    window['progress'] = setInterval(function() {
+var pbClient = PF('pbClient'),
+oldValue = pbClient.getValue(),
+newValue = oldValue + 10;
+         
+pbClient.setValue(pbClient.getValue() + 10);
+     
+if(newValue === 100) {
+    clearInterval(window['progress']);
+}
+ 
+ 
+    }, 1000);
+}
+ 
+function cancel() {
+    clearInterval(window['progress']);
+    PF('pbClient').setValue(0);
+    PF('startButton1').enable();
+}
+    //]]>
+</script>
 		<h3 style="margin: 0px">Báo cáo</h3>
 		<p:separator />
 		<h:form id="list">
@@ -48,20 +78,26 @@
 		</h:form>
 		<!-- Phong nam -->
 		<p:dialog widgetVar="widgetKPIDepartmentYear" resizable="false"
-			width="300" height="70" closeOnEscape="true"
+			width="500" height="100" closeOnEscape="true"
 			header="Báo cáo KPI phòng" modal="true">
 			<h:form id="dialogKPIDepartmentYear">
 				<center>
-					<h:panelGrid columns="3" style="width:100%">
+					<p:progressBar id="progressBarClient" widgetVar="pbClient"
+						style="width:480px" />
+					<h:panelGrid columns="4" style="width:100%">
 						<p:outputLabel value="Năm: " />
 						<p:spinner size="10" value="#{reportBean.yearSelectedDepartment}"
 							min="2017" max="2050">
 							<p:ajax process="@this" />
 						</p:spinner>
-						<p:commandButton type="submit" value="In PDF" ajax="false"
+						<p:commandButton type="submit" value="PDF" ajax="false"
 							style="background:#fbe4c6"
 							actionListener="#{reportBean.showReportDepartmentYear()}"
 							onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						<p:commandButton value="Xuất excel" immediate="true"
+							style="float:right" ajax="false" id="btnDepartmentYear"
+							actionListener="#{reportBean.excelDepartmentYear()}"
+							onclick="start()" widgetVar="startButton1" />
 					</h:panelGrid>
 				</center>
 				<p:separator />
@@ -69,10 +105,12 @@
 		</p:dialog>
 		<!-- Ca nhan thang -->
 		<p:dialog widgetVar="widgetKPIPersonalMonth" resizable="false"
-			width="600" height="70" closeOnEscape="true"
+			width="700" height="100" closeOnEscape="true"
 			header="Báo cáo KPI cá nhân theo tháng" modal="true">
 			<h:form id="dialogKPIPersonalMonth">
 				<center>
+					<p:progressBar id="progressBarClient" widgetVar="pbClient"
+						style="width:480px" />
 					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
 						<p:outputLabel value="Tháng: " />
 						<p:selectOneMenu id="month"
@@ -101,10 +139,14 @@
 							min="2017" max="2050">
 							<p:ajax process="@this" />
 						</p:spinner>
-						<p:commandButton type="submit" value="In PDF" ajax="false"
+						<p:commandButton type="submit" value="PDF" ajax="false"
 							style="background:#fbe4c6"
 							actionListener="#{reportBean.showReportPersonalMonth()}"
 							onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						<p:commandButton value="Xuất excel" immediate="true"
+							style="float:right" ajax="false" id="btnPersonalMonth"
+							actionListener="#{reportBean.excelPersonalMonth()}"
+							onclick="start()" widgetVar="startButton1" />
 					</h:panelGrid>
 				</center>
 				<p:separator />
@@ -112,11 +154,13 @@
 		</p:dialog>
 		<!-- Ca nhan quy -->
 		<p:dialog widgetVar="widgetKPIPersonalQuy" resizable="false"
-			width="600" height="70" closeOnEscape="true"
+			width="700" height="100" closeOnEscape="true"
 			header="Báo cáo KPI cá nhân theo quý" modal="true">
 			<h:form id="dialogKPIPersonalQuy">
 				<center>
-					<h:panelGrid columns="6" style="width:100%" cellspacing="1">
+					<p:progressBar id="progressBarClient" widgetVar="pbClient"
+						style="width:480px" />
+					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
 						<p:outputLabel value="Quý: " />
 						<p:selectOneMenu id="quy"
 							value="#{reportBean.quySelectedPersonal}">
@@ -144,10 +188,14 @@
 							min="2017" max="2050">
 							<p:ajax process="@this" />
 						</p:spinner>
-						<p:commandButton type="submit" value="In PDF" ajax="false"
+						<p:commandButton type="submit" value="PDF" ajax="false"
 							style="background:#fbe4c6"
 							actionListener="#{reportBean.showReportPersonalQuy()}"
 							onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						<p:commandButton value="Xuất excel" immediate="true"
+							style="float:right" ajax="false" id="btnPersonalQuy"
+							actionListener="#{reportBean.excelPersonalQuy()}"
+							onclick="start()" widgetVar="startButton1" />
 					</h:panelGrid>
 				</center>
 				<p:separator />
@@ -155,10 +203,12 @@
 		</p:dialog>
 		<!-- Ca nhan nam -->
 		<p:dialog widgetVar="widgetKPIPersonalYear" resizable="false"
-			width="500" height="70" closeOnEscape="true"
+			width="700" height="100" closeOnEscape="true"
 			header="Báo cáo KPI cá nhân năm" modal="true">
 			<h:form id="dialogKPIPersonalYear">
 				<center>
+					<p:progressBar id="progressBarClient" widgetVar="pbClient"
+						style="width:480px" />
 					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
 						<p:selectOneMenu
 							value="#{reportBean.departmentSelectedPersonalYear}"
@@ -182,10 +232,14 @@
 							min="2017" max="2050">
 							<p:ajax process="@this" />
 						</p:spinner>
-						<p:commandButton type="submit" value="In PDF" ajax="false"
+						<p:commandButton type="submit" value="PDF" ajax="false"
 							style="background:#fbe4c6"
 							actionListener="#{reportBean.showReportPersonalYear()}"
 							onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						<p:commandButton value="Xuất excel" immediate="true"
+							style="float:right" ajax="false" id="btnPersonalYear"
+							actionListener="#{reportBean.excelPersonalYear()}"
+							onclick="start()" widgetVar="startButton1" />
 					</h:panelGrid>
 				</center>
 				<p:separator />
