@@ -45,70 +45,26 @@ public class PersonalOtherService extends AbstractService<KPIPersonalOther> {
 		return KPIPersonalOther.class;
 	}
 
-	
-//	@Override
-//	public KPIPersonalOther findById(long id) {
-//		KPIPersonalOther result=findById(id);
-//		result.getKpiPersonalOtherDetails().size();
-//		return result;
-//	}
+	// @Override
+	// public KPIPersonalOther findById(long id) {
+	// KPIPersonalOther result=findById(id);
+	// result.getKpiPersonalOtherDetails().size();
+	// return result;
+	// }
 
 	public List<KPIPersonalOther> find(List<String> codeEmps, int kmonth, int kyear) {
-		// primary
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPersonalOther> cq = cb.createQuery(KPIPersonalOther.class);
-		Root<KPIPersonalOther> root = cq.from(KPIPersonalOther.class);
-		List<Predicate> queries = new ArrayList<>();
-		if (codeEmps != null) {
-			Predicate codeEmpQuery = cb.in(root.get("codeEmp")).value(codeEmps);
-			queries.add(codeEmpQuery);
-		}
-		if (kmonth != 0) {
-			Predicate kmonthQuery = cb.equal(root.get("kMonth"),kmonth);
-			queries.add(kmonthQuery);
-		}
-
-		if (kyear != 0) {
-			Predicate kyearQuery = cb.equal(root.get("kYear"), kyear);
-			queries.add(kyearQuery);
-		}
-		Predicate data[] = new Predicate[queries.size()];
-		for (int i = 0; i < queries.size(); i++) {
-			data[i] = queries.get(i);
-		}
-		Predicate finalPredicate = cb.and(data);
-		cq.where(finalPredicate);
-		TypedQuery<KPIPersonalOther> query = em.createQuery(cq);
-		List<KPIPersonalOther> results = query.getResultList();
-		List<KPIPersonalOther> resultsFinal = new ArrayList<>();
-		if (!results.isEmpty()) {
-			for (int i = 0; i < results.size(); i++) {
-				KPIPersonalOther kpiother = results.get(i);
-				List<KPIPersonalOtherDetail> listKPIPersonalOtherDetail = new ArrayList<>();
-				listKPIPersonalOtherDetail.addAll(results.get(i).getKpiPersonalOtherDetails());
-				kpiother.setKpiPersonalOtherDetails(listKPIPersonalOtherDetail);
-				resultsFinal.add(kpiother);
-			}
-		}
-		return resultsFinal;
-	}
-
-	public List<KPIPersonalOther> find(String nameDepart, int kmonth, int kyear, String employeeCode) {
-		// primary
+		try {
+			// primary
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<KPIPersonalOther> cq = cb.createQuery(KPIPersonalOther.class);
 			Root<KPIPersonalOther> root = cq.from(KPIPersonalOther.class);
 			List<Predicate> queries = new ArrayList<>();
-			if (nameDepart != null) {
-				Predicate nameDepartQuery = cb.equal(root.get("nameDepart"),nameDepart);
-				queries.add(nameDepartQuery);
-			}
-			if (employeeCode != null) {
-				Predicate employeeCodeQuery = cb.equal(root.get("codeEmp"),employeeCode);
-				queries.add(employeeCodeQuery);
+			if (codeEmps != null && !codeEmps.isEmpty()) {
+				Predicate codeEmpQuery = cb.in(root.get("codeEmp")).value(codeEmps);
+				queries.add(codeEmpQuery);
 			}
 			if (kmonth != 0) {
-				Predicate kmonthQuery = cb.equal(root.get("kMonth"),kmonth);
+				Predicate kmonthQuery = cb.equal(root.get("kMonth"), kmonth);
 				queries.add(kmonthQuery);
 			}
 
@@ -116,7 +72,6 @@ public class PersonalOtherService extends AbstractService<KPIPersonalOther> {
 				Predicate kyearQuery = cb.equal(root.get("kYear"), kyear);
 				queries.add(kyearQuery);
 			}
-
 			Predicate data[] = new Predicate[queries.size()];
 			for (int i = 0; i < queries.size(); i++) {
 				data[i] = queries.get(i);
@@ -136,5 +91,54 @@ public class PersonalOtherService extends AbstractService<KPIPersonalOther> {
 				}
 			}
 			return resultsFinal;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+
+	public List<KPIPersonalOther> find(String nameDepart, int kmonth, int kyear, String employeeCode) {
+		// primary
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPersonalOther> cq = cb.createQuery(KPIPersonalOther.class);
+		Root<KPIPersonalOther> root = cq.from(KPIPersonalOther.class);
+		List<Predicate> queries = new ArrayList<>();
+		if (nameDepart != null) {
+			Predicate nameDepartQuery = cb.equal(root.get("nameDepart"), nameDepart);
+			queries.add(nameDepartQuery);
+		}
+		if (employeeCode != null) {
+			Predicate employeeCodeQuery = cb.equal(root.get("codeEmp"), employeeCode);
+			queries.add(employeeCodeQuery);
+		}
+		if (kmonth != 0) {
+			Predicate kmonthQuery = cb.equal(root.get("kMonth"), kmonth);
+			queries.add(kmonthQuery);
+		}
+
+		if (kyear != 0) {
+			Predicate kyearQuery = cb.equal(root.get("kYear"), kyear);
+			queries.add(kyearQuery);
+		}
+
+		Predicate data[] = new Predicate[queries.size()];
+		for (int i = 0; i < queries.size(); i++) {
+			data[i] = queries.get(i);
+		}
+		Predicate finalPredicate = cb.and(data);
+		cq.where(finalPredicate);
+		TypedQuery<KPIPersonalOther> query = em.createQuery(cq);
+		List<KPIPersonalOther> results = query.getResultList();
+		List<KPIPersonalOther> resultsFinal = new ArrayList<>();
+		if (!results.isEmpty()) {
+			for (int i = 0; i < results.size(); i++) {
+				KPIPersonalOther kpiother = results.get(i);
+				List<KPIPersonalOtherDetail> listKPIPersonalOtherDetail = new ArrayList<>();
+				listKPIPersonalOtherDetail.addAll(results.get(i).getKpiPersonalOtherDetails());
+				kpiother.setKpiPersonalOtherDetails(listKPIPersonalOtherDetail);
+				resultsFinal.add(kpiother);
+			}
+		}
+		return resultsFinal;
 	}
 }

@@ -68,8 +68,11 @@ public class PositionJobBean {
 			trong.lixco.com.servicepublic.PositionJobDTO[] positionJobs = positionJobServicePublic.findAll();
 			for (int i = 0; i < positionJobs.length; i++) {
 				PositionJob positionJob = positionJobService.findByCode(positionJobs[i].getCode());
+				// xu ly de khong bi loi
+
 				if (positionJob != null) {
 					positionJob.setId(positionJobs[i].getId());
+					// positionJob.setIduser(0);
 					positionJob.setName(positionJobs[i].getName());
 					if (positionJobs[i].getCodeDepart() != null)
 						positionJob.setCodeDepart(positionJobs[i].getCodeDepart());
@@ -79,6 +82,8 @@ public class PositionJobBean {
 					positionJob = new PositionJob();
 					positionJob.setId(positionJobs[i].getId());
 					positionJob.setCode(positionJobs[i].getCode());
+					// xu ly de khong bi loi
+					// positionJob.setIduser(0);
 					positionJob.setName(positionJobs[i].getName());
 					if (positionJobs[i].getCodeDepart() != null)
 						positionJob.setCodeDepart(positionJobs[i].getCodeDepart());
@@ -86,21 +91,21 @@ public class PositionJobBean {
 					positionJobService.create(positionJob);
 				}
 			}
-			
-			//Cai dat vi tri cong viec, nhan vien
-			List<EmpPJob> deletes=empPJobService.findAll();
+
+			// Cai dat vi tri cong viec, nhan vien
+			List<EmpPJob> deletes = empPJobService.findAll();
 			for (int i = 0; i < deletes.size(); i++) {
 				empPJobService.delete(deletes.get(i));
 			}
 			EmpPJobServicePublic empPJobServicePublic = new EmpPJobServicePublicProxy();
 			trong.lixco.com.servicepublic.EmpPJobDTO[] empPJobs = empPJobServicePublic.findAll();
 			for (int i = 0; i < empPJobs.length; i++) {
-					EmpPJob ep=new EmpPJob();
-					ep.setCodeEmp(empPJobs[i].getCodeEmp());
-					ep.setCodePJob(empPJobs[i].getCodePJob());
-					empPJobService.create(ep);
+				EmpPJob ep = new EmpPJob();
+				ep.setCodeEmp(empPJobs[i].getCodeEmp());
+				ep.setCodePJob(empPJobs[i].getCodePJob());
+				empPJobService.create(ep);
 			}
-			
+
 			notify = new Notify(FacesContext.getCurrentInstance());
 			notify.success();
 		} catch (Exception e) {

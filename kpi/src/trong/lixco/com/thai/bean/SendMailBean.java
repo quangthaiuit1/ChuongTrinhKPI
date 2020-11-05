@@ -34,7 +34,7 @@ public class SendMailBean extends AbstractBean<KPIPerson>{
 		try {
 			configSendMail = CONFIG_SEND_MAIL_SERVICE.findAll();
 			Reminder job = new Reminder();
-			job.start(configSendMail.get(0).getDepartmentSignDate(),configSendMail.get(0).getHour(), 24, false);
+			job.start(configSendMail.get(0).getDepartmentSignDate(),configSendMail.get(0).getHour(), 8, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

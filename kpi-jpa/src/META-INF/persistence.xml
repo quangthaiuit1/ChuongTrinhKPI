@@ -10,16 +10,16 @@
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
 			<property name="hibernate.connection.url" value="false" />
-			<property name="hibernate.show_sql" value="true" />
-<!-- 			<property name="hibernate.format_sql" value="true"/> -->
+			<property name="hibernate.show_sql" value="false" />
+			<!-- <property name="hibernate.format_sql" value="true"/> -->
 		</properties>
 	</persistence-unit>
 	<persistence-unit name="kpibd" transaction-type="JTA">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<jta-data-source>java:/kpibd</jta-data-source>
 	</persistence-unit>
-<!-- 	<persistence-unit name="kpibn" transaction-type="JTA"> -->
-<!-- 		<provider>org.hibernate.ejb.HibernatePersistence</provider> -->
-<!-- 		<jta-data-source>java:/kpibn</jta-data-source> -->
-<!-- 	</persistence-unit> -->
+	<!-- <persistence-unit name="kpibn" transaction-type="JTA"> -->
+	<!-- <provider>org.hibernate.ejb.HibernatePersistence</provider> -->
+	<!-- <jta-data-source>java:/kpibn</jta-data-source> -->
+	<!-- </persistence-unit> -->
 </persistence>

@@ -80,6 +80,8 @@ import trong.lixco.com.jpa.entitykpi.PositionJob;
 import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
 import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
 import trong.lixco.com.kpi.general.ApplicationBean;
+import trong.lixco.com.thai.apitrong.PositionJobData;
+import trong.lixco.com.thai.apitrong.PositionJobDataService;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
 import trong.lixco.com.util.DepartmentUtil;
 import trong.lixco.com.util.Notify;
@@ -534,13 +536,13 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 		}
 	}
 
-//	// Thai
-//	private List<KPIPersonalPerformance> kpiPersonalPerformances;
-//
-//	public void loadPersonalPerformance() {
-//		kpiPersonalPerformances = PERSONAL_PERFORMANCE_SERVICE.findAll();
-//		showDialogOrien();
-//	}
+	// // Thai
+	// private List<KPIPersonalPerformance> kpiPersonalPerformances;
+	//
+	// public void loadPersonalPerformance() {
+	// kpiPersonalPerformances = PERSONAL_PERFORMANCE_SERVICE.findAll();
+	// showDialogOrien();
+	// }
 
 	public void getListKPIPerformance() {
 		try {
@@ -548,34 +550,40 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 			if (kpiCompOld.isSignKPI()) {
 				noticeError("KPI đã duyệt không thêm được.");
 			} else {
-//				List<KPIPersonalPerformance> listKPIPersonalPerformanceSelected = getListKPIPersonalPerformanceSelected();
-//				for (int i = 0; i < listKPIPersonalPerformanceSelected.size(); i++) {
-//					// check xem item nao duoc chon
-//					KPIPersonOfMonth item = new KPIPersonOfMonth();
-//					item.setKPIPerformance(true);
-//					item.setContentAppreciate(listKPIPersonalPerformanceSelected.get(i).getContent());
-//					item.setCodeFormula(listKPIPersonalPerformanceSelected.get(i).getComputation());
-//					item.setFormulaKPI(listKPIPersonalPerformanceSelected.get(i).getFormulaKPI());
-//					kpiPersonOfMonths.add(item);
-//				}
-				//Cap nhat list kpi hieu suat de selected khong bi lap
+				// List<KPIPersonalPerformance>
+				// listKPIPersonalPerformanceSelected =
+				// getListKPIPersonalPerformanceSelected();
+				// for (int i = 0; i <
+				// listKPIPersonalPerformanceSelected.size(); i++) {
+				// // check xem item nao duoc chon
+				// KPIPersonOfMonth item = new KPIPersonOfMonth();
+				// item.setKPIPerformance(true);
+				// item.setContentAppreciate(listKPIPersonalPerformanceSelected.get(i).getContent());
+				// item.setCodeFormula(listKPIPersonalPerformanceSelected.get(i).getComputation());
+				// item.setFormulaKPI(listKPIPersonalPerformanceSelected.get(i).getFormulaKPI());
+				// kpiPersonOfMonths.add(item);
+				// }
+				// Cap nhat list kpi hieu suat de selected khong bi lap
 				for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
 					for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
 						if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).isSelect()) {
 							// check xem item nao duoc chon
 							KPIPersonOfMonth item = new KPIPersonOfMonth();
 							item.setKPIPerformance(true);
-							item.setContentAppreciate(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent());
-							item.setCodeFormula(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getComputation());
-							item.setFormulaKPI(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getFormulaKPI());
+							item.setContentAppreciate(
+									listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent());
+							item.setCodeFormula(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
+									.getComputation());
+							item.setFormulaKPI(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
+									.getFormulaKPI());
 							kpiPersonOfMonths.add(item);
 							listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).setSelect(false);
 						}
 					}
 				}
-				//End
+				// End
 				for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
-//					kpiPersonOfMonths.get(i).setNoid(i + 1);
+					// kpiPersonOfMonths.get(i).setNoid(i + 1);
 					kpiPersonOfMonths.get(i).setIndex(i);
 				}
 			}
@@ -768,7 +776,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 				if (allowSave(date)) {
 					List<KPIPerson> temps = kPIPersonService.findRange(kPIPerson.getCodeEmp(), kPIPerson.getKmonth(),
 							kPIPerson.getKyear());
-					//check kpi da duoc tao hay chua
+					// check kpi da duoc tao hay chua
 					if (temps.size() != 0) {
 						boolean status = false;
 						for (int i = 0; i < temps.size(); i++) {
@@ -855,7 +863,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 													+ kpiPersonOfMonths.get(i).getWeighted();
 										}
 									}
-									if(kpiPersonOfMonths.get(i).getWeighted() < 10) {
+									if (kpiPersonOfMonths.get(i).getWeighted() < 10) {
 										checkKPIInvalid = true;
 									}
 									// end thai
@@ -868,8 +876,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 									kPIPerson.setKpiPersonOfMonths(listSaves);
 									KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson, kpiPersonOfMonthRemoves);
 									// Thai
-									if (checkKPIInvalid == false
-											&& checkKPIPerformanceWeighted >= 80) {
+									if (checkKPIInvalid == false && checkKPIPerformanceWeighted >= 80) {
 										// trong
 										if (wf != null) {
 											this.kPIPersonEdit = wf;
@@ -906,7 +913,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 												+ kpiPersonOfMonths.get(i).getWeighted();
 									}
 								}
-								if(kpiPersonOfMonths.get(i).getWeighted() < 10) {
+								if (kpiPersonOfMonths.get(i).getWeighted() < 10) {
 									checkKPIInvalid = true;
 								}
 								// end thai
@@ -929,8 +936,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 									kPIPerson.setKpiPersonOfMonths(listSaves);
 									if (status) {
 										// Thai
-										if (checkKPIInvalid == false
-												&& checkKPIPerformanceWeighted >= 80) {
+										if (checkKPIInvalid == false && checkKPIPerformanceWeighted >= 80) {
 											KPIPerson wf = kPIPersonService.updateAssign(kPIPerson);
 											if (wf != null) {
 												this.kPIPersonEdit = wf;
@@ -949,8 +955,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 
 									} else {
 										// Thai
-										if (checkKPIInvalid == false
-												&& checkKPIPerformanceWeighted >= 80) {
+										if (checkKPIInvalid == false && checkKPIPerformanceWeighted >= 80) {
 											KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson,
 													kpiPersonOfMonthRemoves);
 											if (wf != null) {
@@ -1143,9 +1148,16 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 		if (kPIPerson.getId() != null) {
 			// tat ca vi tri cong viec
 			positionJobs = new ArrayList<PositionJob>();
-			List<EmpPJob> empPJobs = empPJobService.findByEmployee(kPIPerson.getCodeEmp());
-			for (int i = 0; i < empPJobs.size(); i++) {
-				PositionJob pj = positionJobService.findByCode(empPJobs.get(i).getCodePJob());
+			// List<EmpPJob> empPJobs =
+			// empPJobService.findByEmployee(kPIPerson.getCodeEmp());
+			// tim vi tri cong viec theo nhan vien
+			PositionJobData[] empPJobs = PositionJobDataService.vttheonhanvien(kPIPerson.getCodeEmp());
+			if (empPJobs == null || empPJobs.length == 0) {
+				notify.warning("Không tìm thấy vị trí công việc phù hợp!");
+				return;
+			}
+			for (int i = 0; i < empPJobs.length; i++) {
+				PositionJob pj = positionJobService.findByCode(empPJobs[i].getCode());
 				if (pj != null)
 					positionJobs.add(pj);
 			}
@@ -1157,6 +1169,10 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 			List<String> listCodePJob = new ArrayList<>();
 			for (int i = 0; i < positionJobs.size(); i++) {
 				listCodePJob.add(positionJobs.get(i).getCode());
+			}
+			if (listCodePJob.isEmpty()) {
+				notify.warning("Không tìm thấy công việc phù hợp!");
+				return;
 			}
 			// Tao list info
 			listKPIPersonalByEmployee = PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
@@ -1176,7 +1192,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 				}
 			}
 			// End Thai
-//			showOrientationPerson();
+			// showOrientationPerson();
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('widgetKPIPersonalPerformance').show();");
 		} else {
