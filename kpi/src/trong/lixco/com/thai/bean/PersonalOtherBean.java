@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ import trong.lixco.com.util.Notify;
 
 @Named
 @org.omnifaces.cdi.ViewScoped
-public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
+public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 	private static final long serialVersionUID = 1L;
 	// list all nhan vien cua phong ban thuoc nhom khac
@@ -82,7 +83,6 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 	private EmployeeServicePublic EMPLOYEE_SERVICE_PUBLIC;
 	private MemberServicePublic MEMBER_SERVICE_PUBLIC;
 	DepartmentServicePublic DEPARTMENT_SERVICE_PUBLIC;
-	
 
 	@Override
 	protected void initItem() {
@@ -137,7 +137,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 				listCodePJob.add(positionJobs.get(i).getCode());
 			}
 			// Tao list info
-			if(!listCodePJob.isEmpty()) {
+			if (!listCodePJob.isEmpty()) {
 				listKPIPersonalByEmployee = PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
 				Map<String, List<KPIPersonalPerformance>> datagroups11 = listKPIPersonalByEmployee.stream()
 						.collect(Collectors.groupingBy(a -> a.getCodePJob(), Collectors.toList()));
@@ -154,7 +154,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 						// TODO: handle exception
 					}
 				}
-				//kiem tra bang other_detail row nao co set selecte = true;
+				// kiem tra bang other_detail row nao co set selecte = true;
 				for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
 					this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
 					for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
@@ -178,36 +178,38 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 			notify.warning("Chưa lưu thông tin phòng ban/nhân viên!");
 		}
 	}
-	//tra ve danh sach nhom khac
+
+	// tra ve danh sach nhom khac
 	public List<String> createAllCodeMemberOther() throws RemoteException {
 		List<String> personalOthersTemp = new ArrayList<>();
 		Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findId(memberPlaying.getDepartment().getId());
 		try {
 			// toan bo nhan vien nhom khac
 			List<EmployeeDTO> allMemberOther = new ArrayList<>();
-			//tat ca nhan vien binh thuong
+			// tat ca nhan vien binh thuong
 			List<EmployeeDTO> allMemberNormal = new ArrayList<>();
-			
-			//Phong ban
+
+			// Phong ban
 			List<String> depList = new ArrayList<>();
 			depList.add(memberPlaying.getDepartment().getCode());
 			String[] depArray = depList.toArray(new String[depList.size()]);
 			EmployeeDTO[] allMemberTemp = EMPLOYEE_SERVICE_PUBLIC.findByDep(depArray);
-			//tat ca nhan vien
+			// tat ca nhan vien
 			List<EmployeeDTO> allMember = Arrays.asList(allMemberTemp);
-			for(int i = 0; i < allMember.size(); i++) {
+			for (int i = 0; i < allMember.size(); i++) {
 				KPIPerson temp = KPI_PERSON_SERVICE.findRangeNew(allMember.get(i).getCode(), monthSearch, yearSearch);
-				//kiem tra co hay khong
-				if(temp != null) {
+				// kiem tra co hay khong
+				if (temp != null) {
 					allMemberNormal.add(allMember.get(i));
-				}else {
-					if(!allMember.get(i).getCode().equals(depTemp.getCodeMem())) {
+				} else {
+					// neu khong phai truong phong thi them vao
+					if (!allMember.get(i).getCode().equals(depTemp.getCodeMem())) {
 						allMemberOther.add(allMember.get(i));
 					}
 				}
 			}
-			//Tao list tring toan bo code employee nhom khac
-			for(EmployeeDTO m : allMemberOther) {
+			// Tao list tring toan bo code employee nhom khac
+			for (EmployeeDTO m : allMemberOther) {
 				personalOthersTemp.add(m.getCode());
 			}
 			return personalOthersTemp;
@@ -216,13 +218,24 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 			return null;
 		}
 	}
+
 	public void create() throws RemoteException {
 		this.personalOthers = this.createAllCodeMemberOther();
 		if (allowSave(null)) {
-			//check cho phep tao tu ngay 10
-			if(daySearch <= 10) {
+			// kiem tra -> ngay cua thang hien tai
+			java.util.Date date = new Date();
+			Calendar currentDate = Calendar.getInstance();
+			currentDate.setTime(date);
+			int monthCurrent = currentDate.get(Calendar.MONTH) + 1;
+			int yearCurrent = currentDate.get(Calendar.YEAR);
+			if (monthSearch != monthCurrent || yearCurrent != yearSearch) {
+				noticeError("Không thể tạo mới");
+				return;
+			}
+			// check cho phep tao tu ngay 10
+			if (daySearch <= 5) {
 				noticeError("Chỉ được tạo sau ngày 10");
-			}else {
+			} else {
 				for (int i = 0; i < personalOthers.size(); i++) {
 					EmployeeDTO memberTemp = EMPLOYEE_SERVICE_PUBLIC.findByCode(personalOthers.get(i));
 					KPIPersonalOther temp = new KPIPersonalOther();
@@ -232,14 +245,19 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 					temp.setkMonth(monthSearch);
 					temp.setkYear(yearSearch);
 					temp.setTotal(100);
-					KPIPersonalOther statusCreate = PERSONAL_OTHER_SERVICE.create(temp);
-					if (statusCreate == null) {
-						// ghi loi cho nay
-						System.out.println("Loi");
+					// kiem tra nhan vien do da duoc tao kpi chua
+					List<KPIPersonalOther> personIsExist = PERSONAL_OTHER_SERVICE.find(null, monthSearch, yearSearch,
+							personalOthers.get(i));
+					if (personIsExist.isEmpty()) {
+						KPIPersonalOther statusCreate = PERSONAL_OTHER_SERVICE.create(temp);
+						if (statusCreate == null) {
+							// ghi loi cho nay
+							System.out.println("Loi");
+						}
 					}
 				}
 				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
-				notice("Tạo mới thành công");
+				notice("Thành công");
 			}
 		} else {
 			noticeError("Không có quyền");
@@ -256,24 +274,28 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 	// Xoa chi tiet diem tru
 	public void removeDetail(KPIPersonalOtherDetail remove) {
 		try {
-//			KPIPersonalOther temp = remove.getKpiPersonalOther();
-//			double total = temp.getTotal() + remove.getMinuspoint();
-//			temp.setTotal(total);
-//			KPIPersonalOtherDetail kp=	PERSONAL_OTHER_DETAIL_SERVICE.findById(remove.getId());
+			// KPIPersonalOther temp = remove.getKpiPersonalOther();
+			// double total = temp.getTotal() + remove.getMinuspoint();
+			// temp.setTotal(total);
+			// KPIPersonalOtherDetail kp=
+			// PERSONAL_OTHER_DETAIL_SERVICE.findById(remove.getId());
 			boolean checkDelete = PERSONAL_OTHER_DETAIL_SERVICE.delete(remove);
-//			if (checkDelete) {
-//				KPIPersonalOther checkUpdate = PERSONAL_OTHER_SERVICE.update(temp);
-//				if (checkUpdate != null) {
-//					notice("Thành công");
-//					kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
-//					this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
-//
-//				}else {
-//					noticeError("Lỗi không cập nhật được");
-//				}
-//			} else {
-//				noticeError("Lỗi");
-//			}
+			// if (checkDelete) {
+			// KPIPersonalOther checkUpdate =
+			// PERSONAL_OTHER_SERVICE.update(temp);
+			// if (checkUpdate != null) {
+			// notice("Thành công");
+			// kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers,
+			// monthSearch, yearSearch);
+			// this.details =
+			// PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+			//
+			// }else {
+			// noticeError("Lỗi không cập nhật được");
+			// }
+			// } else {
+			// noticeError("Lỗi");
+			// }
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -298,25 +320,26 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 		}
 	}
 
-//	public void saveDetailRemove() {
-//		try {
-//			// get kpiperson tu DB len de update list kpipersonOfMonth
-//			List<KPIPerson> temps = kPIPersonService.findRange(personSelecting.getCodeEmp(),
-//					personSelecting.getKmonth(), personSelecting.getKyear());
-//			KPIPerson temp = temps.get(0);
-//			temp.setKpiPersonOfMonths(listDetail);
-//			temp.setModifiedDate(new Date());
-//			KPIPerson resultUpdate = kPIPersonService.updateAssign(temp);
-//			if (resultUpdate != null) {
-//				notice("Cập nhật thành công");
-//			} else {
-//				noticeError("Xảy ra lỗi");
-//			}
-//		} catch (Exception e) {
-//			// TODO: handle exception
-//		}
-//
-//	}
+	// public void saveDetailRemove() {
+	// try {
+	// // get kpiperson tu DB len de update list kpipersonOfMonth
+	// List<KPIPerson> temps =
+	// kPIPersonService.findRange(personSelecting.getCodeEmp(),
+	// personSelecting.getKmonth(), personSelecting.getKyear());
+	// KPIPerson temp = temps.get(0);
+	// temp.setKpiPersonOfMonths(listDetail);
+	// temp.setModifiedDate(new Date());
+	// KPIPerson resultUpdate = kPIPersonService.updateAssign(temp);
+	// if (resultUpdate != null) {
+	// notice("Cập nhật thành công");
+	// } else {
+	// noticeError("Xảy ra lỗi");
+	// }
+	// } catch (Exception e) {
+	// // TODO: handle exception
+	// }
+	//
+	// }
 	public void updateListKPIPersonalOtherNew() {
 		// Kiem tra co loi trong qua trinh xoa hay khong
 		boolean status = false;
@@ -329,7 +352,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 				noticeError("Loi xay ra");
 			}
 		}
-		
+
 		if (status == false) {
 			// Them moi
 			List<KPIPersonalOtherDetail> listDetailAdd = new ArrayList<>();
@@ -362,7 +385,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 						}
 					}
 				}
-				if(checkIsSelect == false) {
+				if (checkIsSelect == false) {
 					otherQuery.setTotal(100);
 				}
 				otherQuery.setKpiPersonalOtherDetails(listDetailAdd);
@@ -374,7 +397,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 					kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
 					if (statusUpdate != null) {
 						notice("Thành công");
-						
+
 					} else {
 						noticeError("Lỗi");
 					}
@@ -420,58 +443,68 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther>{
 							}
 							if (isExist == false) {
 								item.setKpiPersonalOther(otherQuery);
-//								otherDetailsTemp.add(item);
+								// otherDetailsTemp.add(item);
 								listDetailAdd.add(item);
 								double totalTemp2 = otherQuery.getTotal() - (item.getMinuspoint() * item.getQuantity());
 								otherQuery.setTotal(totalTemp2);
 							}
 						}
 
-////						item.setKpiPerson(this.personSelected);
-//						if (listKPIPersonalOtherDetailUpdate.size() == 0) {
-//							listKPIPersonalOtherDetailUpdate.add(item);
-//							// Tru diem sau khi them thai do hanh vi tren giao dien
-//							double totalTemp = this.personSelected.getTotal() - item.getMinuspoint();
-//							this.personSelected.setTotal(totalTemp);
-//							for (int a = 0; a < kpiPersonalOthers.size(); a++) {
-//								if (kpiPersonalOthers.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
-//									kpiPersonalOthers.get(a).setTotal(personSelected.getTotal());
-//								}
-//							}
-//
-//						} else {
-//							for (int h = 0; h < listKPIPersonalOtherDetailUpdate.size(); h++) {
-////								if (item.getKpiPerson().getCodeEmp()
-////										.equals(listKPIPersonalOtherDetailUpdate.get(h).getKpiPerson().getCodeEmp())) {
-////									verify = true;
-////									if (listBehaviour.get(h).getContentAppreciate()
-////											.equals(item.getContentAppreciate())) {
-////										isExist = true;
-////										break;
-////									}
-////								}
-//							}
-//							if (verify == true && isExist == false) {
-//								listKPIPersonalOtherDetailUpdate.add(item);
-//								double totalTemp2 = this.personSelected.getTotal() - item.getMinuspoint();
-//								this.personSelected.setTotal(totalTemp2);
-////								for(int a = 0; a < kPIPersons.size(); a++) {
-////									if(kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
-////										kPIPersons.get(a).setTotal(personSelected.getTotal());
-////									}
-////								}
-//							}
-//							if (verify == false && isExist == false) {
-//								listKPIPersonalOtherDetailUpdate.add(item);
-//								double totalTemp1 = this.personSelected.getTotal() - item.getMinuspoint();
-////								this.personSelected.setTotal(totalTemp1);
-////								for(int a = 0; a < kPIPersons.size(); a++) {
-////									if(kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
-////										kPIPersons.get(a).setTotal(personSelected.getTotal());
-////									}
-////								}
-//							}
-//						}
+						//// item.setKpiPerson(this.personSelected);
+						// if (listKPIPersonalOtherDetailUpdate.size() == 0) {
+						// listKPIPersonalOtherDetailUpdate.add(item);
+						// // Tru diem sau khi them thai do hanh vi tren giao
+						//// dien
+						// double totalTemp = this.personSelected.getTotal() -
+						//// item.getMinuspoint();
+						// this.personSelected.setTotal(totalTemp);
+						// for (int a = 0; a < kpiPersonalOthers.size(); a++) {
+						// if
+						//// (kpiPersonalOthers.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp()))
+						//// {
+						// kpiPersonalOthers.get(a).setTotal(personSelected.getTotal());
+						// }
+						// }
+						//
+						// } else {
+						// for (int h = 0; h <
+						//// listKPIPersonalOtherDetailUpdate.size(); h++) {
+						//// if (item.getKpiPerson().getCodeEmp()
+						//// .equals(listKPIPersonalOtherDetailUpdate.get(h).getKpiPerson().getCodeEmp()))
+						//// {
+						//// verify = true;
+						//// if (listBehaviour.get(h).getContentAppreciate()
+						//// .equals(item.getContentAppreciate())) {
+						//// isExist = true;
+						//// break;
+						//// }
+						//// }
+						// }
+						// if (verify == true && isExist == false) {
+						// listKPIPersonalOtherDetailUpdate.add(item);
+						// double totalTemp2 = this.personSelected.getTotal() -
+						//// item.getMinuspoint();
+						// this.personSelected.setTotal(totalTemp2);
+						//// for(int a = 0; a < kPIPersons.size(); a++) {
+						//// if(kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp()))
+						//// {
+						//// kPIPersons.get(a).setTotal(personSelected.getTotal());
+						//// }
+						//// }
+						// }
+						// if (verify == false && isExist == false) {
+						// listKPIPersonalOtherDetailUpdate.add(item);
+						// double totalTemp1 = this.personSelected.getTotal() -
+						//// item.getMinuspoint();
+						//// this.personSelected.setTotal(totalTemp1);
+						//// for(int a = 0; a < kPIPersons.size(); a++) {
+						//// if(kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp()))
+						//// {
+						//// kPIPersons.get(a).setTotal(personSelected.getTotal());
+						//// }
+						//// }
+						// }
+						// }
 						listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).setSelect(false);
 					}
 				}

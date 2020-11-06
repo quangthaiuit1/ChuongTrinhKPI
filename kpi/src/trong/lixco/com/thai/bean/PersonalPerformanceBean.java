@@ -68,15 +68,15 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 	private KPIPersonalPerformance kpiPersonalPerformanceUpdated;
 	private PositionJob positionJobEdit;
 	private String namePositionJob;
-//	private List<OrientationPerson> allPersonalPerformance;
-	
-	//Cong thuc tinh
+	// private List<OrientationPerson> allPersonalPerformance;
+
+	// Cong thuc tinh
 	private List<FormulaKPI> formulaKPIs;
 	private FormulaKPI formulaKPISelect;
 	private KPIPersonalPerformance kpy;
 	@Inject
 	private FormulaKPIService FORMULAKPI_SERVICE;
-	//End cong thuc tinh
+	// End cong thuc tinh
 	// Service
 	@Inject
 	private OrientationPersonService ORIENTATION_PERSION_SERVICE;
@@ -110,8 +110,8 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 			e.printStackTrace();
 		}
 		member = getAccount().getMember();
-//		codeDepart = member.getDepartment().getCode();
-//		searchItem();
+		// codeDepart = member.getDepartment().getCode();
+		// searchItem();
 	}
 
 	public void searchItem() {
@@ -148,14 +148,14 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	}
 
-//	public String nameDepart() {
-//		try {
-//			return departmentServicePublic.findByCode("code", codeDepart).getName();
-//		} catch (Exception e) {
-//			return "";
-//		}
-//	}
-//
+	// public String nameDepart() {
+	// try {
+	// return departmentServicePublic.findByCode("code", codeDepart).getName();
+	// } catch (Exception e) {
+	// return "";
+	// }
+	// }
+	//
 	public void createOrUpdate() {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		try {
@@ -168,7 +168,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 						kpiPersonalPerformance.setCodePJob(positionJobEdit.getCode());
 						kpiPersonalPerformance = PERSONAL_PERFORMANCE_SERVICE.create(kpiPersonalPerformance);
 						allPersonalPerformance.add(0, kpiPersonalPerformance);
-						//cap nhat list info
+						// cap nhat list info
 						updateListInfo();
 						writeLogInfo("Tạo mới " + kpiPersonalPerformance.toString());
 						notify.success();
@@ -204,8 +204,9 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 		this.kpiPersonalPerformance = kpiPersonalPerformanceUpdated;
 		positionJobEdit = POSITION_JOB_SERVICE.findByCode(kpiPersonalPerformance.getCodePJob());
 		namePositionJob = positionJobEdit.getName();
-//		codeDepart = this.kpi.getCodeDepart();
+		// codeDepart = this.kpi.getCodeDepart();
 	}
+
 	public void showListFormula(KPIPersonalPerformance param) {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		formulaKPIs = FORMULAKPI_SERVICE.findAll();
@@ -214,6 +215,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.execute("PF('dialogFormula11').show();");
 	}
+
 	public void updateFormula() {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		try {
@@ -235,7 +237,8 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 		} catch (Exception e) {
 		}
 	}
-	//update list info personal performance
+
+	// update list info personal performance
 	public void updateListInfo() {
 		Map<String, List<KPIPersonalPerformance>> datagroups11 = allPersonalPerformance.stream()
 				.collect(Collectors.groupingBy(a -> a.getCodePJob(), Collectors.toList()));
@@ -253,6 +256,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 			}
 		}
 	}
+
 	public void delete() {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		if (kpiPersonalPerformance.getId() != null) {
@@ -260,7 +264,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 				boolean status = PERSONAL_PERFORMANCE_SERVICE.delete(kpiPersonalPerformance);
 				if (status) {
 					allPersonalPerformance.remove(kpiPersonalPerformance);
-					//Cap nhat list info
+					// Cap nhat list info
 					updateListInfo();
 					writeLogInfo("Xoá " + kpiPersonalPerformance.toString());
 					reset();
@@ -276,6 +280,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 			notify.warning("Chưa chọn trong danh sách!");
 		}
 	}
+
 	// import file excel
 	public void handleFileUpload(FileUploadEvent event) throws IOException {
 
@@ -324,17 +329,23 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	@Inject
 	private FormulaKPIService FORMULA_KPI_SERVICE;
+
 	public void echoAsCSVFile(Sheet sheet) {
 		Row row = null;
 
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 			row = sheet.getRow(i);
 			try {
-				int codePJob = (int)Double.parseDouble(row.getCell(0).toString());
+				int codePJob = (int) Double.parseDouble(row.getCell(0).toString());
 				String content = row.getCell(1).toString();
-				int formulaKPIIdInt = (int)Double.parseDouble(row.getCell(2).toString());
-				long formulaKPIIdLong = (long)formulaKPIIdInt;
-//				//Luu doi tuong xuong DB
+				int formulaKPIIdInt = (int) Double.parseDouble(row.getCell(2).toString());
+				// get diem tru
+				double diemtru = 0;
+				if (row.getCell(3).toString() != null && !row.getCell(3).toString().isEmpty()) {
+					diemtru = Double.parseDouble(row.getCell(3).toString());
+				}
+				long formulaKPIIdLong = (long) formulaKPIIdInt;
+				// //Luu doi tuong xuong DB
 				KPIPersonalPerformance kpiPersonalPerformanceCreate = new KPIPersonalPerformance();
 				kpiPersonalPerformanceCreate.setCodePJob(Integer.toString(codePJob));
 				kpiPersonalPerformanceCreate.setContent(content);
@@ -346,6 +357,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 				kpiPersonalPerformanceCreate.setDisable(false);
 				kpiPersonalPerformanceCreate.setOldData(false);
 				kpiPersonalPerformanceCreate.setHeader(false);
+				kpiPersonalPerformanceCreate.setMinuspoint(diemtru);
 				try {
 					PERSONAL_PERFORMANCE_SERVICE.create(kpiPersonalPerformanceCreate);
 				} catch (Exception e) {
@@ -360,6 +372,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 		notice("Thành công");
 
 	}
+
 	// end import file excel
 	public void fileDuLieuKPICaNhanMau() {
 		try {
@@ -382,6 +395,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 			e.printStackTrace();
 		}
 	}
+
 	//
 	public int getYear() {
 		return year;
