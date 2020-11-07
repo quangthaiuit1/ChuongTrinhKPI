@@ -1,6 +1,7 @@
 package trong.lixco.com.thai.bean.entities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,10 +23,14 @@ import trong.lixco.com.account.servicepublics.LockTableServicePublicProxy;
 import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
+import trong.lixco.com.thai.apitrong.DepartmentData;
+import trong.lixco.com.thai.apitrong.DepartmentDataService;
+import trong.lixco.com.thai.apitrong.EmployeeData;
+import trong.lixco.com.thai.apitrong.EmployeeDataService;
 
 @Named
 @ViewScoped
-public class Reminder extends AbstractBean<KPIDepMonth>{
+public class Reminder extends AbstractBean<KPIDepMonth> {
 	private static final long serialVersionUID = 1L;
 	private List<KPIDepMonth> allKpiDepByMonth;
 	Date currentDate;
@@ -41,8 +46,8 @@ public class Reminder extends AbstractBean<KPIDepMonth>{
 	@Override
 	protected void initItem() {
 		currentDate = new Date();
-		System.out.println("Thais dep trai");
 		allKpiDepByMonth = KPI_DEPARTMENT_SERVICE.findAll();
+		System.out.println("Thais dep trai");
 	}
 
 	public void start(int dateOfMonth, int hour, int minute, boolean runAtStart) {
@@ -71,7 +76,6 @@ public class Reminder extends AbstractBean<KPIDepMonth>{
 				Thread.sleep(sleepTime);
 				excute();
 				monthCurrent = monthCurrent + 1;
-
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -93,52 +97,83 @@ public class Reminder extends AbstractBean<KPIDepMonth>{
 	AccountServicePublic accountServicePublic;
 
 	private LockTableServicePublic lockTableServicePublic;
+
 	public void excute() {
 		try {
-//			Department[] allDepartmentArray = CommonService.findAll();
-//			initItem();
-				lockTableServicePublic = new LockTableServicePublicProxy();
-				accountServicePublic = new AccountServicePublicProxy();
+			// Department[] allDepartmentArray = CommonService.findAll();
+			// initItem();
+			// lockTableServicePublic = new LockTableServicePublicProxy();
+			// accountServicePublic = new AccountServicePublicProxy();
+			//
+			// DEPARTMENT_SERVICE_PUBLIC = new DepartmentServicePublicProxy();
+			// Department[] allDepartmentArr =
+			// DEPARTMENT_SERVICE_PUBLIC.findAll();
+			// List<Department> departmentHCMList = new ArrayList<>();
 
-			DEPARTMENT_SERVICE_PUBLIC = new DepartmentServicePublicProxy();
-			Department[] allDepartmentArr = DEPARTMENT_SERVICE_PUBLIC.findAll();
-			List<Department> departmentHCMList = new ArrayList<>();
-			
-			// tao list department HCM
-			for (int i = 0; i < allDepartmentArr.length; i++) {
-				if (allDepartmentArr[i].getLevelDep().getLevel() == 2
-						&& allDepartmentArr[i].getDepartment().getId() == 191) {
-					departmentHCMList.add(allDepartmentArr[i]);
-				}
-			}
-			Department[] departmentHCMArray = departmentHCMList.toArray(new Department[departmentHCMList.size()]);
-			
-			//tu danh sach phong se get danh sach mail truong phong
-			//List kpi department month
-			allKpiDepByMonth = KPI_DEPARTMENT_SERVICE.find(currentDate.getMonth(), currentDate.getYear()); 
-			
-			for (int i = 0; i < departmentHCMArray.length; i++) {
-				boolean check = false;
-				for (int j = 0; j < allKpiDepByMonth.size(); j++) {
-					if (departmentHCMArray[i].getDepartment().getCode()
-							.equals(allKpiDepByMonth.get(j).getCodeDepart())) {
-						check = true;
+			// danh sach phong ban ho chi minh
+			// tao list phong ban loai bo
+			String[] departmentCodeArraySub = new String[] { "" };
+			List<String> departmentCodeArraySubArr = Arrays.asList(departmentCodeArraySub);
+			DepartmentData[] departmentHCMArray = DepartmentDataService.timtheophongquanly("20002");
+			List<DepartmentData> departmentHCM = new ArrayList<>(Arrays.asList(departmentHCMArray));
+			// tao string danh sach ma phong ban
+			StringBuilder departmentCodeString = new StringBuilder();
+			for (int i = 0; i < departmentHCM.size(); i++) {
+				boolean isSub = false;
+				for (int j = 0; j < departmentCodeArraySubArr.size(); j++) {
+					if (departmentHCM.get(i).getCode().equals(departmentCodeArraySubArr.get(j))) {
+						isSub = true;
+						break;
 					}
 				}
-				if (check) {
-					System.out.println("size array: " + departmentHCMArray);
-					departmentHCMArray = removeTheElement(departmentHCMArray, i);
+				if (!isSub) {
+					departmentCodeString.append(departmentHCM.get(i).getCode());
+					departmentCodeString.append(",");
 				}
-				System.out.println("size array: " + departmentHCMArray);
 			}
-//			
+			String departmentCodeStringNew = departmentCodeString.toString();
+			if (departmentCodeStringNew.endsWith(",")) {
+				departmentCodeStringNew = departmentCodeStringNew.substring(0, departmentCodeStringNew.length() - 1);
+			}
+			EmployeeData[] employees = EmployeeDataService.timtheodsphongban(departmentCodeStringNew);
+
+			// // tao list department HCM
+			// for (int i = 0; i < allDepartmentArr.length; i++) {
+			// if (allDepartmentArr[i].getLevelDep().getLevel() == 2
+			// && allDepartmentArr[i].getDepartment().getId() == 191) {
+			// departmentHCMList.add(allDepartmentArr[i]);
+			// }
+			// }
+			// Department[] departmentHCMArray = departmentHCMList.toArray(new
+			// Department[departmentHCMList.size()]);
+
+			// tu danh sach phong se get danh sach mail truong phong
+			// List kpi department month
+			allKpiDepByMonth = KPI_DEPARTMENT_SERVICE.find(currentDate.getMonth(), currentDate.getYear());
+
+			// for (int i = 0; i < departmentHCMArray.length; i++) {
+			// boolean check = false;
+			// for (int j = 0; j < allKpiDepByMonth.size(); j++) {
+			// if (departmentHCMArray[i].getDepartment().getCode()
+			// .equals(allKpiDepByMonth.get(j).getCodeDepart())) {
+			// check = true;
+			// }
+			// }
+			// if (check) {
+			// System.out.println("size array: " + departmentHCMArray);
+			// departmentHCMArray = removeTheElement(departmentHCMArray, i);
+			// }
+			// System.out.println("size array: " + departmentHCMArray);
+			// }
+			//
 			System.out.println("thais");
-//			List<String> listMail = new ArrayList<>();
-//			listMail.add("quangthaiuit1@gmail.com");
-//			listMail.add("thai-dinhquang@lixco.com");
-//			listMail.add("trong-nguyenvan@lixco.com");
-//			
-//			Mail.processSendMailDepartmentSignKPI("yeucausuachua@lixco.com", "It@2019", listMail);
+			// List<String> listMail = new ArrayList<>();
+			// listMail.add("quangthaiuit1@gmail.com");
+			// listMail.add("thai-dinhquang@lixco.com");
+			// listMail.add("trong-nguyenvan@lixco.com");
+			//
+			// Mail.processSendMailDepartmentSignKPI("yeucausuachua@lixco.com",
+			// "It@2019", listMail);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -146,36 +181,36 @@ public class Reminder extends AbstractBean<KPIDepMonth>{
 
 	public static Department[] removeTheElement(Department[] arr, int index) {
 
-// If the array is empty 
-// or the index is not in array range 
-// return the original array 
+		// If the array is empty
+		// or the index is not in array range
+		// return the original array
 		if (arr == null || index < 0 || index >= arr.length) {
 
 			return arr;
 		}
 
-// Create another array of size one less 
+		// Create another array of size one less
 		Department[] anotherArray = new Department[arr.length - 1];
 
-// Copy the elements except the index 
-// from original array to the other array 
+		// Copy the elements except the index
+		// from original array to the other array
 		for (int i = 0, k = 0; i < arr.length; i++) {
 
-// if the index is 
-// the removal element index 
+			// if the index is
+			// the removal element index
 			if (i == index) {
 				continue;
 			}
 
-// if the index is not 
-// the removal element index 
+			// if the index is not
+			// the removal element index
 			anotherArray[k++] = arr[i];
 		}
 
-// return the resultant array 
+		// return the resultant array
 		return anotherArray;
 	}
-	
+
 	public Date getCurrentDate() {
 		return currentDate;
 	}
@@ -190,61 +225,75 @@ public class Reminder extends AbstractBean<KPIDepMonth>{
 		return null;
 	}
 }
-//static public void start(int hour, int dateOfMonth) throws SchedulerException, InterruptedException {
+// static public void start(int hour, int dateOfMonth) throws
+// SchedulerException, InterruptedException {
 //
 //// PHAN GUI MAIL KPI CA NHAN (27 HANG THANG)
-////JobDetail jobMailPersonalSignKPI = JobBuilder.newJob(JobMailPersonalSignKPI.class)
-////		.withIdentity("jobMailPersonalSignKPI", "group1").build();
+//// JobDetail jobMailPersonalSignKPI =
+// JobBuilder.newJob(JobMailPersonalSignKPI.class)
+//// .withIdentity("jobMailPersonalSignKPI", "group1").build();
 ////// Tao trigger nhac dki kpi cuoi thang
-////StringBuilder cronPersonalSignKPI = new StringBuilder();
-////cronPersonalSignKPI.append("0 11 ");
-////cronPersonalSignKPI.append(hour + " " + dateOfMonth + " * ?");
-////System.out.println(cronPersonalSignKPI.toString());
+//// StringBuilder cronPersonalSignKPI = new StringBuilder();
+//// cronPersonalSignKPI.append("0 11 ");
+//// cronPersonalSignKPI.append(hour + " " + dateOfMonth + " * ?");
+//// System.out.println(cronPersonalSignKPI.toString());
 ////
-////Trigger triggerPersonalSignKPI = TriggerBuilder.newTrigger()
-////		.withIdentity("cronTriggerPersonalSignKPI", "group1")
-////		.withSchedule(CronScheduleBuilder.cronSchedule(cronPersonalSignKPI.toString())).build();
+//// Trigger triggerPersonalSignKPI = TriggerBuilder.newTrigger()
+//// .withIdentity("cronTriggerPersonalSignKPI", "group1")
+//// .withSchedule(CronScheduleBuilder.cronSchedule(cronPersonalSignKPI.toString())).build();
 ////
-////Scheduler schedulerPersonalSignKPI = StdSchedulerFactory.getDefaultScheduler();
-////if (schedulerPersonalSignKPI.checkExists(jobMailPersonalSignKPI.getKey())) {
-////	schedulerPersonalSignKPI.deleteJob(jobMailPersonalSignKPI.getKey());
-////}
-////schedulerPersonalSignKPI.scheduleJob(jobMailPersonalSignKPI, triggerPersonalSignKPI);
-////schedulerPersonalSignKPI.start();
+//// Scheduler schedulerPersonalSignKPI =
+// StdSchedulerFactory.getDefaultScheduler();
+//// if (schedulerPersonalSignKPI.checkExists(jobMailPersonalSignKPI.getKey()))
+// {
+//// schedulerPersonalSignKPI.deleteJob(jobMailPersonalSignKPI.getKey());
+//// }
+//// schedulerPersonalSignKPI.scheduleJob(jobMailPersonalSignKPI,
+// triggerPersonalSignKPI);
+//// schedulerPersonalSignKPI.start();
 //
 //// PHAN GUI MAIL DANH GIA KET QUA KPI PHONG
-//JobDetail jobMailResultEvaluationDepartment = JobBuilder.newJob(JobMailResultEvaluationDepartmentKPI.class)
-//		.withIdentity("jobMailResultEvaluationDepartment", "group3").build();
-//StringBuilder cronResultEvaluationDepartment = new StringBuilder();
-//cronResultEvaluationDepartment.append("0 4 ");
-//cronResultEvaluationDepartment.append(hour + " " + dateOfMonth + " * ?");
+// JobDetail jobMailResultEvaluationDepartment =
+// JobBuilder.newJob(JobMailResultEvaluationDepartmentKPI.class)
+// .withIdentity("jobMailResultEvaluationDepartment", "group3").build();
+// StringBuilder cronResultEvaluationDepartment = new StringBuilder();
+// cronResultEvaluationDepartment.append("0 4 ");
+// cronResultEvaluationDepartment.append(hour + " " + dateOfMonth + " * ?");
 //
-//Trigger triggerResultEvaluationDepartment = TriggerBuilder.newTrigger()
-//		.withIdentity("cronResultEvaluation", "group3")
-//		.withSchedule(CronScheduleBuilder.cronSchedule(cronResultEvaluationDepartment.toString())).build();
-//Scheduler schedulerResultEvaluationDepartment = StdSchedulerFactory.getDefaultScheduler();
+// Trigger triggerResultEvaluationDepartment = TriggerBuilder.newTrigger()
+// .withIdentity("cronResultEvaluation", "group3")
+// .withSchedule(CronScheduleBuilder.cronSchedule(cronResultEvaluationDepartment.toString())).build();
+// Scheduler schedulerResultEvaluationDepartment =
+// StdSchedulerFactory.getDefaultScheduler();
 //
-//if (schedulerResultEvaluationDepartment.checkExists(jobMailResultEvaluationDepartment.getKey())) {
-//	schedulerResultEvaluationDepartment.deleteJob(jobMailResultEvaluationDepartment.getKey());
-//}
-//schedulerResultEvaluationDepartment.scheduleJob(jobMailResultEvaluationDepartment,
-//		triggerResultEvaluationDepartment);
-//schedulerResultEvaluationDepartment.start();
+// if
+// (schedulerResultEvaluationDepartment.checkExists(jobMailResultEvaluationDepartment.getKey()))
+// {
+// schedulerResultEvaluationDepartment.deleteJob(jobMailResultEvaluationDepartment.getKey());
+// }
+// schedulerResultEvaluationDepartment.scheduleJob(jobMailResultEvaluationDepartment,
+// triggerResultEvaluationDepartment);
+// schedulerResultEvaluationDepartment.start();
 //
 //// PHAN GUI MAIL THONG BAO DANG KI KPI PHONG
-//JobDetail jobMailDepartmentSignKPI = JobBuilder.newJob(JobMailDepartmentSignKPI.class)
-//		.withIdentity("jobMailDepartmentSignKPI", "group4").build();
-//StringBuilder cronDepartmentSignKPI = new StringBuilder();
-//cronDepartmentSignKPI.append("0 12 ");
-//cronDepartmentSignKPI.append(hour + " " + dateOfMonth + " * ?");
+// JobDetail jobMailDepartmentSignKPI =
+// JobBuilder.newJob(JobMailDepartmentSignKPI.class)
+// .withIdentity("jobMailDepartmentSignKPI", "group4").build();
+// StringBuilder cronDepartmentSignKPI = new StringBuilder();
+// cronDepartmentSignKPI.append("0 12 ");
+// cronDepartmentSignKPI.append(hour + " " + dateOfMonth + " * ?");
 //
-//Trigger DepartmentSignKPI = TriggerBuilder.newTrigger().withIdentity("cronResultEvaluation", "group4")
-//		.withSchedule(CronScheduleBuilder.cronSchedule(cronDepartmentSignKPI.toString())).build();
-//Scheduler schedulerDepartmentSignKPI = StdSchedulerFactory.getDefaultScheduler();
+// Trigger DepartmentSignKPI =
+// TriggerBuilder.newTrigger().withIdentity("cronResultEvaluation", "group4")
+// .withSchedule(CronScheduleBuilder.cronSchedule(cronDepartmentSignKPI.toString())).build();
+// Scheduler schedulerDepartmentSignKPI =
+// StdSchedulerFactory.getDefaultScheduler();
 //
-//if (schedulerDepartmentSignKPI.checkExists(jobMailDepartmentSignKPI.getKey())) {
-//	schedulerDepartmentSignKPI.deleteJob(jobMailDepartmentSignKPI.getKey());
-//}
-//schedulerDepartmentSignKPI.scheduleJob(jobMailDepartmentSignKPI, DepartmentSignKPI);
-//schedulerDepartmentSignKPI.start();
-//}
+// if
+// (schedulerDepartmentSignKPI.checkExists(jobMailDepartmentSignKPI.getKey())) {
+// schedulerDepartmentSignKPI.deleteJob(jobMailDepartmentSignKPI.getKey());
+// }
+// schedulerDepartmentSignKPI.scheduleJob(jobMailDepartmentSignKPI,
+// DepartmentSignKPI);
+// schedulerDepartmentSignKPI.start();
+// }
