@@ -969,6 +969,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 					if (kpiDepOfYears.get(i).isSelect()) {
 						KPIDepOfMonth item = new KPIDepOfMonth();
 						item.setContentAppreciate(kpiDepOfYears.get(i).getContentAppreciate());
+						item.setKPIPerformance(true);
 						kPIDepOfMonths.add(item);
 					}
 				}
@@ -980,7 +981,6 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-
 	}
 
 	// Thai

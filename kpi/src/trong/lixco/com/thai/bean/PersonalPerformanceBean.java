@@ -332,13 +332,17 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	public void echoAsCSVFile(Sheet sheet) {
 		Row row = null;
+		boolean isError = false;
 
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 			row = sheet.getRow(i);
 			try {
 				int codePJob = (int) Double.parseDouble(row.getCell(0).toString());
 				String content = row.getCell(1).toString();
-				int formulaKPIIdInt = (int) Double.parseDouble(row.getCell(2).toString());
+				int formulaKPIIdInt = 0;
+				if (row.getCell(2).toString() != null && !row.getCell(2).toString().isEmpty()) {
+					formulaKPIIdInt = (int) Double.parseDouble(row.getCell(2).toString());
+				}
 				// get diem tru
 				double diemtru = 0;
 				if (row.getCell(3).toString() != null && !row.getCell(3).toString().isEmpty()) {
@@ -350,8 +354,10 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 				kpiPersonalPerformanceCreate.setCodePJob(Integer.toString(codePJob));
 				kpiPersonalPerformanceCreate.setContent(content);
 				FormulaKPI formulaKPITemp = FORMULA_KPI_SERVICE.findById(formulaKPIIdLong);
-				kpiPersonalPerformanceCreate.setComputation(formulaKPITemp.getCode());
-				kpiPersonalPerformanceCreate.setFormulaKPI(formulaKPITemp);
+				if (formulaKPITemp != null) {
+					kpiPersonalPerformanceCreate.setComputation(formulaKPITemp.getCode());
+					kpiPersonalPerformanceCreate.setFormulaKPI(formulaKPITemp);
+				}
 				kpiPersonalPerformanceCreate.setCreatedDate(new Date());
 				kpiPersonalPerformanceCreate.setCreatedUser(member.getName());
 				kpiPersonalPerformanceCreate.setDisable(false);
@@ -365,12 +371,15 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 				}
 
 			} catch (Exception e) {
+				isError = true;
 				e.printStackTrace();
 			}
-
 		}
-		notice("Thành công");
-
+		if (isError) {
+			notify.error("Lỗi!");
+		} else {
+			notice("Thành công");
+		}
 	}
 
 	// end import file excel

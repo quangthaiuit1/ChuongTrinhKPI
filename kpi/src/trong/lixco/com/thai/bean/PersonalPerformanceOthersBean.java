@@ -45,6 +45,7 @@ import trong.lixco.com.jpa.entitykpi.KPIPerson;
 import trong.lixco.com.jpa.entitykpi.KPIPersonOfMonth;
 import trong.lixco.com.jpa.entitykpi.OrientationPerson;
 import trong.lixco.com.jpa.entitykpi.PositionJob;
+import trong.lixco.com.jpa.thai.KPIPersonalOther;
 import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
 import trong.lixco.com.kpi.general.ApplicationBean;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
@@ -74,7 +75,7 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 	// private DepartmentParent departmentParent, departmentParentSearch;
 	private PositionJob positionJobSearch;
 	// private List<DepartmentParent> departmentParents;
-//	private Department departmentSearch;
+	// private Department departmentSearch;
 	private List<Department> departmentSearchs;
 	private boolean isEmp = false;// la nhan vien
 	private Department departmentSelected;
@@ -170,7 +171,7 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 			}
 			if (departmentSearchs.size() != 0) {
 				departmentSearchs = DepartmentUtil.sort(departmentSearchs);
-//				departmentSearch = departmentSearchs.get(0);
+				// departmentSearch = departmentSearchs.get(0);
 			}
 		} catch (Exception e) {
 		}
@@ -293,12 +294,13 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 				noticeError("KPI tháng " + monthSearch + " đã được tạo.");
 			} else {
 				for (int i = 0; i < allMemberByDepartment.size(); i++) {
-//					List<KPIPersonOfMonth> listSaves = new ArrayList<KPIPersonOfMonth>();
-//					// trong
-//					listSaves.addAll(kpiPersonOfMonths);
-//					listSaves.addAll(kpiPersonOfMonthAdds);
+					// List<KPIPersonOfMonth> listSaves = new
+					// ArrayList<KPIPersonOfMonth>();
+					// // trong
+					// listSaves.addAll(kpiPersonOfMonths);
+					// listSaves.addAll(kpiPersonOfMonthAdds);
 					KPIPerson kpiPersonNew = new KPIPerson();
-//					kpiPersonNew.setKpiPersonOfMonths(listSaves);
+					// kpiPersonNew.setKpiPersonOfMonths(listSaves);
 					kpiPersonNew.setTotal(100.0);
 					kpiPersonNew.setCodeEmp(allMemberByDepartment.get(i).getCode());
 					kpiPersonNew.setKmonth(monthSearch);
@@ -323,86 +325,95 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 
 	public void createOrUpdate() {
 		notify = new Notify(FacesContext.getCurrentInstance());
-//			kPIPerson.setCodeEmp(member.getCode());
-//
-//			KPIPerson kpiPersonOld = kPIPersonService.findById(kPIPerson.getId());
-//			if (kpiPersonOld.isSignResultKPI()) {
-//				this.kPIPersonEdit = kpiPersonOld;
-//				showEdit();
-//				noticeError("Phiếu đã duyệt kết quả. Không lưu được");
-//			} else {
-//			Date date2 = new Date(kpiPersonOld.getKyear(), kpiPersonOld.getKmonth(), 1);
+		// kPIPerson.setCodeEmp(member.getCode());
+		//
+		// KPIPerson kpiPersonOld =
+		// kPIPersonService.findById(kPIPerson.getId());
+		// if (kpiPersonOld.isSignResultKPI()) {
+		// this.kPIPersonEdit = kpiPersonOld;
+		// showEdit();
+		// noticeError("Phiếu đã duyệt kết quả. Không lưu được");
+		// } else {
+		// Date date2 = new Date(kpiPersonOld.getKyear(),
+		// kpiPersonOld.getKmonth(), 1);
 		if (allowUpdate(null)) {
-//				if (kpiPersonOld.getKmonth() != kPIPerson.getKmonth()
-//						|| kpiPersonOld.getKyear() != kPIPerson.getKyear()) {
-//					List<KPIPerson> temps = kPIPersonService.findRange(kPIPerson.getCodeEmp(), kPIPerson.getKmonth(),
-//							kPIPerson.getKyear());
-//					if (temps.size() != 0) {
-//						boolean status = false;
-//						for (int i = 0; i < temps.size(); i++) {
-//							if (temps.get(i).isSignKPI()) {
-//								status = true;
-//								break;
-//							}
-//						}
-//						if (status) {
-//							noticeError("Tháng đã duyệt đăng ký không thay thế được.");
-//						} else {
-//							// //////////////////////////////////////////////////////////////////////////////////////////////////////////
-//							RequestContext context = RequestContext.getCurrentInstance();
-//							context.execute("PF('dialogConfirm').show();");
-//						}
-//					} else {
-//						List<KPIPersonOfMonth> listSaves = new ArrayList<KPIPersonOfMonth>();
-//						double checkp = 0;
-//						// thai
-//						double checkKPIPerformanceWeighted = 0;
-//						boolean checkKPIInvalid = false;
-//						// end thai
-//						for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
-//							checkp += kpiPersonOfMonths.get(i).getWeighted();
-//							// thai
-//							if (kpiPersonOfMonths.get(i).isKPIPerformance()) {
-//								if (kpiPersonOfMonths.get(i).getWeighted() >= 10) {
-//									checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
-//											+ kpiPersonOfMonths.get(i).getWeighted();
-//								}
-//							}
-//							if (kpiPersonOfMonths.get(i).getWeighted() < 10) {
-//								checkKPIInvalid = true;
-//							}
-//							// end thai
-//						}
-//						if (kpiPersonOfMonths.size() != 0 && checkp != TOTALPARAM) {
-//							noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
-//						} else {
-//							listSaves.addAll(kpiPersonOfMonths);
-//							listSaves.addAll(kpiPersonOfMonthAdds);
-//							kPIPerson.setKpiPersonOfMonths(listSaves);
-//							KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson, kpiPersonOfMonthRemoves);
-//							// Thai
-//							if (checkKPIInvalid == false && checkKPIPerformanceWeighted >= 80) {
-//								// trong
-//								if (wf != null) {
-//									this.kPIPersonEdit = wf;
-//									showEdit();
-//									writeLogInfo("Cap nhat" + wf.toString());
-//									notice("Lưu thành công.");
-//								} else {
-//									noticeError("Xảy ra lỗi khi lưu.");
-//								}
-//								// end trong
-//							} else {
-//								if (checkKPIInvalid == true) {
-//									noticeError("Trọng số KPI phải lớn hơn 10%");
-//								} else {
-//									noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
-//								}
-//							}
-//							// end thai
-//						}
-//					}
-//				} else {
+			// if (kpiPersonOld.getKmonth() != kPIPerson.getKmonth()
+			// || kpiPersonOld.getKyear() != kPIPerson.getKyear()) {
+			// List<KPIPerson> temps =
+			// kPIPersonService.findRange(kPIPerson.getCodeEmp(),
+			// kPIPerson.getKmonth(),
+			// kPIPerson.getKyear());
+			// if (temps.size() != 0) {
+			// boolean status = false;
+			// for (int i = 0; i < temps.size(); i++) {
+			// if (temps.get(i).isSignKPI()) {
+			// status = true;
+			// break;
+			// }
+			// }
+			// if (status) {
+			// noticeError("Tháng đã duyệt đăng ký không thay thế được.");
+			// } else {
+			// //
+			// //////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// RequestContext context = RequestContext.getCurrentInstance();
+			// context.execute("PF('dialogConfirm').show();");
+			// }
+			// } else {
+			// List<KPIPersonOfMonth> listSaves = new
+			// ArrayList<KPIPersonOfMonth>();
+			// double checkp = 0;
+			// // thai
+			// double checkKPIPerformanceWeighted = 0;
+			// boolean checkKPIInvalid = false;
+			// // end thai
+			// for (int i = 0; i < kpiPersonOfMonths.size(); i++) {
+			// checkp += kpiPersonOfMonths.get(i).getWeighted();
+			// // thai
+			// if (kpiPersonOfMonths.get(i).isKPIPerformance()) {
+			// if (kpiPersonOfMonths.get(i).getWeighted() >= 10) {
+			// checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
+			// + kpiPersonOfMonths.get(i).getWeighted();
+			// }
+			// }
+			// if (kpiPersonOfMonths.get(i).getWeighted() < 10) {
+			// checkKPIInvalid = true;
+			// }
+			// // end thai
+			// }
+			// if (kpiPersonOfMonths.size() != 0 && checkp != TOTALPARAM) {
+			// noticeError("Không lưu được. Tổng trọng số các mục tiêu khác
+			// 100%");
+			// } else {
+			// listSaves.addAll(kpiPersonOfMonths);
+			// listSaves.addAll(kpiPersonOfMonthAdds);
+			// kPIPerson.setKpiPersonOfMonths(listSaves);
+			// KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson,
+			// kpiPersonOfMonthRemoves);
+			// // Thai
+			// if (checkKPIInvalid == false && checkKPIPerformanceWeighted >=
+			// 80) {
+			// // trong
+			// if (wf != null) {
+			// this.kPIPersonEdit = wf;
+			// showEdit();
+			// writeLogInfo("Cap nhat" + wf.toString());
+			// notice("Lưu thành công.");
+			// } else {
+			// noticeError("Xảy ra lỗi khi lưu.");
+			// }
+			// // end trong
+			// } else {
+			// if (checkKPIInvalid == true) {
+			// noticeError("Trọng số KPI phải lớn hơn 10%");
+			// } else {
+			// noticeError("Tổng trọng số KPI hiệu suất không được bé hơn 80%");
+			// }
+			// }
+			// // end thai
+			// }
+			// }
+			// } else {
 			// test
 			for (int i = 0; i < allMemberByDepartment.size(); i++) {
 				KPIPerson kpiPersonOld = kPIPersonService.findRangeNew(allMemberByDepartment.get(i).getCode(),
@@ -435,9 +446,10 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 					}
 				}
 				kpiPersonOld.setKpiPersonOfMonths(kpiOfMonths);
-				//check trong cai list persons ban dau de lay total cua tung cai
-				for(KPIPerson k: kPIPersons) {
-					if(k.getCodeEmp().equals(kpiPersonOld.getCodeEmp())) {
+				// check trong cai list persons ban dau de lay total cua tung
+				// cai
+				for (KPIPerson k : kPIPersons) {
+					if (k.getCodeEmp().equals(kpiPersonOld.getCodeEmp())) {
 						kpiPersonOld.setTotal(k.getTotal());
 					}
 					break;
@@ -445,8 +457,8 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 				KPIPerson wf = kPIPersonService.updateAssign(kpiPersonOld);
 				if (wf != null) {
 					this.kPIPersonEdit = wf;
-//						showEdit();
-//						writeLogInfo("Cap nhat" + wf.toString());
+					// showEdit();
+					// writeLogInfo("Cap nhat" + wf.toString());
 					notice("Lưu thành công.");
 				} else {
 					noticeError("Xảy ra lỗi khi lưu.");
@@ -455,51 +467,55 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 			listBehaviour = new ArrayList<>();
 			// end
 
-//				//use
-//				List<KPIPersonOfMonth> listSaves = new ArrayList<KPIPersonOfMonth>();
-//				List<KPIPerson> temps = kPIPersonService.findRange(kPIPerson.getCodeEmp(), kPIPerson.getKmonth(),
-//						kPIPerson.getKyear());
-//				if (temps.size() != 0) {
-//					boolean status = false;
-//					for (int i = 0; i < temps.size(); i++) {
-//						if (temps.get(i).isSignKPI()) {
-//							status = true;
-//							break;
-//						}
-//					}
-//					listSaves.addAll(kpiPersonOfMonths);
-//					listSaves.addAll(kpiPersonOfMonthAdds);
-//					kPIPerson.setKpiPersonOfMonths(listSaves);
-//					if (status) {
-//						// Thai
-//						KPIPerson wf = kPIPersonService.updateAssign(kPIPerson);
-//						if (wf != null) {
-//							this.kPIPersonEdit = wf;
-//							showEdit();
-//							notice("Lưu thành công");
-//						} else {
-//							noticeError("Xảy ra lỗi không lưu được");
-//						}
-//
-//					} else {
-//						// Thai
-//						KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson, kpiPersonOfMonthRemoves);
-//						if (wf != null) {
-//							this.kPIPersonEdit = wf;
-//							showEdit();
-//							notice("Lưu thành công");
-//						} else {
-//							noticeError("Xảy ra lỗi không lưu được");
-//						}
-//					}
-//				}
-//
-////				}
-//
-//			} else {
-//				notify.warningDetail();
-//			}
-//			//use
+			// //use
+			// List<KPIPersonOfMonth> listSaves = new
+			// ArrayList<KPIPersonOfMonth>();
+			// List<KPIPerson> temps =
+			// kPIPersonService.findRange(kPIPerson.getCodeEmp(),
+			// kPIPerson.getKmonth(),
+			// kPIPerson.getKyear());
+			// if (temps.size() != 0) {
+			// boolean status = false;
+			// for (int i = 0; i < temps.size(); i++) {
+			// if (temps.get(i).isSignKPI()) {
+			// status = true;
+			// break;
+			// }
+			// }
+			// listSaves.addAll(kpiPersonOfMonths);
+			// listSaves.addAll(kpiPersonOfMonthAdds);
+			// kPIPerson.setKpiPersonOfMonths(listSaves);
+			// if (status) {
+			// // Thai
+			// KPIPerson wf = kPIPersonService.updateAssign(kPIPerson);
+			// if (wf != null) {
+			// this.kPIPersonEdit = wf;
+			// showEdit();
+			// notice("Lưu thành công");
+			// } else {
+			// noticeError("Xảy ra lỗi không lưu được");
+			// }
+			//
+			// } else {
+			// // Thai
+			// KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson,
+			// kpiPersonOfMonthRemoves);
+			// if (wf != null) {
+			// this.kPIPersonEdit = wf;
+			// showEdit();
+			// notice("Lưu thành công");
+			// } else {
+			// noticeError("Xảy ra lỗi không lưu được");
+			// }
+			// }
+			// }
+			//
+			//// }
+			//
+			// } else {
+			// notify.warningDetail();
+			// }
+			// //use
 		}
 	}
 
@@ -615,7 +631,7 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 						boolean isExist = false;
 						boolean verify = false;
 						// check xem item nao duoc chon
-//						KPIPerson itemp = this.personSelected;
+						// KPIPerson itemp = this.personSelected;
 						KPIPersonOfMonth item = new KPIPersonOfMonth();
 						item.setBehaviour(true);
 						item.setContentAppreciate(
@@ -625,11 +641,12 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 						item.setKpiPerson(this.personSelected);
 						if (listBehaviour.size() == 0) {
 							listBehaviour.add(item);
-							//Tru diem sau khi them thai do hanh vi tren giao dien
+							// Tru diem sau khi them thai do hanh vi tren giao
+							// dien
 							double totalTemp = this.personSelected.getTotal() - item.getWeighted();
 							this.personSelected.setTotal(totalTemp);
-							for(int a = 0; a < kPIPersons.size(); a++) {
-								if(kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
+							for (int a = 0; a < kPIPersons.size(); a++) {
+								if (kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
 									kPIPersons.get(a).setTotal(personSelected.getTotal());
 								}
 							}
@@ -646,22 +663,22 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 									}
 								}
 							}
-							if(verify == true && isExist == false) {
+							if (verify == true && isExist == false) {
 								listBehaviour.add(item);
 								double totalTemp2 = this.personSelected.getTotal() - item.getWeighted();
 								this.personSelected.setTotal(totalTemp2);
-								for(int a = 0; a < kPIPersons.size(); a++) {
-									if(kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
+								for (int a = 0; a < kPIPersons.size(); a++) {
+									if (kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
 										kPIPersons.get(a).setTotal(personSelected.getTotal());
 									}
 								}
 							}
-							if(verify == false && isExist == false) {
+							if (verify == false && isExist == false) {
 								listBehaviour.add(item);
 								double totalTemp1 = this.personSelected.getTotal() - item.getWeighted();
 								this.personSelected.setTotal(totalTemp1);
-								for(int a = 0; a < kPIPersons.size(); a++) {
-									if(kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
+								for (int a = 0; a < kPIPersons.size(); a++) {
+									if (kPIPersons.get(a).getCodeEmp().equals(this.personSelected.getCodeEmp())) {
 										kPIPersons.get(a).setTotal(personSelected.getTotal());
 									}
 								}
@@ -779,12 +796,12 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 		this.positionJobSearch = positionJobSearch;
 	}
 
-//	public Department getDepartmentSearch() {
-//		return departmentSearch;
-//	}
-//	public void setDepartmentSearch(Department departmentSearch) {
-//		this.departmentSearch = departmentSearch;
-//	}
+	// public Department getDepartmentSearch() {
+	// return departmentSearch;
+	// }
+	// public void setDepartmentSearch(Department departmentSearch) {
+	// this.departmentSearch = departmentSearch;
+	// }
 	public List<Department> getDepartmentSearchs() {
 		return departmentSearchs;
 	}

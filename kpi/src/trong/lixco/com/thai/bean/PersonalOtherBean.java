@@ -41,6 +41,10 @@ import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
 import trong.lixco.com.servicepublic.EmployeeDTO;
 import trong.lixco.com.servicepublic.EmployeeServicePublic;
 import trong.lixco.com.servicepublic.EmployeeServicePublicProxy;
+import trong.lixco.com.thai.apitrong.DepartmentData;
+import trong.lixco.com.thai.apitrong.DepartmentDataService;
+import trong.lixco.com.thai.apitrong.PositionJobData;
+import trong.lixco.com.thai.apitrong.PositionJobDataService;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
 import trong.lixco.com.util.Notify;
 
@@ -114,6 +118,54 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 		}
 	}
 
+	public void removeKPIPersonOther(KPIPersonalOther item) {
+		// check kpi da duoc duyet chua
+		KPIPersonalOther itemSelected = item;
+		if (itemSelected.isSignResult()) {
+			noticeError("KPI đã được duyệt không thể xóa");
+			return;
+		}
+		boolean deleteSuccess = PERSONAL_OTHER_SERVICE.delete(item);
+		if (deleteSuccess) {
+			// try {
+			// this.personalOthers = this.createAllCodeMemberOther();
+			// } catch (RemoteException e) {
+			// e.printStackTrace();
+			// }
+			kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+			notice("Thành công");
+		} else {
+			noticeError("Lỗi");
+		}
+
+	}
+
+	public void ajaxHandleQuantityChange(KPIPersonalOtherDetail item) {
+		try {
+			KPIPersonalOther itemSelected = item.getKpiPersonalOther();
+			// cap nhat so luong moi
+			KPIPersonalOtherDetail update = PERSONAL_OTHER_DETAIL_SERVICE.update(item);
+			// tinh lai tong so diem
+			if (update != null) {
+				List<KPIPersonalOtherDetail> totalDetail = PERSONAL_OTHER_DETAIL_SERVICE.find(itemSelected);
+				double totalPoint = 0;
+				for (int i = 0; i < totalDetail.size(); i++) {
+					totalPoint = totalPoint + totalDetail.get(i).getMinuspoint();
+				}
+				itemSelected.setTotal(100 - totalPoint);
+				KPIPersonalOther updateOther = PERSONAL_OTHER_SERVICE.update(itemSelected);
+				// cap nhat lai danh sach other
+				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+				// cap nhat lai danh sach detail
+				// details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+			} else {
+				noticeError("Lỗi");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void showDialogOrien(KPIPersonalOther personSelected) {
 		this.personSelected = personSelected;
 		listInfoPersonalPerformances = new ArrayList<>();
@@ -121,59 +173,75 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 		if (personSelected.getId() != null) {
 			// tat ca vi tri cong viec
 			positionJobs = new ArrayList<PositionJob>();
-			List<EmpPJob> empPJobs = empPJobService.findByEmployee(personSelected.getCodeEmp());
-			for (int i = 0; i < empPJobs.size(); i++) {
-				PositionJob pj = POSITION_JOB_SERVICE.findByCode(empPJobs.get(i).getCodePJob());
-				if (pj != null)
-					positionJobs.add(pj);
-			}
+			// List<EmpPJob> empPJobs =
+			// empPJobService.findByEmployee(personSelected.getCodeEmp());
 
-			if (positionJobs.size() != 0)
-				positionJobSelect = positionJobs.get(0);
-			// Thai
-			// Tao danh sach code PJob theo tung nhan vien
-			List<String> listCodePJob = new ArrayList<>();
-			for (int i = 0; i < positionJobs.size(); i++) {
-				listCodePJob.add(positionJobs.get(i).getCode());
+			// tim vi tri cong viec theo nhan vien
+			PositionJobData[] empPJobs = PositionJobDataService.vttheonhanvien(personSelected.getCodeEmp());
+			boolean existPosition = true;
+			if (empPJobs == null || empPJobs.length == 0) {
+				existPosition = false;
 			}
-			// Tao list info
-			if (!listCodePJob.isEmpty()) {
-				listKPIPersonalByEmployee = PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
-				Map<String, List<KPIPersonalPerformance>> datagroups11 = listKPIPersonalByEmployee.stream()
-						.collect(Collectors.groupingBy(a -> a.getCodePJob(), Collectors.toList()));
-
-				listKPIPersonalByEmployee = new ArrayList<>();
-				for (String key : datagroups11.keySet()) {
-					List<KPIPersonalPerformance> invs = datagroups11.get(key);
-					try {
-						InfoPersonalPerformance tgi = new InfoPersonalPerformance();
-						tgi.setPositionJobName(POSITION_JOB_SERVICE.findByCode(key).getName());
-						tgi.setPersonalPerformances(invs);
-						listInfoPersonalPerformances.add(tgi);
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
+			// co vi tri cong viec
+			else {
+				for (int i = 0; i < empPJobs.length; i++) {
+					PositionJob pj = POSITION_JOB_SERVICE.findByCode(empPJobs[i].getCode());
+					if (pj != null)
+						positionJobs.add(pj);
 				}
-				// kiem tra bang other_detail row nao co set selecte = true;
-				for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
-					this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
-					for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
-						for (int k = 0; k < details.size(); k++) {
-							if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent()
-									.equals(details.get(k).getContent())) {
-								listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).setSelect(true);
-								listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
-										.setQuantity(details.get(k).getQuantity());
-								break;
+
+				if (positionJobs.size() != 0)
+					positionJobSelect = positionJobs.get(0);
+				// Thai
+				// Tao danh sach code PJob theo tung nhan vien
+				List<String> listCodePJob = new ArrayList<>();
+				for (int i = 0; i < positionJobs.size(); i++) {
+					listCodePJob.add(positionJobs.get(i).getCode());
+				}
+				// Tao list info
+				if (!listCodePJob.isEmpty()) {
+					listKPIPersonalByEmployee = PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
+					Map<String, List<KPIPersonalPerformance>> datagroups11 = listKPIPersonalByEmployee.stream()
+							.collect(Collectors.groupingBy(a -> a.getCodePJob(), Collectors.toList()));
+
+					listKPIPersonalByEmployee = new ArrayList<>();
+					for (String key : datagroups11.keySet()) {
+						List<KPIPersonalPerformance> invs = datagroups11.get(key);
+						try {
+							InfoPersonalPerformance tgi = new InfoPersonalPerformance();
+							tgi.setPositionJobName(POSITION_JOB_SERVICE.findByCode(key).getName());
+							tgi.setPersonalPerformances(invs);
+							listInfoPersonalPerformances.add(tgi);
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+					}
+					// kiem tra bang other_detail row nao co set selecte = true;
+					for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
+						this.details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+						for (int j = 0; j < listInfoPersonalPerformances.get(i).getPersonalPerformances().size(); j++) {
+							for (int k = 0; k < details.size(); k++) {
+								if (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent()
+										.equals(details.get(k).getContent())) {
+									listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
+											.setSelect(true);
+									listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
+											.setQuantity(details.get(k).getQuantity());
+									break;
+								}
 							}
 						}
 					}
 				}
+				// End Thai
+				RequestContext context = RequestContext.getCurrentInstance();
+				context.execute("PF('widgetKPIPersonalOther').show();");
+				return;
 			}
-
-			// End Thai
-			RequestContext context = RequestContext.getCurrentInstance();
-			context.execute("PF('widgetKPIPersonalOther').show();");
+			if (!existPosition) {
+				noticeError("Không tìm thấy vị trí công việc phù hợp");
+				return;
+			}
 		} else {
 			notify.warning("Chưa lưu thông tin phòng ban/nhân viên!");
 		}
@@ -183,6 +251,9 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 	public List<String> createAllCodeMemberOther() throws RemoteException {
 		List<String> personalOthersTemp = new ArrayList<>();
 		Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findId(memberPlaying.getDepartment().getId());
+		// tim tat ca cac to duoi cap phong
+		DepartmentData[] totalDepByDepartmentArray = DepartmentDataService.timtheophongquanly(depTemp.getCode());
+		List<DepartmentData> totalDepByDepartment = new ArrayList<>(Arrays.asList(totalDepByDepartmentArray));
 		try {
 			// toan bo nhan vien nhom khac
 			List<EmployeeDTO> allMemberOther = new ArrayList<>();
@@ -191,6 +262,11 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 			// Phong ban
 			List<String> depList = new ArrayList<>();
+			for (int t = 0; t < totalDepByDepartment.size(); t++) {
+				depList.add(totalDepByDepartment.get(t).getCode());
+			}
+			// tim theo phong quan ly khong bao gom phong do -> phai them phong
+			// do vao
 			depList.add(memberPlaying.getDepartment().getCode());
 			String[] depArray = depList.toArray(new String[depList.size()]);
 			EmployeeDTO[] allMemberTemp = EMPLOYEE_SERVICE_PUBLIC.findByDep(depArray);
@@ -280,6 +356,28 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 			// KPIPersonalOtherDetail kp=
 			// PERSONAL_OTHER_DETAIL_SERVICE.findById(remove.getId());
 			boolean checkDelete = PERSONAL_OTHER_DETAIL_SERVICE.delete(remove);
+			double totalPoint = 0;
+			if (checkDelete) {
+				List<KPIPersonalOtherDetail> totalKPI = PERSONAL_OTHER_DETAIL_SERVICE
+						.find(remove.getKpiPersonalOther());
+				if (!totalKPI.isEmpty()) {
+					for (int i = 0; i < totalKPI.size(); i++) {
+						totalPoint = totalPoint + (totalKPI.get(i).getMinuspoint() * totalKPI.get(i).getQuantity());
+					}
+				}
+				// cap nhat tong diem trong bang personal_other
+
+				KPIPersonalOther update = remove.getKpiPersonalOther();
+				update.setTotal(100 - totalPoint);
+				KPIPersonalOther checkUpdate = PERSONAL_OTHER_SERVICE.update(update);
+				details = PERSONAL_OTHER_DETAIL_SERVICE.find(remove.getKpiPersonalOther());
+				if (checkUpdate != null) {
+					kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+					notice("Thành công");
+				} else {
+					noticeError("Lỗi");
+				}
+			}
 			// if (checkDelete) {
 			// KPIPersonalOther checkUpdate =
 			// PERSONAL_OTHER_SERVICE.update(temp);

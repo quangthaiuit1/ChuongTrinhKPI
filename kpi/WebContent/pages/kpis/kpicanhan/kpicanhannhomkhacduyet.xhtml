@@ -40,7 +40,7 @@
 										<p:ajax process="@this" />
 									</p:spinner>
 								</h:panelGrid>
-								
+
 								<h:panelGrid columns="2" style="width:100%" cellspacing="10">
 									<p:selectOneMenu
 										value="#{personalPerformanceOthersBean.departmentSelected}"
@@ -63,6 +63,8 @@
 						<div style="clear: both" />
 						<p:dataTable value="#{personalOtherBean.kpiPersonalOthers}"
 							widgetVar="dtlistkpiperson" styleClass="tableparent"
+							scrollable="true" scrollHeight="400" paginator="true"
+							paginatorPosition="bottom" rows="50"
 							filteredValue="#{personalPerformanceOthersBean.kPIPersonFilters}"
 							id="tableid" var="item">
 							<f:facet name="header">
@@ -77,7 +79,7 @@
 							<p:column headerText="Duyệt KQ"
 								style="width:25px;text-align:center">
 								<p:selectBooleanCheckbox styleClass="selectbllb"
-									value="#{item.signResult}" >
+									value="#{item.signResult}">
 									<p:ajax process="@this" />
 								</p:selectBooleanCheckbox>
 							</p:column>
@@ -139,6 +141,7 @@
 					<f:facet name="header">
 						<div style="float: right">
 							<p:commandButton type="submit" value="Lưu/cập nhật"
+								disabled="true"
 								action="#{personalOtherBean.updateListKPIPersonalOther()}"
 								update=":menuformid:tv:list:tableid" icon="fa fa-save" />
 						</div>
@@ -156,7 +159,8 @@
 							paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
 							paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
 							style="width:100%" id="dtTableAddKPIPerformancePersonal"
-							scrollHeight="370" widgetVar="dtTableAddKPIPerformancePersonal"
+							scrollHeight="370" scrollWidth="800"
+							widgetVar="dtTableAddKPIPerformancePersonal"
 							resizableColumns="true" var="item" rowIndexVar="rowIndex">
 
 							<p:column headerText="..." style="width:20px;">
@@ -175,6 +179,11 @@
 								<h:outputText value="#{item.minuspoint/100}">
 									<f:convertNumber pattern="##0%" />
 								</h:outputText>
+							</p:column>
+							<p:column headerText="Số lượng" style="width:40px">
+								<p:spinner size="10" value="#{item.quantity}" min="1" max="10">
+									<p:ajax process="@this" />
+								</p:spinner>
 							</p:column>
 							<f:facet name="footer">
 								<div style="clear: both;" />
@@ -215,6 +224,13 @@
 							style="text-align:center">
 							<f:convertNumber pattern="##0%" />
 						</h:outputText>
+					</p:column>
+					<p:column headerText="Số lượng" style="width:40px">
+						<p:spinner size="10" value="#{item.quantity}" min="1" max="10">
+							<p:ajax process="@this"
+								update="menuformid:tv:list:tableid,tableidHV"
+								listener="#{personalOtherBean.ajaxHandleQuantityChange(item)}" />
+						</p:spinner>
 					</p:column>
 				</p:dataTable>
 			</h:form>
