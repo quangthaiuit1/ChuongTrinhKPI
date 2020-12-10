@@ -1,16 +1,18 @@
-package trong.lixco.com.jpa.entitykpi;
+package trong.lixco.com.jpa.thai;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
-/**
- * @author vantrong
- * @Time 16-04-2018 12:08:21 KPI cua cong ty/phong trong nam
- */
+import trong.lixco.com.jpa.entitykpi.AbstractEntity;
+import trong.lixco.com.jpa.entitykpi.FormulaKPI;
+import trong.lixco.com.jpa.entitykpi.Taget;
+
 @Entity
-public class KPIDepOfMonth extends AbstractEntity {
+@Table(name = "kpi_to_chitiet")
+public class KPIToDetail extends AbstractEntity {
 	private int no;// so thu tu
 	@ManyToOne
 	private Taget taget; // chi tieu
@@ -31,7 +33,7 @@ public class KPIDepOfMonth extends AbstractEntity {
 	private double ratioCompleteIsWeighted;// ti le da nhan trong so
 
 	@ManyToOne
-	private KPIDepMonth kpiDepMonth;
+	private KPITo kpi_to;
 
 	private String paramA;
 	private String paramB;
@@ -42,8 +44,6 @@ public class KPIDepOfMonth extends AbstractEntity {
 	// check KPI hieu suat
 	@Column(name = "is_kpi_performance")
 	private boolean isKPIPerformance;
-
-	private boolean isShowFormual = true;
 
 	@Transient
 	private int noid;// so thu tu
@@ -184,12 +184,12 @@ public class KPIDepOfMonth extends AbstractEntity {
 		this.ratioCompleteIsWeighted = ratioCompleteIsWeighted;
 	}
 
-	public KPIDepMonth getKpiDepMonth() {
-		return kpiDepMonth;
+	public KPITo getKpi_to() {
+		return kpi_to;
 	}
 
-	public void setKpiDepMonth(KPIDepMonth kpiDepMonth) {
-		this.kpiDepMonth = kpiDepMonth;
+	public void setKpi_to(KPITo kpi_to) {
+		this.kpi_to = kpi_to;
 	}
 
 	public String getParamA() {
@@ -238,13 +238,5 @@ public class KPIDepOfMonth extends AbstractEntity {
 
 	public void setKPIPerformance(boolean isKPIPerformance) {
 		this.isKPIPerformance = isKPIPerformance;
-	}
-
-	public boolean isShowFormual() {
-		return isShowFormual;
-	}
-
-	public void setShowFormual(boolean isShowFormual) {
-		this.isShowFormual = isShowFormual;
 	}
 }

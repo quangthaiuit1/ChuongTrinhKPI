@@ -1,11 +1,10 @@
-package trong.lixco.com.beankpi;
+package trong.lixco.com.thai.bean;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,36 +15,33 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.docx4j.org.xhtmlrenderer.pdf.ITextRenderer;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
-import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.Visibility;
 
-import com.sun.tracing.dtrace.NameAttributes;
-
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublic;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublicProxy;
 import trong.lixco.com.account.servicepublics.Member;
@@ -55,36 +51,39 @@ import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.classInfor.PrintKPIComp;
 import trong.lixco.com.ejb.service.ParamReportDetailService;
 import trong.lixco.com.ejb.servicekpi.FormulaKPIService;
-import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
-import trong.lixco.com.ejb.servicekpi.KPIDepOfMonthService;
 import trong.lixco.com.ejb.servicekpi.KPIDepService;
 import trong.lixco.com.ejb.servicekpi.PathImageAssignService;
 import trong.lixco.com.ejb.thai.kpi.DepPerformanceService;
+import trong.lixco.com.ejb.thai.kpi.KPIToDetailService;
+import trong.lixco.com.ejb.thai.kpi.KPIToPerformanceService;
+import trong.lixco.com.ejb.thai.kpi.KPIToService;
 import trong.lixco.com.jpa.entitykpi.FormulaKPI;
-import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
-import trong.lixco.com.jpa.entitykpi.KPIDepOfMonth;
 import trong.lixco.com.jpa.entitykpi.KPIDepOfYear;
 import trong.lixco.com.jpa.entitykpi.ParamReportDetail;
 import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
+import trong.lixco.com.jpa.thai.KPITo;
+import trong.lixco.com.jpa.thai.KPIToDetail;
+import trong.lixco.com.jpa.thai.KPIToPerformance;
+import trong.lixco.com.thai.bean.staticentity.MessageView;
 import trong.lixco.com.util.Notify;
 import trong.lixco.com.util.PDFMerger;
 
 @ManagedBean
-@javax.faces.bean.ViewScoped
-// KPI cong ty
-public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
+@ViewScoped
+public class KPIToBeanNew extends AbstractBean {
+
 	private static final long serialVersionUID = 1L;
 	private SimpleDateFormat sf;
 	private Notify notify;
-	private List<KPIDepMonth> kpiDepMonths;
-	private List<KPIDepMonth> kpiDepMonthFilters;
+	private List<KPITo> kpiTos;
+	private List<KPITo> kpiToFilters;
 
 	private final int TOTALPARAM = 100;
 
-	private KPIDepMonth kpiDepMonth;
-	private KPIDepMonth kpiDepMonthEdit;
-	private List<KPIDepOfMonth> kPIDepOfMonths;
-	private List<KPIDepOfMonth> KPIDepOfMonthRemoves;
+	private KPITo kpiTo;
+	private KPITo kpiToEdit;
+	private List<KPIToDetail> kpiToDetails;
+	private List<KPIToDetail> kpiToDetailRemoves;
 	private List<FormulaKPI> formulaKPIs;
 	private FormulaKPI formulaKPISelect;
 
@@ -112,7 +111,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	@Inject
 	private KPIDepService kpiDepService;
 	@Inject
-	private KPIDepMonthService kpiDepMonthService;
+	private KPIToService kPIToService;
 	@Inject
 	private Logger logger;
 
@@ -126,7 +125,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	public void copy() {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		try {
-			if (kpiDepMonth.getId() != null) {
+			if (kpiTo.getId() != null) {
 				RequestContext context = RequestContext.getCurrentInstance();
 				context.execute("PF('dialogCopy').show();");
 			} else {
@@ -143,7 +142,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	public void printOnly() {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		try {
-			String pathre = "/resources/reports/kpis/kpidepmonth.jasper";
+			String pathre = "/resources/reports/kpis/KPITo.jasper";
 			String reportPath = null;
 			Map<String, Object> importParam = null;
 			importParam = installConfigPersonReport();
@@ -157,10 +156,11 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 			List<PrintKPIComp> printKPIComps = new ArrayList<PrintKPIComp>();
 			SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
-			for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-				PrintKPIComp pr = new PrintKPIComp(kPIDepOfMonths.get(i), sf, departmentServicePublic,
-						memberServicePublic);
-				printKPIComps.add(pr);
+			for (int i = 0; i < kpiToDetails.size(); i++) {
+				// PrintKPIComp pr = new PrintKPIComp(KPIToDetails.get(i), sf,
+				// departmentServicePublic,
+				// memberServicePublic);
+				// printKPIComps.add(pr);
 			}
 
 			printKPIComps.sort(Comparator.comparing(PrintKPIComp::getNo));
@@ -215,13 +215,13 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	}
 
 	@Inject
-	KPIDepOfMonthService kpiDepOfMonthService;
+	KPIToDetailService KPIToDetailService;
 
 	// Cap nhat dư liêu chung minh
 	public void updateDataAssign(FileUploadEvent event) {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		if (kpm != null && kpm.getId() != null) {
-			kpm = kpiDepOfMonthService.findById(kpm.getId());
+			kpm = KPIToDetailService.findById(kpm.getId());
 			if (allowUpdate(null)) {
 				try (InputStream input = event.getFile().getInputstream()) {
 					byte[] file = IOUtils.toByteArray(input);
@@ -241,16 +241,16 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 						File directory = new File(pathImageAssignService.findById(1l).getPath(), filename);
 						FileUtils.writeByteArrayToFile(directory, file);
 						kpm.setNameAssign(filename);
-						kpm = kpiDepOfMonthService.update(kpm);
-						kPIDepOfMonths.set(kPIDepOfMonths.indexOf(kpm), this.kpm);
+						kpm = KPIToDetailService.update(kpm);
+						kpiToDetails.set(kpiToDetails.indexOf(kpm), this.kpm);
 						RequestContext context = RequestContext.getCurrentInstance();
 						context.execute("PF('dialogDataAssign').hide();");
 						notice("Tải lên thành công.");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					kpm = kpiDepOfMonthService.findById(kpm.getId());
-					kPIDepOfMonths.set(kPIDepOfMonths.indexOf(kpm), this.kpm);
+					kpm = KPIToDetailService.findById(kpm.getId());
+					kpiToDetails.set(kpiToDetails.indexOf(kpm), this.kpm);
 					noticeError("Không lưu được. Dữ liệu vượt quá dung lượng");
 				}
 			} else {
@@ -262,9 +262,9 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	}
 
-	private KPIDepOfMonth kpm;
+	private KPIToDetail kpm;
 
-	public void selectData(KPIDepOfMonth kpm) {
+	public void selectData(KPIToDetail kpm) {
 		this.kpm = kpm;
 	}
 
@@ -272,9 +272,9 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	@Inject
 	PathImageAssignService pathImageAssignService;
 
-	public void processDataAssign(KPIDepOfMonth kpm) {
+	public void processDataAssign(KPIToDetail kpm) {
 		if (kpm != null && kpm.getId() != null) {
-			this.kpm = kpiDepOfMonthService.findById(kpm.getId());
+			this.kpm = KPIToDetailService.findById(kpm.getId());
 			byte[] file = PDFMerger.getFile(pathImageAssignService.findById(1l).getPath(), this.kpm.getNameAssign());
 			if (file != null) {
 				RequestContext context = RequestContext.getCurrentInstance();
@@ -327,7 +327,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	}
 
 	public void process() {
-		if (kPIDepOfMonths.size() != 0) {
+		if (kpiToDetails.size() != 0) {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("document.getElementById('formdataassign:report').click();");
 		} else {
@@ -367,9 +367,9 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		}
 	}
 
-	private KPIDepOfMonth kpy;
+	private KPIToDetail kpy;
 
-	public void showListFormula(KPIDepOfMonth param) {
+	public void showListFormula(KPIToDetail param) {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		formulaKPIs = formulaKPIService.findAll();
 		formulaKPISelect = param.getFormulaKPI();
@@ -381,19 +381,19 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	public void updateFormula() {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		try {
-			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
+			KPITo kpiCompOld = kPIToService.findById(kpiTo.getId());
 			if (kpiCompOld.isSignKPI()) {
 				noticeError("KPI đã duyệt không cập nhật được.");
 			} else {
 				if (formulaKPISelect == null) {
 					notify.warning("Chưa chọn công thức!");
 				} else {
-					for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-						KPIDepOfMonth kp = kPIDepOfMonths.get(i);
-						if (kPIDepOfMonths.get(i).getIndex() == kpy.getIndex()) {
+					for (int i = 0; i < kpiToDetails.size(); i++) {
+						KPIToDetail kp = kpiToDetails.get(i);
+						if (kpiToDetails.get(i).getIndex() == kpy.getIndex()) {
 							kpy.setFormulaKPI(formulaKPISelect);
 							kpy.setComputation(formulaKPISelect.getCode());
-							kPIDepOfMonths.set(i, kpy);
+							kpiToDetails.set(i, kpy);
 							notify.success();
 							break;
 						}
@@ -404,23 +404,23 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		}
 	}
 
-	public void removeDetail(KPIDepOfMonth item) {
-		for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-			if (kPIDepOfMonths.get(i).getIndex() == item.getIndex()) {
+	public void removeDetail(KPIToDetail item) {
+		for (int i = 0; i < kpiToDetails.size(); i++) {
+			if (kpiToDetails.get(i).getIndex() == item.getIndex()) {
 				try {
-					KPIDepMonth kpiCompOld = kpiDepMonthService
-							.findById(kPIDepOfMonths.get(i).getKpiDepMonth().getId());
+					KPITo kpiCompOld = kPIToService.findById(kpiToDetails.get(i).getKpi_to().getId());
 					if (kpiCompOld.isSignKPI()) {
 						noticeError("KPI đã duyệt không xóa được.");
 					} else {
-						kPIDepOfMonths.remove(i);
-						KPIDepOfMonthRemoves.add(item);
+						kpiToDetails.remove(i);
+						kpiToDetailRemoves.add(item);
 						break;
 					}
 				} catch (Exception e) {
-					kPIDepOfMonths.remove(i);
-					KPIDepOfMonthRemoves.add(item);
+					kpiToDetails.remove(i);
+					kpiToDetailRemoves.add(item);
 				}
+
 			}
 
 		}
@@ -433,8 +433,8 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		if (allowUpdate(null) && allowSave(null)) {
 			totalCV = 0;
 			totalHV = 0;
-			for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-				KPIDepOfMonth item = kPIDepOfMonths.get(i);
+			for (int i = 0; i < kpiToDetails.size(); i++) {
+				KPIToDetail item = kpiToDetails.get(i);
 				// Lay bo cong thuc xem tinh theo sua dung cong thuc nao
 				String KH = item.getPlanKPI();// Ke hoach
 				String TH = item.getPerformKPI();// thuc hien
@@ -480,8 +480,8 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 						}
 					} catch (Exception e) {
 						iscacul = false;
-						kPIDepOfMonths.get(i).setRatioComplete(0);
-						kPIDepOfMonths.get(i).setRatioCompleteIsWeighted(0);
+						kpiToDetails.get(i).setRatioComplete(0);
+						kpiToDetails.get(i).setRatioCompleteIsWeighted(0);
 						totalCV += 0;
 					}
 				}
@@ -528,29 +528,29 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 									result = 100.0;
 						} catch (Exception e) {
 						}
-						kPIDepOfMonths.get(i).setRatioComplete(Math.round(result));
-						kPIDepOfMonths.get(i).setRatioCompleteIsWeighted(
-								Math.round((result * kPIDepOfMonths.get(i).getWeighted()) / 100));
-						totalCV += kPIDepOfMonths.get(i).getRatioCompleteIsWeighted();
+						kpiToDetails.get(i).setRatioComplete(Math.round(result));
+						kpiToDetails.get(i).setRatioCompleteIsWeighted(
+								Math.round((result * kpiToDetails.get(i).getWeighted()) / 100));
+						totalCV += kpiToDetails.get(i).getRatioCompleteIsWeighted();
 
 					} catch (Exception e) {
 						// e.printStackTrace();
-						kPIDepOfMonths.get(i).setRatioComplete(0);
-						kPIDepOfMonths.get(i).setRatioCompleteIsWeighted(0);
+						kpiToDetails.get(i).setRatioComplete(0);
+						kpiToDetails.get(i).setRatioCompleteIsWeighted(0);
 						totalCV += 0;
 					}
 
 				}
 			}
 			totalCV = totalCV * 100 / 100;
-			for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-				if (kPIDepOfMonths.get(i).getContentAppreciate() != null
-						&& !"".equals(kPIDepOfMonths.get(i).getContentAppreciate().trim()))
-					totalHV += kPIDepOfMonths.get(i).getRatioCompleteIsWeighted();
+			for (int i = 0; i < kpiToDetails.size(); i++) {
+				if (kpiToDetails.get(i).getContentAppreciate() != null
+						&& !"".equals(kpiToDetails.get(i).getContentAppreciate().trim()))
+					totalHV += kpiToDetails.get(i).getRatioCompleteIsWeighted();
 			}
 			if (totalHV < 0)
 				totalHV = 0;
-			kpiDepMonth.setResult(totalHV);
+			kpiTo.setResult(totalHV);
 		} else {
 			notify.warningDetail();
 		}
@@ -558,7 +558,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	public void updatesignKPI() {
 		notify = new Notify(FacesContext.getCurrentInstance());
-		if (kpiDepMonth.getId() != null) {
+		if (kpiTo.getId() != null) {
 			// // VT0005: Tong giam doc
 			// boolean status = false;
 			// try {
@@ -567,7 +567,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 			// status = true;
 			// } else {
 			// String emp =
-			// kpiDepMonth.getDepartmentParent().getManagerEmployee().getEmployeeCode();
+			// KPITo.getDepartmentParent().getManagerEmployee().getEmployeeCode();
 			// if (mem.getCode().equals(emp))
 			// status = true;
 			// }
@@ -575,14 +575,14 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 			// // TODO: handle exception
 			// }
 			// if (status) {
-			Date date = new Date(kpiDepMonth.getYear(), kpiDepMonth.getMonth(), 1);
+			Date date = new Date(kpiTo.getYear(), kpiTo.getMonth(), 1);
 			if (allowUpdate(date)) {
 				try {
-					KPIDepMonth wf = kpiDepMonthService.update(kpiDepMonth);
-					if (kpiDepMonths.contains(wf)) {
-						kpiDepMonths.set(kpiDepMonths.indexOf(wf), wf);
+					KPITo wf = kPIToService.update(kpiTo);
+					if (kpiTos.contains(wf)) {
+						kpiTos.set(kpiTos.indexOf(wf), wf);
 					}
-					kpiDepMonths.set(kpiDepMonths.indexOf(wf), wf);
+					kpiTos.set(kpiTos.indexOf(wf), wf);
 					writeLogInfo("Duyet KPI thang (phong) " + wf.toString());
 					notify.success();
 				} catch (Exception e) {
@@ -603,22 +603,21 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	public void createAndDelete() {
 		notify = new Notify(FacesContext.getCurrentInstance());
-		Date date = new Date(kpiDepMonth.getYear(), kpiDepMonth.getYear(), 1);
+		Date date = new Date(kpiTo.getYear(), kpiTo.getYear(), 1);
 		if (allowSave(date)) {
-			List<KPIDepMonth> kps = kpiDepMonthService.findKPIDepMonth(kpiDepMonth.getMonth(), kpiDepMonth.getYear(),
-					kpiDepMonth.getCodeDepart());
+			List<KPITo> kps = kPIToService.findKPITo(kpiTo.getMonth(), kpiTo.getYear(), kpiTo.getCodeDepart());
 			for (int i = 0; i < kps.size(); i++) {
-				kpiDepMonthService.delete(kps.get(i));
+				kPIToService.delete(kps.get(i));
 			}
-			List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
-			listSaves.addAll(kPIDepOfMonths);
-			kpiDepMonth.setKpiDepOfMonths(listSaves);
-			Long id = kpiDepMonth.getId();
-			kpiDepMonth.setId(null);
-			KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, KPIDepOfMonthRemoves);
+			List<KPIToDetail> listSaves = new ArrayList<KPIToDetail>();
+			listSaves.addAll(kpiToDetails);
+			kpiTo.setKpi_to_chitiet(listSaves);
+			Long id = kpiTo.getId();
+			kpiTo.setId(null);
+			KPITo wf = kPIToService.saveOrUpdate(kpiTo, kpiToDetailRemoves);
 			if (wf != null) {
 				if (id != null)
-					kpiDepMonthService.delete(kpiDepMonthService.findById(id));
+					kPIToService.delete(kPIToService.findById(id));
 				writeLogInfo("Tao moi " + wf.toString());
 				searchItem();
 				notify.success();
@@ -632,25 +631,25 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	public void createAndDeleteCopy() {
 		notify = new Notify(FacesContext.getCurrentInstance());
-		kpiDepMonth.setId(null);
-		kpiDepMonth.setMonth(monthCopy);
-		kpiDepMonth.setYear(yearCopy);
-		kpiDepMonth.setSignKPI(false);
-		kpiDepMonth.setSignResultKPI(false);
-		kpiDepMonth.setSignKPIBLD(false);
-		kpiDepMonth.setSignResultKPIBLD(false);
-		kpiDepMonth.setResult(0);
-		kpiDepMonth.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
-		kpiDepMonth.setDateAssignResult(
+		kpiTo.setId(null);
+		kpiTo.setMonth(monthCopy);
+		kpiTo.setYear(yearCopy);
+		kpiTo.setSignKPI(false);
+		kpiTo.setSignResultKPI(false);
+		kpiTo.setSignKPIBLD(false);
+		kpiTo.setSignResultKPIBLD(false);
+		kpiTo.setResult(0);
+		kpiTo.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
+		kpiTo.setDateAssignResult(
 				new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1).minusDays(1).toDate());
 
-		List<KPIDepMonth> temps = kpiDepMonthService.findKPIDepMonth(monthCopy, yearCopy, kpiDepMonth.getCodeDepart());
+		List<KPITo> temps = kPIToService.findKPITo(monthCopy, yearCopy, kpiTo.getCodeDepart());
 		for (int i = 0; i < temps.size(); i++) {
-			kpiDepMonthService.delete(temps.get(i));
+			kPIToService.delete(temps.get(i));
 		}
 
-		List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
-		listSaves.addAll(kPIDepOfMonths);
+		List<KPIToDetail> listSaves = new ArrayList<KPIToDetail>();
+		listSaves.addAll(kpiToDetails);
 
 		for (int i = 0; i < listSaves.size(); i++) {
 			listSaves.get(i).setId(null);
@@ -660,12 +659,12 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 			listSaves.get(i).setNameAssign(null);
 		}
 
-		kpiDepMonth.setKpiDepOfMonths(listSaves);
-		KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, null);
+		kpiTo.setKpi_to_chitiet(listSaves);
+		KPITo wf = kPIToService.saveOrUpdate(kpiTo, null);
 		if (wf != null) {
-			kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
-			kpiDepMonthEdit = kpiDepMonth;
-			kpiDepMonths.add(wf);
+			kpiTo = kPIToService.findByIdAll(wf.getId());
+			kpiToEdit = kpiTo;
+			kpiTos.add(wf);
 			writeLogInfo("Tao moi " + wf.toString());
 			notify.success();
 			searchItem();
@@ -678,8 +677,7 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		Date date = new Date(yearCopy, monthCopy, 1);
 		if (allowSave(date)) {
-			List<KPIDepMonth> temps = kpiDepMonthService.findKPIDepMonth(monthCopy, yearCopy,
-					kpiDepMonth.getCodeDepart());
+			List<KPITo> temps = kPIToService.findKPITo(monthCopy, yearCopy, kpiTo.getCodeDepart());
 			if (temps.size() != 0) {
 				boolean status = false;
 				for (int i = 0; i < temps.size(); i++) {
@@ -695,21 +693,20 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 					context.execute("PF('dialogConfirmCopy').show();");
 				}
 			} else {
-				kpiDepMonth.setId(null);
-				kpiDepMonth.setMonth(monthCopy);
-				kpiDepMonth.setYear(yearCopy);
-				kpiDepMonth.setSignKPI(false);
-				kpiDepMonth.setSignResultKPI(false);
-				kpiDepMonth.setSignKPIBLD(false);
-				kpiDepMonth.setSignResultKPIBLD(false);
-				kpiDepMonth.setResult(0);
-				kpiDepMonth.setDateRecei(
-						new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
-				kpiDepMonth.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1)
-						.withDayOfMonth(1).minusDays(1).toDate());
+				kpiTo.setId(null);
+				kpiTo.setMonth(monthCopy);
+				kpiTo.setYear(yearCopy);
+				kpiTo.setSignKPI(false);
+				kpiTo.setSignResultKPI(false);
+				kpiTo.setSignKPIBLD(false);
+				kpiTo.setSignResultKPIBLD(false);
+				kpiTo.setResult(0);
+				kpiTo.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
+				kpiTo.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1)
+						.minusDays(1).toDate());
 
-				List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
-				listSaves.addAll(kPIDepOfMonths);
+				List<KPIToDetail> listSaves = new ArrayList<KPIToDetail>();
+				listSaves.addAll(kpiToDetails);
 
 				for (int i = 0; i < listSaves.size(); i++) {
 					listSaves.get(i).setId(null);
@@ -719,12 +716,12 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 					listSaves.get(i).setNameAssign(null);
 				}
 
-				kpiDepMonth.setKpiDepOfMonths(listSaves);
-				KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, null);
+				kpiTo.setKpi_to_chitiet(listSaves);
+				KPITo wf = kPIToService.saveOrUpdate(kpiTo, null);
 				if (wf != null) {
-					kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
-					kpiDepMonthEdit = kpiDepMonth;
-					kpiDepMonths.add(wf);
+					kpiTo = kPIToService.findByIdAll(wf.getId());
+					kpiToEdit = kpiTo;
+					kpiTos.add(wf);
 					writeLogInfo("Tao moi " + wf.toString());
 					notify.success();
 					searchItem();
@@ -740,26 +737,25 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	public void createOrUpdate() {
 		notify = new Notify(FacesContext.getCurrentInstance());
-		Date date = new Date(kpiDepMonth.getYear(), kpiDepMonth.getYear(), 1);
+		Date date = new Date(kpiTo.getYear(), kpiTo.getYear(), 1);
 
-		kpiDepMonth.setCodeDepart(codeDepart);
-		if (kpiDepMonth.getId() == null) {
+		kpiTo.setCodeDepart(codeDepart);
+		if (kpiTo.getId() == null) {
 
-			List<KPIDepMonth> kps = kpiDepMonthService.findKPIDepMonth(kpiDepMonth.getMonth(), kpiDepMonth.getYear(),
-					kpiDepMonth.getCodeDepart());
+			List<KPITo> kps = kPIToService.findKPITo(kpiTo.getMonth(), kpiTo.getYear(), kpiTo.getCodeDepart());
 			if (kps.size() == 0) {
 				if (allowSave(date)) {
-					List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
+					List<KPIToDetail> listSaves = new ArrayList<KPIToDetail>();
 					double checkp = 0;
-					for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-						checkp += kPIDepOfMonths.get(i).getWeighted();
+					for (int i = 0; i < kpiToDetails.size(); i++) {
+						checkp += kpiToDetails.get(i).getWeighted();
 					}
-					if (kPIDepOfMonths.size() != 0 && checkp != TOTALPARAM) {
+					if (kpiToDetails.size() != 0 && checkp != TOTALPARAM) {
 						noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
 					} else {
-						listSaves.addAll(kPIDepOfMonths);
-						kpiDepMonth.setKpiDepOfMonths(listSaves);
-						KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, KPIDepOfMonthRemoves);
+						listSaves.addAll(kpiToDetails);
+						kpiTo.setKpi_to_chitiet(listSaves);
+						KPITo wf = kPIToService.saveOrUpdate(kpiTo, kpiToDetailRemoves);
 						if (wf != null) {
 							searchItem();
 							writeLogInfo("Tao moi " + wf.toString());
@@ -776,18 +772,17 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 				context.execute("PF('dialogConfirm').show();");
 			}
 		} else {
-			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
+			KPITo kpiCompOld = kPIToService.findById(kpiTo.getId());
 			if (kpiCompOld.isSignResultKPI()) {
-				this.kpiDepMonthEdit = kpiCompOld;
+				this.kpiToEdit = kpiCompOld;
 				showEdit();
 				noticeError("Phiếu đã duyệt kết quả. Không lưu được");
 			} else {
 				Date date2 = new Date(kpiCompOld.getYear(), kpiCompOld.getYear(), 1);
 				if (allowUpdate(date) && allowUpdate(date2)) {
-					if (kpiCompOld.getMonth() != kpiDepMonth.getMonth()
-							|| kpiCompOld.getYear() != kpiDepMonth.getYear()) {
-						List<KPIDepMonth> temps = kpiDepMonthService.findKPIDepMonth(kpiDepMonth.getMonth(),
-								kpiDepMonth.getYear(), kpiDepMonth.getCodeDepart());
+					if (kpiCompOld.getMonth() != kpiTo.getMonth() || kpiCompOld.getYear() != kpiTo.getYear()) {
+						List<KPITo> temps = kPIToService.findKPITo(kpiTo.getMonth(), kpiTo.getYear(),
+								kpiTo.getCodeDepart());
 						if (temps.size() != 0) {
 							boolean status = false;
 							for (int i = 0; i < temps.size(); i++) {
@@ -804,37 +799,37 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 							}
 
 						} else {
-							List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
+							List<KPIToDetail> listSaves = new ArrayList<KPIToDetail>();
 							double checkp = 0;
 							double checkKPIPerformanceWeighted = 0;
 							boolean checkKPIInvalid = false;
-							for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-								checkp += kPIDepOfMonths.get(i).getWeighted();
+							for (int i = 0; i < kpiToDetails.size(); i++) {
+								checkp += kpiToDetails.get(i).getWeighted();
 								// Thai
-								if (kPIDepOfMonths.get(i).isKPIPerformance()) {
-									if (kPIDepOfMonths.get(i).getWeighted() >= 10) {
+								if (kpiToDetails.get(i).isKPIPerformance()) {
+									if (kpiToDetails.get(i).getWeighted() >= 10) {
 										checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
-												+ kPIDepOfMonths.get(i).getWeighted();
+												+ kpiToDetails.get(i).getWeighted();
 									}
 								}
-								if (kPIDepOfMonths.get(i).getWeighted() < 10) {
+								if (kpiToDetails.get(i).getWeighted() < 10) {
 									checkKPIInvalid = true;
 								}
 								// end thai
 							}
-							if (kPIDepOfMonths.size() != 0 && checkp != TOTALPARAM) {
+							if (kpiToDetails.size() != 0 && checkp != TOTALPARAM) {
 								noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
 							} else {
-								listSaves.addAll(kPIDepOfMonths);
-								kpiDepMonth.setKpiDepOfMonths(listSaves);
-								KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth, KPIDepOfMonthRemoves);
+								listSaves.addAll(kpiToDetails);
+								kpiTo.setKpi_to_chitiet(listSaves);
+								KPITo wf = kPIToService.saveOrUpdate(kpiTo, kpiToDetailRemoves);
 								// Thai
 								if (checkKPIInvalid == false && checkKPIPerformanceWeighted >= 80) {
 									if (wf != null) {
-										kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
-										kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
-										for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-											kPIDepOfMonths.get(i).setIndex(i);
+										kpiTo = kPIToService.findByIdAll(wf.getId());
+										kpiToDetails = kpiTo.getKpi_to_chitiet();
+										for (int i = 0; i < kpiToDetails.size(); i++) {
+											kpiToDetails.get(i).setIndex(i);
 										}
 										searchItem();
 										notice("Lưu thành công");
@@ -851,31 +846,31 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 							}
 						}
 					} else {
-						List<KPIDepOfMonth> listSaves = new ArrayList<KPIDepOfMonth>();
+						List<KPIToDetail> listSaves = new ArrayList<KPIToDetail>();
 						double checkp = 0;
 						double checkKPIPerformanceWeighted = 0;
 						boolean checkKPIInvalid = false;
-						for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-							checkp += kPIDepOfMonths.get(i).getWeighted();
+						for (int i = 0; i < kpiToDetails.size(); i++) {
+							checkp += kpiToDetails.get(i).getWeighted();
 							// Thai
-							if (kPIDepOfMonths.get(i).isKPIPerformance()) {
-								if (kPIDepOfMonths.get(i).getWeighted() >= 10) {
+							if (kpiToDetails.get(i).isKPIPerformance()) {
+								if (kpiToDetails.get(i).getWeighted() >= 10) {
 									checkKPIPerformanceWeighted = checkKPIPerformanceWeighted
-											+ kPIDepOfMonths.get(i).getWeighted();
+											+ kpiToDetails.get(i).getWeighted();
 								}
 							}
-							if (kPIDepOfMonths.get(i).getWeighted() < 10) {
+							if (kpiToDetails.get(i).getWeighted() < 10) {
 								checkKPIInvalid = true;
 							}
 							// end thai
 						}
 
-						if (kPIDepOfMonths.size() != 0 && checkp != TOTALPARAM) {
+						if (kpiToDetails.size() != 0 && checkp != TOTALPARAM) {
 							noticeError("Không lưu được. Tổng trọng số các mục tiêu khác 100%");
 						} else {
 
-							List<KPIDepMonth> temps = kpiDepMonthService.findKPIDepMonth(kpiDepMonth.getMonth(),
-									kpiDepMonth.getYear(), kpiDepMonth.getCodeDepart());
+							List<KPITo> temps = kPIToService.findKPITo(kpiTo.getMonth(), kpiTo.getYear(),
+									kpiTo.getCodeDepart());
 							if (temps.size() != 0) {
 								boolean status = false;
 								for (int i = 0; i < temps.size(); i++) {
@@ -884,17 +879,17 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 										break;
 									}
 								}
-								listSaves.addAll(kPIDepOfMonths);
-								kpiDepMonth.setKpiDepOfMonths(listSaves);
+								listSaves.addAll(kpiToDetails);
+								kpiTo.setKpi_to_chitiet(listSaves);
 								if (status) {
 									// Thai
 									if (checkKPIInvalid == false && checkKPIPerformanceWeighted >= 80) {
-										KPIDepMonth wf = kpiDepMonthService.updateAssign(kpiDepMonth);
+										KPITo wf = kPIToService.updateAssign(kpiTo);
 										if (wf != null) {
-											kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
-											kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
-											for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-												kPIDepOfMonths.get(i).setIndex(i);
+											kpiTo = kPIToService.findByIdAll(wf.getId());
+											kpiToDetails = kpiTo.getKpi_to_chitiet();
+											for (int i = 0; i < kpiToDetails.size(); i++) {
+												kpiToDetails.get(i).setIndex(i);
 											}
 											searchItem();
 											notice("Lưu thành công");
@@ -912,13 +907,12 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 								} else {
 									// Thai
 									if (checkKPIInvalid == false && checkKPIPerformanceWeighted >= 80) {
-										KPIDepMonth wf = kpiDepMonthService.saveOrUpdate(kpiDepMonth,
-												KPIDepOfMonthRemoves);
+										KPITo wf = kPIToService.saveOrUpdate(kpiTo, kpiToDetailRemoves);
 										if (wf != null) {
-											kpiDepMonth = kpiDepMonthService.findByIdAll(wf.getId());
-											kPIDepOfMonths = kpiDepMonth.getKpiDepOfMonths();
-											for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-												kPIDepOfMonths.get(i).setIndex(i);
+											kpiTo = kPIToService.findByIdAll(wf.getId());
+											kpiToDetails = kpiTo.getKpi_to_chitiet();
+											for (int i = 0; i < kpiToDetails.size(); i++) {
+												kpiToDetails.get(i).setIndex(i);
 											}
 											searchItem();
 											notice("Lưu thành công");
@@ -944,38 +938,38 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		}
 	}
 
-	public void loadTaget() {
-		kpiDepOfYears = kpiDepService.findKPIDepOfYear(kpiDepMonth.getYear(), kpiDepMonth.getCodeDepart());
-	}
-
 	// Thai
-	private List<KPIDepPerformanceJPA> kpiDepPerformances;
+	private List<KPIToPerformance> kpiToPerformances;
 	@Inject
-	DepPerformanceService DEPARTMENT_PERFORMANCE_SERVICE;
+	private KPIToPerformanceService KPI_TO_PERFORMANCE_SERVICE;
 
 	public void loadDepPerformance() {
-		kpiDepPerformances = DEPARTMENT_PERFORMANCE_SERVICE.findSubDisable(kpiDepMonth.getYear(),
-				kpiDepMonth.getCodeDepart());
+		if (kpiTo == null || kpiTo.getId() == null) {
+			MessageView.WARN("Vui lòng chọn Đơn vị trước khi xử lý");
+			return;
+		}
+		kpiToPerformances = KPI_TO_PERFORMANCE_SERVICE.find(kpiTo.getYear(), kpiTo.getCodeDepart());
+		PrimeFaces.current().executeScript("PF('dialogAddKPIHieuSuat').show();");
 	}
 
 	// End Thai
 	public void getListTaget() {
 		try {
-			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
+			KPITo kpiCompOld = kPIToService.findById(kpiTo.getId());
 			if (kpiCompOld.isSignKPI()) {
 				noticeError("KPI đã duyệt không thêm được.");
 			} else {
 				for (int i = 0; i < kpiDepOfYears.size(); i++) {
 					if (kpiDepOfYears.get(i).isSelect()) {
-						KPIDepOfMonth item = new KPIDepOfMonth();
+						KPIToDetail item = new KPIToDetail();
 						item.setContentAppreciate(kpiDepOfYears.get(i).getContentAppreciate());
 						item.setKPIPerformance(true);
-						kPIDepOfMonths.add(item);
+						kpiToDetails.add(item);
 					}
 				}
-				for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-					kPIDepOfMonths.get(i).setNoid(i + 1);
-					kPIDepOfMonths.get(i).setIndex(i);
+				for (int i = 0; i < kpiToDetails.size(); i++) {
+					kpiToDetails.get(i).setNoid(i + 1);
+					kpiToDetails.get(i).setIndex(i);
 				}
 			}
 		} catch (Exception e) {
@@ -986,28 +980,27 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	// Thai
 	public void getListKPIPerformance() {
 		try {
-			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
+			KPITo kpiCompOld = kPIToService.findById(kpiTo.getId());
 			if (kpiCompOld.isSignKPI()) {
 				noticeError("KPI đã duyệt không thêm được.");
 			} else {
-				for (int i = 0; i < kpiDepPerformances.size(); i++) {
-					if (kpiDepPerformances.get(i).isSelect()) {
-						KPIDepOfMonth item = new KPIDepOfMonth();
+				for (int i = 0; i < kpiToPerformances.size(); i++) {
+					if (kpiToPerformances.get(i).isSelect()) {
+						KPIToDetail item = new KPIToDetail();
 						item.setKPIPerformance(true);
-						item.setContentAppreciate(kpiDepPerformances.get(i).getContent());
-						item.setComputation(kpiDepPerformances.get(i).getComputation());
-						item.setFormulaKPI(kpiDepPerformances.get(i).getFormulaKPI());
-						item.setShowFormual(false);
-						kPIDepOfMonths.add(item);
+						item.setContentAppreciate(kpiToPerformances.get(i).getContent());
+						item.setComputation(kpiToPerformances.get(i).getComputation());
+						item.setFormulaKPI(kpiToPerformances.get(i).getFormulaKPI());
+						kpiToDetails.add(item);
 					}
 				}
-				for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-					kPIDepOfMonths.get(i).setNoid(i + 1);
-					kPIDepOfMonths.get(i).setIndex(i);
+				for (int i = 0; i < kpiToDetails.size(); i++) {
+					kpiToDetails.get(i).setNoid(i + 1);
+					kpiToDetails.get(i).setIndex(i);
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 
 	}
@@ -1015,18 +1008,19 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	// End Thai
 	public void addNone() {
 		try {
-			KPIDepMonth kpiCompOld = kpiDepMonthService.findById(kpiDepMonth.getId());
+			KPITo kpiCompOld = kPIToService.findById(kpiTo.getId());
 			if (kpiCompOld.isSignKPI()) {
 				noticeError("KPI đã duyệt không thêm được.");
 			} else {
-				KPIDepOfMonth item = new KPIDepOfMonth();
+				KPIToDetail item = new KPIToDetail();
 				item.setContentAppreciate("");
-				kPIDepOfMonths.add(item);
-				for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-					kPIDepOfMonths.get(i).setIndex(i);
+				kpiToDetails.add(item);
+				for (int i = 0; i < kpiToDetails.size(); i++) {
+					kpiToDetails.get(i).setIndex(i);
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			// TODO: handle exception
 		}
 
@@ -1034,27 +1028,18 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	public void reset() {
 
-		kpiDepMonth = new KPIDepMonth();
+		kpiTo = new KPITo();
 		DateTime dt = new DateTime();
 		monthCopy = dt.getMonthOfYear();
 		yearCopy = dt.getYear();
 		monthSearch = dt.getMonthOfYear();
 		yearSearch = dt.getYear();
-		// neu cap to thi lay cap phong
-		if (getAccount().getMember().getDepartment().getLevelDep().getLevel() == 3) {
-			codeDepart = getAccount().getMember().getDepartment().getDepartment().getCode();
-			nameDepart = getAccount().getMember().getDepartment().getDepartment().getName();
-		}
-		if (getAccount().getMember().getDepartment().getLevelDep().getLevel() == 2) {
-			codeDepart = getAccount().getMember().getDepartment().getCode();
-			nameDepart = nameDepart();
-		}
-
-		kpiDepMonth.setMonth(dt.getMonthOfYear());
-		kpiDepMonth.setYear(dt.getYear());
-		kpiDepMonth.setDateRecei(dt.withDayOfMonth(1).minusDays(1).toDate());
-		kpiDepMonth.setDateAssignResult(dt.plusMonths(1).withDayOfMonth(1).minusDays(1).toDate());
-		kpiDepMonth.setCodeDepart(codeDepart);
+		codeDepart = getAccount().getMember().getDepartment().getCode();
+		nameDepart = nameDepart();
+		kpiTo.setMonth(dt.getMonthOfYear());
+		kpiTo.setYear(dt.getYear());
+		kpiTo.setDateRecei(dt.withDayOfMonth(1).minusDays(1).toDate());
+		kpiTo.setDateAssignResult(dt.plusMonths(1).withDayOfMonth(1).minusDays(1).toDate());
 
 		try {
 			// String employeeCode = getAccount().getMember().getCode();
@@ -1079,12 +1064,12 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 			// }
 			// }
 			// }
-			// kpiDepMonth.setDepartmentParent(employee.getDepartment().getDepartmentParent());
+			// KPITo.setDepartmentParent(employee.getDepartment().getDepartmentParent());
 		} catch (Exception e) {
 
 		}
-		kPIDepOfMonths = new ArrayList<KPIDepOfMonth>();
-		KPIDepOfMonthRemoves = new ArrayList<KPIDepOfMonth>();
+		kpiToDetails = new ArrayList<KPIToDetail>();
+		kpiToDetailRemoves = new ArrayList<KPIToDetail>();
 		kpiDepOfYears = new ArrayList<KPIDepOfYear>();
 		searchItem();
 	}
@@ -1092,17 +1077,17 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	private String nameDepart;
 
 	public void showEdit() {
-		KPIDepOfMonthRemoves.clear();
-		kPIDepOfMonths.clear();
-		if (kpiDepMonthEdit != null && kpiDepMonthEdit.getId() != null) {
-			KPIDepMonth od = kpiDepMonthService.findByIdAll(kpiDepMonthEdit.getId());
+		kpiToDetailRemoves.clear();
+		kpiToDetails.clear();
+		if (kpiToEdit != null && kpiToEdit.getId() != null) {
+			KPITo od = kPIToService.findByIdAll(kpiToEdit.getId());
 			if (od != null) {
-				kpiDepMonth = od;
-				kPIDepOfMonths = od.getKpiDepOfMonths();
-				for (int i = 0; i < kPIDepOfMonths.size(); i++) {
-					kPIDepOfMonths.get(i).setIndex(i);
+				kpiTo = od;
+				kpiToDetails = od.getKpi_to_chitiet();
+				for (int i = 0; i < kpiToDetails.size(); i++) {
+					kpiToDetails.get(i).setIndex(i);
 				}
-				codeDepart = this.kpiDepMonth.getCodeDepart();
+				codeDepart = this.kpiTo.getCodeDepart();
 				try {
 					nameDepart = departmentServicePublic.findByCode("code", codeDepart).getName();
 				} catch (Exception e) {
@@ -1114,17 +1099,17 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	public void delete() {
 		notify = new Notify(FacesContext.getCurrentInstance());
-		if (kpiDepMonth != null && kpiDepMonth.getId() != null) {
-			kpiDepMonth = kpiDepMonthService.findByIdAll(kpiDepMonth.getId());
-			if (kpiDepMonth.isSignKPI()) {
+		if (kpiTo != null && kpiTo.getId() != null) {
+			kpiTo = kPIToService.findByIdAll(kpiTo.getId());
+			if (kpiTo.isSignKPI()) {
 				notify.warning("Phiếu này đã duyệt không xóa được.");
 			} else {
-				Date date = new Date(kpiDepMonth.getYear(), kpiDepMonth.getYear(), 1);
+				Date date = new Date(kpiTo.getYear(), kpiTo.getYear(), 1);
 				if (allowDelete(date)) {
-					boolean result = kpiDepMonthService.delete(kpiDepMonth);
+					boolean result = kPIToService.delete(kpiTo);
 					if (result) {
-						kpiDepMonths.remove(kpiDepMonth);
-						writeLogInfo("Xoa " + kpiDepMonth.toString());
+						kpiTos.remove(kpiTo);
+						writeLogInfo("Xoa " + kpiTo.toString());
 						reset();
 						notify.success();
 					} else {
@@ -1142,24 +1127,16 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 	public void searchItem() {
 		try {
 			if (getAccount().isAdmin()) {
-				kpiDepMonths = kpiDepMonthService.findKPIDepMonth(monthSearch, yearSearch, null);
+				kpiTos = kPIToService.findKPITo(monthSearch, yearSearch, null);
 			} else {
 				if (getAccount().getMember().getDepartment() != null)
-					// lay cap phong
-					if (getAccount().getMember().getDepartment().getLevelDep().getLevel() == 3) {
-						kpiDepMonths = kpiDepMonthService.findKPIDepMonth(monthSearch, yearSearch,
-								getAccount().getMember().getDepartment().getDepartment().getCode());
-					}
-				if (getAccount().getMember().getDepartment().getLevelDep().getLevel() == 2) {
-					kpiDepMonths = kpiDepMonthService.findKPIDepMonth(monthSearch, yearSearch,
+					kpiTos = kPIToService.findKPITo(monthSearch, yearSearch,
 							getAccount().getMember().getDepartment().getCode());
-				}
-
 			}
-			for (int i = 0; i < kpiDepMonths.size(); i++) {
+			for (int i = 0; i < kpiTos.size(); i++) {
 				try {
-					kpiDepMonths.get(i).setNameDepart(
-							departmentServicePublic.findByCode("code", kpiDepMonths.get(i).getCodeDepart()).getName());
+					kpiTos.get(i).setNameDepart(
+							departmentServicePublic.findByCode("code", kpiTos.get(i).getCodeDepart()).getName());
 				} catch (Exception e) {
 				}
 
@@ -1169,36 +1146,36 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 
 	}
 
-	public List<KPIDepMonth> getKpiDepMonths() {
-		return kpiDepMonths;
+	public List<KPITo> getKpiTos() {
+		return kpiTos;
 	}
 
-	public void setKpiDepMonths(List<KPIDepMonth> kpiDepMonths) {
-		this.kpiDepMonths = kpiDepMonths;
+	public void setKpiTos(List<KPITo> kpiTos) {
+		this.kpiTos = kpiTos;
 	}
 
-	public KPIDepMonth getKpiDepMonth() {
-		return kpiDepMonth;
+	public KPITo getKpiTo() {
+		return kpiTo;
 	}
 
-	public void setKpiDepMonth(KPIDepMonth kpiDepMonth) {
-		this.kpiDepMonth = kpiDepMonth;
+	public void setKpiTo(KPITo kpiTo) {
+		this.kpiTo = kpiTo;
 	}
 
-	public KPIDepMonth getKpiDepMonthEdit() {
-		return kpiDepMonthEdit;
+	public KPITo getKPIToEdit() {
+		return kpiToEdit;
 	}
 
-	public void setKpiDepMonthEdit(KPIDepMonth kpiDepMonthEdit) {
-		this.kpiDepMonthEdit = kpiDepMonthEdit;
+	public void setKPIToEdit(KPITo KPIToEdit) {
+		this.kpiToEdit = KPIToEdit;
 	}
 
-	public List<KPIDepOfMonth> getKPIDepOfMonths() {
-		return kPIDepOfMonths;
+	public List<KPIToDetail> getKpiToDetails() {
+		return kpiToDetails;
 	}
 
-	public void setKPIDepOfMonths(List<KPIDepOfMonth> kPIDepOfMonths) {
-		kPIDepOfMonths = kPIDepOfMonths;
+	public void setKpiToDetails(List<KPIToDetail> kpiToDetails) {
+		this.kpiToDetails = kpiToDetails;
 	}
 
 	public List<FormulaKPI> getFormulaKPIs() {
@@ -1273,12 +1250,20 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		this.yearSearch = yearSearch;
 	}
 
-	public List<KPIDepMonth> getKpiDepMonthFilters() {
-		return kpiDepMonthFilters;
+	public List<KPITo> getKPIToFilters() {
+		return kpiToFilters;
 	}
 
-	public void setKpiDepMonthFilters(List<KPIDepMonth> kpiDepMonthFilters) {
-		this.kpiDepMonthFilters = kpiDepMonthFilters;
+	public KPITo getKpiToEdit() {
+		return kpiToEdit;
+	}
+
+	public void setKpiToEdit(KPITo kpiToEdit) {
+		this.kpiToEdit = kpiToEdit;
+	}
+
+	public void setKPIToFilters(List<KPITo> KPIToFilters) {
+		this.kpiToFilters = KPIToFilters;
 	}
 
 	public boolean isOrverideData() {
@@ -1313,11 +1298,11 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 		this.nameDepart = nameDepart;
 	}
 
-	public List<KPIDepPerformanceJPA> getKpiDepPerformances() {
-		return kpiDepPerformances;
+	public List<KPIToPerformance> getKpiToPerformances() {
+		return kpiToPerformances;
 	}
 
-	public void setKpiDepPerformances(List<KPIDepPerformanceJPA> kpiDepPerformances) {
-		this.kpiDepPerformances = kpiDepPerformances;
+	public void setKpiToPerformances(List<KPIToPerformance> kpiToPerformances) {
+		this.kpiToPerformances = kpiToPerformances;
 	}
 }

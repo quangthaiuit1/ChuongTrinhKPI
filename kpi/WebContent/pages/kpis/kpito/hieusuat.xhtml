@@ -7,7 +7,7 @@
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
 	<ui:define name="content">
-		<h3 style="margin: 0px">Ngân hàng KPI hiệu suất (Phòng)</h3>
+		<h3 style="margin: 0px">Ngân hàng KPI hiệu suất (Tổ)</h3>
 		<p:separator />
 		<p:growl id="departmentPerformance" showDetail="true" sticky="false" />
 		<h:form id="menuformid">
@@ -16,24 +16,24 @@
 					style="height:690px">
 					<h:panelGrid id="info">
 						<p:outputLabel value="Phòng ban" />
-						<p:inputText value="#{departPerformanceBean.nameDepart()}"
+						<p:inputText value="#{toPerformanceBean.nameDepart()}"
 							readonly="true" />
 						<p:outputLabel value="Năm*:" />
 						<p:spinner size="10" min="2017" max="2050"
-							value="#{departPerformanceBean.kpiDepPerformance.year}">
+							value="#{toPerformanceBean.kpiToPerformance.year}">
 						</p:spinner>
 						<p:outputLabel value="Nội dung*:" />
 						<p:inputTextarea
-							value="#{departPerformanceBean.kpiDepPerformance.content}" />
+							value="#{toPerformanceBean.kpiToPerformance.content}" />
 						<p:outputLabel value="Cách tính*:" />
 						<p:panel id="basic" style="margin-bottom:10px;width:396px">
 							<h:panelGrid columns="2" cellpadding="2">
 								<p:inputTextarea
-									value="#{departPerformanceBean.kpiDepPerformance.formulaKPI.code}"
+									value="#{toPerformanceBean.kpiToPerformance.formulaKPI.code}"
 									readonly="true" />
 								<p:commandLink style="float:right" process="@this"
 									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
-									actionListener="#{departPerformanceBean.showListFormula(departPerformanceBean.kpiDepPerformance)}"
+									actionListener="#{toPerformanceBean.showListFormula(toPerformanceBean.kpiToPerformance)}"
 									update=":dialogformula1,:messages">
 									<h:outputText value="&#8801;" />
 								</p:commandLink>
@@ -41,38 +41,38 @@
 						</p:panel>
 						<p:outputLabel value="Ghi chú:" />
 						<p:inputTextarea cols="24" rows="4"
-							value="#{departPerformanceBean.kpiDepPerformance.note}" />
+							value="#{toPerformanceBean.kpiToPerformance.note}" />
 					</h:panelGrid>
 					<p:separator />
 					<p:commandButton value="Lưu/Cập nhật" process="@form"
-						action="#{departPerformanceBean.createOrUpdate()}"
+						action="#{toPerformanceBean.createOrUpdate()}"
 						update=":messages,:menuformid" />
 					<p:commandButton value="Tạo mới"
-						action="#{departPerformanceBean.reset()}" update=":menuformid" />
+						action="#{toPerformanceBean.reset()}" update=":menuformid" />
 					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
 						value="Xóa" update=":messages,:menuformid"
-						action="#{departPerformanceBean.delete()}">
+						action="#{toPerformanceBean.delete()}">
 						<p:confirm icon="ui-icon-alert" />
 					</p:commandButton>
 					<p:commandButton id="cmbEnable" process="@this" value="Enable"
-						disabled="#{departPerformanceBean.enablePerformance}"
+						disabled="#{toPerformanceBean.enablePerformance}"
 						update=":messages,:menuformid,departmentPerformance"
-						action="#{departPerformanceBean.handleEnable()}">
+						action="#{toPerformanceBean.handleEnable()}">
 					</p:commandButton>
 					<p:commandButton id="cmbDisable" process="@this" value="Disable"
-						disabled="#{departPerformanceBean.kpiDepPerformance.disable}"
+						disabled="#{toPerformanceBean.kpiToPerformance.disable}"
 						update=":messages,:menuformid,departmentPerformance"
-						action="#{departPerformanceBean.handleDisable()}">
+						action="#{toPerformanceBean.handleDisable()}">
 					</p:commandButton>
 					<p:commandButton value="File excel mẫu" immediate="true"
 						styleClass="btlink"
 						onclick="monitorDownload( showStatus , hideStatus)"
-						actionListener="#{departPerformanceBean.fileDuLieuKPICaNhanMau()}" />
+						actionListener="#{toPerformanceBean.fileDuLieuKPICaNhanMau()}" />
 					<p:separator />
 					<!-- Upload file excel -->
 					<h:form enctype="multipart/form-data">
 						<p:fileUpload
-							fileUploadListener="#{departPerformanceBean.handleFileUpload}"
+							fileUploadListener="#{toPerformanceBean.handleFileUpload}"
 							mode="advanced" dragDropSupport="false" multiple="true"
 							update="messagesh" sizeLimit="10000000"
 							allowTypes="/(\.|\/)(xls|xlsx)$/" label="Chọn tệp tải lên"
@@ -83,13 +83,12 @@
 				</p:panel>
 				<p:panel header="Danh sách" id="preview">
 					<p:spinner size="10" min="2017" max="2050"
-						value="#{departPerformanceBean.year}">
+						value="#{toPerformanceBean.year}">
 					</p:spinner>
 					<p:commandButton value="Tìm" style="margin-left: 20px;"
-						action="#{departPerformanceBean.searchItem()}" update="tableid" />
+						action="#{toPerformanceBean.searchItem()}" update="tableid" />
 					<div style="clear: both" />
-					<p:dataTable
-						value="#{departPerformanceBean.listInfoDepartPerformance}"
+					<p:dataTable value="#{toPerformanceBean.listInfoToPerformance}"
 						sortBy="#{itemp.nameDepart}" expandableRowGroups="true"
 						id="tableid" widgetVar="datatb" scrollable="true"
 						scrollWidth="670" scrollHeight="600" resizableColumns="true"
@@ -101,16 +100,16 @@
 							<h:outputText value="#{itemp.nameDepart}" />
 						</p:column>
 						<p:rowExpansion>
-							<p:dataTable value="#{itemp.listDepPerformance}"
+							<p:dataTable value="#{itemp.listToPerformance}"
 								sortBy="#{item.year}" expandableRowGroups="true"
 								paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
 								paginator="true" rows="40" rowKey="#{item.id}"
-								selection="#{departPerformanceBean.kpiDepPerformanceUpdate}"
+								selection="#{toPerformanceBean.kpiToPerformanceUpdate}"
 								scrollable="true" selectionMode="single" scrollWidth="650"
 								scrollHeight="370" resizableColumns="true" var="item"
 								rowIndexVar="rowIndex">
 								<p:ajax event="rowSelect"
-									listener="#{departPerformanceBean.showEdit()}"
+									listener="#{toPerformanceBean.showEdit()}"
 									update=":menuformid:info,:menuformid:cmbEnable,:menuformid:cmbDisable" />
 								<p:column headerText="STT" style="width:30px">
 									<h:outputText value="#{rowIndex+1}" />
@@ -140,11 +139,11 @@
 		<p:dialog widgetVar="dialogFormula1" resizable="false" width="300"
 			closeOnEscape="true" header="Công thức tính">
 			<h:form id="dialogformula1">
-				<p:dataTable value="#{departPerformanceBean.formulaKPIs}"
-					lazy="true" paginatorPosition="bottom"
-					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
-					rowKey="#{item.id}" scrollable="true" scrollHeight="370"
-					selection="#{departPerformanceBean.formulaKPISelect}"
+				<p:dataTable value="#{toPerformanceBean.formulaKPIs}" lazy="true"
+					paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
+					paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
+					scrollHeight="370"
+					selection="#{toPerformanceBean.formulaKPISelect}"
 					selectionMode="single" id="tableid" resizableColumns="true"
 					var="item" rowIndexVar="rowIndex">
 					<p:column headerText="STT" width="20">
@@ -160,7 +159,7 @@
 				<p:separator />
 				<p:commandButton value="Đặt công thức"
 					oncomplete="PF('dialogFormula1').hide()"
-					action="#{departPerformanceBean.updateFormula()}"
+					action="#{toPerformanceBean.updateFormula()}"
 					update=":menuformid:basic" />
 			</h:form>
 		</p:dialog>

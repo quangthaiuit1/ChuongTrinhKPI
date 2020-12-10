@@ -78,52 +78,72 @@ public class KPIPersonService extends AbstractService<KPIPerson> {
 	}
 
 	public List<KPIPersonOfMonth> loadListDetailOrderBy(KPIPerson kpiPerson) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
-		List<Predicate> predicates = new LinkedList<Predicate>();
-		Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
-		predicates.add(cb.equal(root.get("kpiPerson"), kpiPerson));
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.asc(root.get("no")));
-		TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
-		List<KPIPersonOfMonth> results = query.getResultList();
-		return results;
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
+			predicates.add(cb.equal(root.get("kpiPerson"), kpiPerson));
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.asc(root.get("no")));
+			TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
+			List<KPIPersonOfMonth> results = query.getResultList();
+			return results;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 
 	public List<KPIPersonOfMonth> findKPIPerson(KPIPerson kpiPerson) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
-		List<Predicate> predicates = new LinkedList<Predicate>();
-		Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
-		predicates.add(cb.equal(root.get("kpiPerson"), kpiPerson));
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
-		TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
-		List<KPIPersonOfMonth> results = query.getResultList();
-		return results;
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
+			predicates.add(cb.equal(root.get("kpiPerson"), kpiPerson));
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+			TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
+			List<KPIPersonOfMonth> results = query.getResultList();
+			return results;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 
 	public List<KPIPersonOfMonth> findKPIPersonBehavior(KPIPerson kpiPerson) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
-		List<Predicate> predicates = new LinkedList<Predicate>();
-		Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
-		predicates.add(cb.equal(root.get("kpiPerson"), kpiPerson));
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])), cb.equal(root.get("behaviour"), true));
-		TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
-		List<KPIPersonOfMonth> results = query.getResultList();
-		return results;
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
+			predicates.add(cb.equal(root.get("kpiPerson"), kpiPerson));
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])), cb.equal(root.get("behaviour"), true));
+			TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
+			List<KPIPersonOfMonth> results = query.getResultList();
+			return results;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 
 	public List<KPIPersonOfMonth> findOrientIsNull(KPIPerson kpiPerson) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
-		List<Predicate> predicates = new LinkedList<Predicate>();
-		Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
-		predicates.add(cb.isNull(root.get("orientationPerson")));
-		predicates.add(cb.equal(root.get("kpiPerson"), kpiPerson));
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
-		TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
-		List<KPIPersonOfMonth> results = query.getResultList();
-		return results;
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<KPIPersonOfMonth> cq = cb.createQuery(KPIPersonOfMonth.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			Root<KPIPersonOfMonth> root = cq.from(KPIPersonOfMonth.class);
+			predicates.add(cb.isNull(root.get("orientationPerson")));
+			predicates.add(cb.equal(root.get("kpiPerson"), kpiPerson));
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+			TypedQuery<KPIPersonOfMonth> query = em.createQuery(cq);
+			List<KPIPersonOfMonth> results = query.getResultList();
+			return results;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -247,11 +267,11 @@ public class KPIPersonService extends AbstractService<KPIPerson> {
 			KPIPerson kpi = em.find(KPIPerson.class, kpiPerson.getId());
 			kpi.setSignKPI(kpiPerson.isSignKPI());
 			if (kpiPerson.isSignKPI()) {
-				kpi.setNoteSign(kpi.getNoteSign()+"Duyet dk: " + sf.format(new Date())+";");
+				kpi.setNoteSign(kpi.getNoteSign() + "Duyet dk: " + sf.format(new Date()) + ";");
 			} else {
-				kpi.setNoteSign(kpi.getNoteSign()+"Bo duyet dk: " + sf.format(new Date())+";");
+				kpi.setNoteSign(kpi.getNoteSign() + "Bo duyet dk: " + sf.format(new Date()) + ";");
 			}
-			
+
 			return kpiPerson;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -260,15 +280,16 @@ public class KPIPersonService extends AbstractService<KPIPerson> {
 		}
 
 	}
+
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public KPIPerson updateSignResult(KPIPerson kpiPerson) {
 		try {
 			KPIPerson kpi = em.find(KPIPerson.class, kpiPerson.getId());
 			kpi.setSignResultKPI(kpiPerson.isSignResultKPI());
 			if (kpiPerson.isSignResultKPI()) {
-				kpi.setNoteSign(kpi.getNoteSign()+"Duyet kq: " + sf.format(new Date())+"/");
+				kpi.setNoteSign(kpi.getNoteSign() + "Duyet kq: " + sf.format(new Date()) + "/");
 			} else {
-				kpi.setNoteSign(kpi.getNoteSign()+"Bo duyet kq:  " + sf.format(new Date())+"/");
+				kpi.setNoteSign(kpi.getNoteSign() + "Bo duyet kq:  " + sf.format(new Date()) + "/");
 			}
 			return kpiPerson;
 		} catch (Exception e) {
@@ -280,66 +301,79 @@ public class KPIPersonService extends AbstractService<KPIPerson> {
 	}
 
 	public List<KPIPerson> findRange(String codeEmp, int year) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
-		List<Predicate> predicates = new LinkedList<Predicate>();
-		Root<KPIPerson> root = cq.from(KPIPerson.class);
-		if (codeEmp != null) {
-			predicates.add(cb.equal(root.get("codeEmp"), codeEmp));
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			Root<KPIPerson> root = cq.from(KPIPerson.class);
+			if (codeEmp != null) {
+				predicates.add(cb.equal(root.get("codeEmp"), codeEmp));
+			}
+			if (year != 0) {
+				predicates.add(cb.equal(root.get("kyear"), year));
+			}
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0]))).orderBy(cb.desc(root.get("kyear")),
+					cb.desc(root.get("kmonth")));
+			List<KPIPerson> result = em.createQuery(cq).getResultList();
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
 		}
-		if (year != 0) {
-			predicates.add(cb.equal(root.get("kyear"), year));
-		}
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])))
-				.orderBy(cb.desc(root.get("kyear")), cb.desc(root.get("kmonth")));
-		List<KPIPerson> result = em.createQuery(cq).getResultList();
-		return result;
 	}
 
 	public List<KPIPerson> findRange(String codeEmp, int month, int year) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
-		List<Predicate> predicates = new LinkedList<Predicate>();
-		Root<KPIPerson> root = cq.from(KPIPerson.class);
-		if (codeEmp != null) {
-			predicates.add(cb.equal(root.get("codeEmp"), codeEmp));
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			Root<KPIPerson> root = cq.from(KPIPerson.class);
+			if (codeEmp != null) {
+				predicates.add(cb.equal(root.get("codeEmp"), codeEmp));
+			}
+			if (month != 0) {
+				predicates.add(cb.equal(root.get("kmonth"), month));
+			}
+			if (year != 0) {
+				predicates.add(cb.equal(root.get("kyear"), year));
+			}
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+			List<KPIPerson> result = em.createQuery(cq).getResultList();
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
 		}
-		if (month != 0) {
-			predicates.add(cb.equal(root.get("kmonth"), month));
-		}
-		if (year != 0) {
-			predicates.add(cb.equal(root.get("kyear"), year));
-		}
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
-		List<KPIPerson> result = em.createQuery(cq).getResultList();
-		return result;
 	}
-	
+
 	public KPIPerson findRangeNew(String codeEmp, int month, int year) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
-		List<Predicate> predicates = new LinkedList<Predicate>();
-		Root<KPIPerson> root = cq.from(KPIPerson.class);
-		if (codeEmp != null) {
-			predicates.add(cb.equal(root.get("codeEmp"), codeEmp));
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			Root<KPIPerson> root = cq.from(KPIPerson.class);
+			if (codeEmp != null) {
+				predicates.add(cb.equal(root.get("codeEmp"), codeEmp));
+			}
+			if (month != 0) {
+				predicates.add(cb.equal(root.get("kmonth"), month));
+			}
+			if (year != 0) {
+				predicates.add(cb.equal(root.get("kyear"), year));
+			}
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+			List<KPIPerson> result = em.createQuery(cq).getResultList();
+			if (!result.isEmpty()) {
+				result.get(0).getKpiPersonOfMonths().size();
+				return result.get(0);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new KPIPerson();
 		}
-		if (month != 0) {
-			predicates.add(cb.equal(root.get("kmonth"), month));
-		}
-		if (year != 0) {
-			predicates.add(cb.equal(root.get("kyear"), year));
-		}
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
-		List<KPIPerson> result = em.createQuery(cq).getResultList();
-		if (!result.isEmpty()) {
-			result.get(0).getKpiPersonOfMonths().size();
-			return result.get(0);
-		}else {
-			return null;
-		}
-		
 	}
-	
 
 	public List<KPIPerson> findRange(String codeEmp, int month, int year, List<String> codeEmps) {
 		if (codeEmps != null && codeEmps.size() != 0) {
@@ -368,19 +402,24 @@ public class KPIPersonService extends AbstractService<KPIPerson> {
 	}
 
 	public List<KPIPerson> findRange(int month, int year) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
-		List<Predicate> predicates = new LinkedList<Predicate>();
-		Root<KPIPerson> root = cq.from(KPIPerson.class);
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<KPIPerson> cq = cb.createQuery(KPIPerson.class);
+			List<Predicate> predicates = new LinkedList<Predicate>();
+			Root<KPIPerson> root = cq.from(KPIPerson.class);
 
-		if (month != 0) {
-			predicates.add(cb.equal(root.get("kmonth"), month));
+			if (month != 0) {
+				predicates.add(cb.equal(root.get("kmonth"), month));
+			}
+			if (year != 0) {
+				predicates.add(cb.equal(root.get("kyear"), year));
+			}
+			cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+			List<KPIPerson> result = em.createQuery(cq).getResultList();
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
 		}
-		if (year != 0) {
-			predicates.add(cb.equal(root.get("kyear"), year));
-		}
-		cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
-		List<KPIPerson> result = em.createQuery(cq).getResultList();
-		return result;
 	}
 }

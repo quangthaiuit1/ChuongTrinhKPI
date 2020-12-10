@@ -45,6 +45,10 @@ public class KPIPersonOfMonth extends AbstractEntity {
 	@Column(name = "is_kpi_performance")
 	private boolean isKPIPerformance = false;
 
+	// chon cong thuc cho kpi hieu suat
+	@Column(name = "is_show_formula")
+	private boolean isShowFormula = true;
+
 	public int getNo() {
 		return no;
 	}
@@ -212,7 +216,7 @@ public class KPIPersonOfMonth extends AbstractEntity {
 	public void setFormulaKPI(FormulaKPI formulaKPI) {
 		this.formulaKPI = formulaKPI;
 	}
-	
+
 	public boolean isKPIPerformance() {
 		return isKPIPerformance;
 	}
@@ -220,7 +224,6 @@ public class KPIPersonOfMonth extends AbstractEntity {
 	public void setKPIPerformance(boolean isKPIPerformance) {
 		this.isKPIPerformance = isKPIPerformance;
 	}
-
 
 	@Override
 	public String toString() {
@@ -242,4 +245,11 @@ public class KPIPersonOfMonth extends AbstractEntity {
 		this.nameAssign = nameAssign;
 	}
 
+	public boolean isShowFormula() {
+		return isShowFormula;
+	}
+
+	public void setShowFormula(boolean isShowFormula) {
+		this.isShowFormula = isShowFormula;
+	}
 }

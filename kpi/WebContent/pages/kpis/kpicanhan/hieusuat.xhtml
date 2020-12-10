@@ -9,6 +9,7 @@
 	<ui:define name="content">
 		<h3 style="margin: 0px">Ngân hàng KPI hiệu suất (Cá nhân)</h3>
 		<p:separator />
+		<p:growl id="personPerformance" showDetail="true" sticky="false" />
 		<h:form id="formPersonalPerformance">
 			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
 				<p:panel header="Thông tin" styleClass="panelw100"
@@ -55,10 +56,20 @@
 						action="#{personalPerformanceBean.delete()}">
 						<p:confirm icon="ui-icon-alert" />
 					</p:commandButton>
+					<p:commandButton id="cmbEnable" process="@this" value="Enable"
+						disabled="#{personalPerformanceBean.enablePerformance}"
+						update=":messages,:formPersonalPerformance,:formPersonalPerformance:dtTablePersonalPerformance,personPerformance"
+						action="#{personalPerformanceBean.handleEnable()}">
+					</p:commandButton>
+					<p:commandButton id="cmbDisable" process="@this" value="Disable"
+						disabled="#{personalPerformanceBean.kpiPersonalPerformance.disable}"
+						update=":messages,:formPersonalPerformance,:formPersonalPerformance:dtTablePersonalPerformance,personPerformance"
+						action="#{personalPerformanceBean.handleDisable()}">
+					</p:commandButton>
 					<p:commandButton value="File excel mẫu" immediate="true"
-					styleClass="btlink"
-					onclick="monitorDownload( showStatus , hideStatus)"
-					actionListener="#{personalPerformanceBean.fileDuLieuKPICaNhanMau()}" />
+						styleClass="btlink"
+						onclick="monitorDownload( showStatus , hideStatus)"
+						actionListener="#{personalPerformanceBean.fileDuLieuKPICaNhanMau()}" />
 					<p:separator />
 					<!-- Upload file excel -->
 					<h:form enctype="multipart/form-data">
@@ -119,7 +130,7 @@
 								rowIndexVar="rowIndex">
 								<p:ajax event="rowSelect"
 									listener="#{personalPerformanceBean.showEdit()}"
-									update=":formPersonalPerformance:info" />
+									update=":formPersonalPerformance:info, formPersonalPerformance:cmbEnable,formPersonalPerformance:cmbDisable" />
 								<p:column headerText="STT" style="width:30px">
 									<h:outputText value="#{rowIndex+1}" />
 								</p:column>

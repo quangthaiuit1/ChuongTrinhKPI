@@ -576,6 +576,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 									.getComputation());
 							item.setFormulaKPI(listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
 									.getFormulaKPI());
+							item.setShowFormula(false);
 							kpiPersonOfMonths.add(item);
 							listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).setSelect(false);
 						}
@@ -1286,6 +1287,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 			if (kpiDepOfMonths.get(i).isSelect()) {
 				KPIPersonOfMonth item = new KPIPersonOfMonth();
 				item.setContentAppreciate(kpiDepOfMonths.get(i).getContentAppreciate());
+				item.setKPIPerformance(true);
 				kpiPersonOfMonths.add(item);
 			}
 		}

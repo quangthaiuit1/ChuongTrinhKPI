@@ -15,15 +15,16 @@
 	font-weight: bold;
 }
 </style>
-		<h3 style="margin: 0px">KPI phòng (tháng)</h3>
+		<h3 style="margin: 0px">KPI tổ</h3>
 		<p:separator />
+		<p:growl id="growTo" showDetail="true" sticky="false" />
 		<h:form id="formdataassign">
 			<p:commandButton ajax="false" value="xem" style="display:none"
 				onclick="this.form.target='_blank'" id="process"
-				action="#{kPIDepMonthBean.showPDFData()}" />
+				action="#{kPIToBeanNew.showPDFData()}" />
 			<p:commandButton id="report" style="display:none" ajax="false"
 				update=":messages" onclick="this.form.target='_blank'"
-				action="#{kPIDepMonthBean.printOnly()}" />
+				action="#{kPIToBeanNew.printOnly()}" />
 		</h:form>
 		<h:form id="menuformid">
 			<p:tabView id="tv" widgetVar="myTab"
@@ -35,21 +36,21 @@
 							style="float:right; border:0px; margin-top:-53px !important">
 							<p:selectBooleanCheckbox itemLabel="Duyệt đăng ký KPI"
 								disabled="true" styleClass="selectbllb"
-								value="#{kPIDepMonthBean.kpiDepMonth.signKPI}">
+								value="#{kPIToBeanNew.kpiTo.signKPI}">
 							</p:selectBooleanCheckbox>
 							<p:selectBooleanCheckbox itemLabel="Duyệt kết quả KPI"
 								disabled="true" styleClass="selectbllb"
-								value="#{kPIDepMonthBean.kpiDepMonth.signResultKPI}"
+								value="#{kPIToBeanNew.kpiTo.signResultKPI}"
 								style="margin-right:20px">
 							</p:selectBooleanCheckbox>
 							<p:outputLabel value="Tổng điểm:"
 								style="font-size:1.3em;margin-left:20px;font-weight: bold;" />
-							<p:outputLabel value="#{kPIDepMonthBean.kpiDepMonth.result}%"
+							<p:outputLabel value="#{kPIToBeanNew.kpiTo.result}%"
 								style="color:#b12fc0;font-size:2.5em;margin-left:10px;font-weight: bold;" />
 						</p:panel>
 						<p:dataTable var="item" styleClass="tableformat1" editable="true"
 							editMode="cell" scrollable="true"
-							value="#{kPIDepMonthBean.KPIDepOfMonths}" scrollHeight="600"
+							value="#{kPIToBeanNew.kpiToDetails}" scrollHeight="600"
 							scrollWidth="1160" id="idtableinput">
 							<f:facet name="header">
 								<div style="float: left;">
@@ -57,7 +58,7 @@
 										<p:panelGrid columns="2" columnClasses="w95, w5"
 											style="width:580px">
 											<h:panelGrid columns="1">
-												<h:outputText value="#{kPIDepMonthBean.nameDepart}" />
+												<h:outputText value="#{kPIToBeanNew.nameDepart}" />
 											</h:panelGrid>
 											<p:commandLink>
 												<h:outputText class="fa fa-fw fa-edit" />
@@ -65,41 +66,29 @@
 										</p:panelGrid>
 										<p:outputLabel value="Tháng" style="margin-right:15px" />
 										<p:spinner size="2" min="1" max="12" style="margin-right:15px"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
-											value="#{kPIDepMonthBean.kpiDepMonth.month}">
-											<p:ajax process="@this" update="ttyear" />
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}"
+											value="#{kPIToBeanNew.kpiTo.month}">
+											<p:ajax process="@this" />
 										</p:spinner>
 										<p:outputLabel value="Năm" style="margin-right:15px" />
 										<p:spinner size="3" min="2017" max="2050"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
-											style="margin-right:15px"
-											value="#{kPIDepMonthBean.kpiDepMonth.year}">
-											<p:ajax process="@this" update="ttyear" />
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}"
+											style="margin-right:15px" value="#{kPIToBeanNew.kpiTo.year}">
+											<p:ajax process="@this" />
 										</p:spinner>
-										<p:tooltip for="btloadct" id="ttyear"
-											value="KPI năm #{kPIDepMonthBean.kpiDepMonth.year} của phòng."
-											position="top" />
-										<p:commandButton type="submit" id="btloadct" value="KPIs"
-											rendered="#{!kPIDepMonthBean.kpiDepMonth.signKPI}"
-											action="#{kPIDepMonthBean.loadTaget()}" process="@this"
-											oncomplete="PF('dialogTaget').show();"
-											update=":dialogTagetid" icon="ui-icon-arrowthick-1-s">
-										</p:commandButton>
 										<p:tooltip for="btaddnone" value="Thêm ngoài KPI năm"
 											position="top" />
 										<p:commandButton value="Thêm" id="btaddnone"
-											rendered="#{!kPIDepMonthBean.kpiDepMonth.signKPI}"
-											action="#{kPIDepMonthBean.addNone()}" process="@this"
+											rendered="#{!kPIToBeanNew.kpiTo.signKPI}"
+											action="#{kPIToBeanNew.addNone()}" process="@this"
 											update=":menuformid" icon="ui-icon-plus">
 										</p:commandButton>
 										<p:tooltip for="btnAddKPIHieuSuat"
 											value="Ngân hàng KPI hiệu suất" position="top" />
 										<p:commandButton value="KPI hiệu suất" id="btnAddKPIHieuSuat"
-											rendered="#{!kPIDepMonthBean.kpiDepMonth.signKPI}"
-											action="#{kPIDepMonthBean.loadDepPerformance()}"
-											process="@this"
-											oncomplete="PF('dialogAddKPIHieuSuat').show();"
-											update=":formDialogAddKPIHieuSuat"
+											rendered="#{!kPIToBeanNew.kpiTo.signKPI}"
+											action="#{kPIToBeanNew.loadDepPerformance()}" process="@this"
+											update=":formDialogAddKPIHieuSuat, growTo"
 											icon="ui-icon-arrowthick-1-s">
 										</p:commandButton>
 									</p:fieldset>
@@ -112,31 +101,31 @@
 											position="top" />
 										<p:commandButton type="submit" value="Tính kết quả"
 											id="caculid" process="@form" style="background:#fbe4c6"
-											actionListener="#{kPIDepMonthBean.caculatorResult()}"
+											actionListener="#{kPIToBeanNew.caculatorResult()}"
 											update=":menuformid,:messages" icon="ui-icon-calculator" />
 										<p:tooltip for="saveorupdateid"
 											value="Lưu hoặc cập nhật giá trị trong lưới chi tiết"
 											position="top" />
 										<p:commandButton type="submit" value="Lưu/cập nhật"
 											id="saveorupdateid" process="@form"
-											action="#{kPIDepMonthBean.createOrUpdate()}"
+											action="#{kPIToBeanNew.createOrUpdate()}"
 											update=":messages,:menuformid" icon="ui-icon-disk" />
 										<p:tooltip for="btnew"
 											value="Làm trống dữ liệu trên form để tạo phiếu mới"
 											position="top" />
 										<p:commandButton type="submit" value="Tạo mới" process="@this"
-											id="btnew" action="#{kPIDepMonthBean.reset()}"
+											id="btnew" action="#{kPIToBeanNew.reset()}"
 											update=":menuformid" icon="ui-icon-document" />
 
 										<p:tooltip for="remote"
 											value="In hoặc xuất báo cáo ra file .pdf " position="top" />
 										<p:commandButton id="remote" icon="ui-icon-print" value="In"
 											styleClass="bthei40" process="@form"
-											actionListener="#{kPIDepMonthBean.process()}" />
+											actionListener="#{kPIToBeanNew.process()}" />
 
 
 										<p:commandButton type="submit" value="Copy" process="@this"
-											actionListener="#{kPIDepMonthBean.copy()}" update=":messages"
+											actionListener="#{kPIToBeanNew.copy()}" update=":messages"
 											icon="ui-icon-copy" />
 										<p:tooltip for="toggler"
 											value="Chọn vào các cột để hiển thị trong lưới chi tiết"
@@ -144,7 +133,7 @@
 										<p:commandButton id="toggler" type="button" value="Cột"
 											icon="ui-icon-calculator" />
 										<p:columnToggler datasource="idtableinput" trigger="toggler">
-											<p:ajax event="toggle" listener="#{kPIDepMonthBean.onToggle}" />
+											<p:ajax event="toggle" listener="#{kPIToBeanNew.onToggle}" />
 										</p:columnToggler>
 									</p:fieldset>
 								</div>
@@ -157,8 +146,8 @@
 										<p:fieldset legend="Ngày nhận/duyệt tiêu chí"
 											styleClass="noneformatfs">
 											<p:calendar styleClass="subw40" locale="vi"
-												disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
-												value="#{kPIDepMonthBean.kpiDepMonth.dateRecei}"
+												disabled="#{kPIToBeanNew.kpiTo.signKPI}"
+												value="#{kPIToBeanNew.kpiTo.dateRecei}"
 												pattern="#{applicationBean.cf.formatDate}"
 												showButtonPanel="true" navigator="true" showOn="button"
 												mask="#{applicationBean.cf.maskDate}" />
@@ -166,15 +155,15 @@
 										<p:fieldset legend="Ngày duyệt kết quả"
 											styleClass="noneformatfs">
 											<p:calendar styleClass="subw40" locale="vi"
-												value="#{kPIDepMonthBean.kpiDepMonth.dateAssignResult}"
+												value="#{kPIToBeanNew.kpiTo.dateAssignResult}"
 												pattern="#{applicationBean.cf.formatDate}"
 												showButtonPanel="true" navigator="true" showOn="button"
 												mask="#{applicationBean.cf.maskDate}" />
 										</p:fieldset>
 										<p:fieldset legend="Ghi chú" styleClass="noneformatfs">
 											<p:inputTextarea placeholder="..."
-												disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
-												value="#{kPIDepMonthBean.kpiDepMonth.note}" rows="2">
+												disabled="#{kPIToBeanNew.kpiTo.signKPI}"
+												value="#{kPIToBeanNew.kpiTo.note}" rows="2">
 												<p:ajax event="blur" process="@this" />
 											</p:inputTextarea>
 										</p:fieldset>
@@ -183,14 +172,14 @@
 								<div style="clear: both;" />
 							</f:facet>
 							<p:column headerText="..." style="width:10px; text-align:center"
-								visible="#{kPIDepMonthBean.list[0]}">
+								visible="#{kPIToBeanNew.list[0]}">
 								<p:commandButton id="btxoa" icon="ui-icon-closethick"
-									rendered="#{!kPIDepMonthBean.kpiDepMonth.signKPI}"
+									rendered="#{!kPIToBeanNew.kpiTo.signKPI}"
 									style="margin-left: -9px;background: none;border: none; box-shadow: none;"
 									update="idtableinput" styleClass="btnoneformat" process="@this"
-									actionListener="#{kPIDepMonthBean.removeDetail(item)}" />
+									actionListener="#{kPIToBeanNew.removeDetail(item)}" />
 							</p:column>
-							<p:column headerText="STT" visible="#{kPIDepMonthBean.list[1]}"
+							<p:column headerText="STT" visible="#{kPIToBeanNew.list[1]}"
 								style="text-align:center" width="20">
 								<p:cellEditor>
 									<f:facet name="output">
@@ -198,22 +187,21 @@
 									</f:facet>
 									<f:facet name="input">
 										<p:inputNumber value="#{item.no}" decimalPlaces="0"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}">
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}">
 											<p:ajax process="@this" />
 										</p:inputNumber>
 									</f:facet>
 								</p:cellEditor>
 							</p:column>
 							<p:column headerText="Mục tiêu" width="280"
-								visible="#{kPIDepMonthBean.list[2]}">
+								visible="#{kPIToBeanNew.list[2]}">
 								<p:cellEditor rendered="#{item.KPIPerformance == false}">
 									<f:facet name="output">
 										<h:outputText value="#{item.contentAppreciate}" />
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.contentAppreciate}" rows="3"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
-											autoResize="false">
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}" autoResize="false">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
 									</f:facet>
@@ -222,7 +210,7 @@
 									rendered="#{item.KPIPerformance}" />
 							</p:column>
 							<p:column headerText="Trọng số(%)" width="32"
-								style="text-align:center" visible="#{kPIDepMonthBean.list[3]}">
+								style="text-align:center" visible="#{kPIToBeanNew.list[3]}">
 								<p:cellEditor>
 									<f:facet name="output">
 										<h:outputText value="#{item.weighted/100}">
@@ -254,7 +242,7 @@
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.criteriaCheck}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}">
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
 									</f:facet>
@@ -264,28 +252,28 @@
 								visible="#{kPIDepMonthBean.list[5]}">
 								<p:outputLabel value="#{item.computation}" rows="2" />
 								<p:commandLink style="float:right" process="@this"
-									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
-									actionListener="#{kPIDepMonthBean.showListFormula(item)}"
+									disabled="#{kPIToBeanNew.kpiTo.signKPI}"
+									actionListener="#{kPIToBeanNew.showListFormula(item)}"
 									update=":dialogformula,:messages"
-									rendered="#{item.showFormual}">
+									rendered="#{item.KPIPerformance == false}">
 									<h:outputText value="&#8801;" />
 								</p:commandLink>
 							</p:column>
 							<p:column headerText="Thời điểm ghi nhận kết quả" width="100"
-								visible="#{kPIDepMonthBean.list[6]}">
+								visible="#{kPIToBeanNew.list[6]}">
 								<p:cellEditor>
 									<f:facet name="output">
 										<h:outputText value="#{item.timeTakeResult}" />
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.timeTakeResult}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}">
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
 									</f:facet>
 								</p:cellEditor>
 							</p:column>
-							<p:column headerText="A" visible="#{kPIDepMonthBean.list[7]}"
+							<p:column headerText="A" visible="#{kPIToBeanNew.list[7]}"
 								width="35">
 								<p:cellEditor>
 									<f:facet name="output">
@@ -293,14 +281,14 @@
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.paramA}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}"
 											style="text-align:center">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
 									</f:facet>
 								</p:cellEditor>
 							</p:column>
-							<p:column headerText="B" visible="#{kPIDepMonthBean.list[8]}"
+							<p:column headerText="B" visible="#{kPIToBeanNew.list[8]}"
 								width="35">
 								<p:cellEditor>
 									<f:facet name="output">
@@ -308,7 +296,7 @@
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.paramB}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}"
 											style="text-align:center">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
@@ -316,14 +304,14 @@
 								</p:cellEditor>
 							</p:column>
 							<p:column headerText="Nguồn dữ liệu chứng minh" width="100"
-								visible="#{kPIDepMonthBean.list[10]}">
+								visible="#{kPIToBeanNew.list[10]}">
 								<p:cellEditor>
 									<f:facet name="output">
 										<h:outputText value="#{item.sourceVerify}" />
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.sourceVerify}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}">
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
 									</f:facet>
@@ -337,7 +325,7 @@
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.unit}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}"
 											style="text-align:center">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
@@ -345,7 +333,7 @@
 								</p:cellEditor>
 							</p:column>
 							<p:column headerText="Kế hoạch(KH)"
-								visible="#{kPIDepMonthBean.list[12]}" width="55"
+								visible="#{kPIToBeanNew.list[12]}" width="55"
 								style="text-align:center">
 								<p:cellEditor>
 									<f:facet name="output">
@@ -353,7 +341,7 @@
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.planKPI}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}"
 											style="text-align:center">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
@@ -361,7 +349,7 @@
 								</p:cellEditor>
 							</p:column>
 							<p:column headerText="Thực hiện(TH)"
-								visible="#{kPIDepMonthBean.list[13]}" width="55"
+								visible="#{kPIToBeanNew.list[13]}" width="55"
 								style="text-align:center">
 								<p:cellEditor>
 									<f:facet name="output">
@@ -369,7 +357,7 @@
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.performKPI}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signResultKPI}"
+											disabled="#{kPIToBeanNew.kpiTo.signResultKPI}"
 											style="text-align:center">
 											<p:ajax process="@this" />
 										</p:inputTextarea>
@@ -377,7 +365,7 @@
 								</p:cellEditor>
 							</p:column>
 							<p:column headerText="Tỉ lệ hoàn thành"
-								visible="#{kPIDepMonthBean.list[14]}" width="40"
+								visible="#{kPIToBeanNew.list[14]}" width="40"
 								style="text-align:center">
 								<p:outputLabel value="#{item.ratioComplete/100}" rows="2"
 									style="text-align:center">
@@ -385,22 +373,22 @@
 								</p:outputLabel>
 							</p:column>
 							<p:column headerText="Tỉ lệ nhân trọng số "
-								visible="#{kPIDepMonthBean.list[15]}" width="50"
+								visible="#{kPIToBeanNew.list[15]}" width="50"
 								style="text-align:center">
 								<p:outputLabel value="#{item.ratioCompleteIsWeighted/100}"
 									rows="2" style="text-align:center">
 									<f:convertNumber pattern="##0%" />
 								</p:outputLabel>
 							</p:column>
-							<p:column headerText="Ghi chú"
-								visible="#{kPIDepMonthBean.list[16]}" width="125">
+							<p:column headerText="Ghi chú" visible="#{kPIToBeanNew.list[16]}"
+								width="125">
 								<p:cellEditor>
 									<f:facet name="output">
 										<h:outputText value="#{item.note}" />
 									</f:facet>
 									<f:facet name="input">
 										<p:inputTextarea value="#{item.note}" rows="2"
-											disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
+											disabled="#{kPIToBeanNew.kpiTo.signKPI}"
 											style="text-align:center">
 											<p:ajax event="blur" process="@this" />
 										</p:inputTextarea>
@@ -408,18 +396,18 @@
 								</p:cellEditor>
 							</p:column>
 							<p:column headerText="DL chứng minh"
-								visible="#{kPIDepMonthBean.list[17]}" width="50">
+								visible="#{kPIToBeanNew.list[17]}" width="50">
 								<p:panelGrid id="mainGrid" columns="1"
 									styleClass="noneformat pdnf2px">
 									<p:commandLink value="Xem file" process="@this" id="btviewpdf"
 										style="font-size: 11px;text-decoration: underline;color: blue;font-style: italic;"
 										rendered="#{item.nameAssign!=null}" update="btviewpdf"
-										actionListener="#{kPIDepMonthBean.processDataAssign(item)}" />
+										actionListener="#{kPIToBeanNew.processDataAssign(item)}" />
 									<p:commandLink value="Tải lên" style="font-size:11px"
-										actionListener="#{kPIDepMonthBean.selectData(item)}"
-										disabled="#{kPIDepMonthBean.kpiDepMonth.signResultKPI}"
+										actionListener="#{kPIToBeanNew.selectData(item)}"
+										disabled="#{kPIToBeanNew.kpiTo.signResultKPI}"
 										oncomplete="PF('dialogDataAssign').show();" process="@this"
-										rendered="#{!kPIDepMonthBean.kpiDepMonth.signResultKPI}" />
+										rendered="#{!kPIToBeanNew.kpiTo.signResultKPI}" />
 								</p:panelGrid>
 							</p:column>
 						</p:dataTable>
@@ -448,36 +436,34 @@
 								style="float:left; margin-bottom:5px">
 								<h:panelGrid columns="4" style="width:100%" cellspacing="10">
 									<p:outputLabel value="Tháng" />
-									<p:spinner size="10" value="#{kPIDepMonthBean.monthSearch}"
+									<p:spinner size="10" value="#{kPIToBeanNew.monthSearch}"
 										min="1" max="12">
 										<p:ajax process="@this" />
 									</p:spinner>
 									<p:outputLabel value="Năm" />
-									<p:spinner size="10" value="#{kPIDepMonthBean.yearSearch}"
+									<p:spinner size="10" value="#{kPIToBeanNew.yearSearch}"
 										min="2017" max="2050">
 										<p:ajax process="@this" />
 									</p:spinner>
 								</h:panelGrid>
 								<p:commandButton value="Tìm" style="float:right;"
 									icon="ui-icon-search" update=":menuformid:tv:list"
-									process="@this"
-									actionListener="#{kPIDepMonthBean.searchItem()}" />
+									process="@this" actionListener="#{kPIToBeanNew.searchItem()}" />
 								<p:tooltip for="xoact" value="Xoá phiếu" />
 								<p:commandButton icon="fa fa-trash" id="xoact" process="@this"
 									value="Xoá" update=":messages,:menuformid"
-									action="#{kPIDepMonthBean.delete()}">
+									action="#{kPIToBeanNew.delete()}">
 									<p:confirm header="Xác nhận"
 										message="Bạn có chắc muốn xoá không?" icon="ui-icon-alert" />
 								</p:commandButton>
 							</h:panelGrid>
 						</p:panel>
 						<div style="clear: both" />
-						<p:dataTable value="#{kPIDepMonthBean.kpiDepMonths}"
+						<p:dataTable value="#{kPIToBeanNew.kpiTos}"
 							styleClass="tableparent" rowKey="#{item.id}"
-							selection="#{kPIDepMonthBean.kpiDepMonthEdit}"
-							widgetVar="dtlistkpiDep" selectionMode="single" id="tableid"
-							var="item">
-							<p:ajax event="rowSelect" listener="#{kPIDepMonthBean.showEdit}"
+							selection="#{kPIToBeanNew.kpiToEdit}" widgetVar="dtlistkpiDep"
+							selectionMode="single" id="tableid" var="item">
+							<p:ajax event="rowSelect" listener="#{kPIToBeanNew.showEdit}"
 								update=":menuformid" />
 							<p:column headerText="Duyệt ĐK"
 								style="width:80px;text-align:center">
@@ -523,7 +509,7 @@
 
 				<p:separator />
 				<p:commandButton value="OK" oncomplete="PF('dialogConfirm').hide()"
-					action="#{kPIDepMonthBean.createAndDelete()}"
+					action="#{kPIToBeanNew.createAndDelete()}"
 					update=":messages,:menuformid:tv:detail" />
 				<p:commandButton value="Cancel"
 					oncomplete="PF('dialogConfirm').hide()" />
@@ -532,10 +518,10 @@
 		<p:dialog widgetVar="dialogFormula" resizable="false" width="300"
 			closeOnEscape="true" header="Công thức tính">
 			<h:form id="dialogformula">
-				<p:dataTable value="#{kPIDepMonthBean.formulaKPIs}" lazy="true"
+				<p:dataTable value="#{kPIToBeanNew.formulaKPIs}" lazy="true"
 					paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
 					paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
-					scrollHeight="370" selection="#{kPIDepMonthBean.formulaKPISelect}"
+					scrollHeight="370" selection="#{kPIToBeanNew.formulaKPISelect}"
 					selectionMode="single" id="tableid" resizableColumns="true"
 					var="item">
 					<p:column headerText="ID" width="20">
@@ -551,62 +537,7 @@
 				<p:separator />
 				<p:commandButton value="Đặt công thức"
 					oncomplete="PF('dialogFormula').hide()"
-					action="#{kPIDepMonthBean.updateFormula()}" update=":menuformid" />
-			</h:form>
-		</p:dialog>
-		<p:dialog widgetVar="dialogTaget" resizable="false" width="600"
-			closeOnEscape="true" header="KPIs năm của phòng">
-			<h:form id="dialogTagetid">
-				<p:dataTable value="#{kPIDepMonthBean.kpiDepOfYears}" lazy="true"
-					sortBy="#{item.tagetDepart.kTagetDepartCate.code}"
-					expandableRowGroups="true" paginatorPosition="bottom"
-					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
-					rowKey="#{item.id}" scrollable="true" style="width:100%"
-					id="tabletagetid" scrollHeight="370" widgetVar="datatagettb"
-					resizableColumns="true" var="item">
-					<p:headerRow>
-						<p:column>
-							<h:outputText value="" />
-						</p:column>
-						<p:column style="font-size: 1.2em;text-align:center">
-							<h:outputText value="#{item.tagetDepart.kTagetDepartCate.code}" />
-						</p:column>
-						<p:column style="font-size: 1.2em;padding: 10px;">
-							<h:outputText
-								value="#{item.tagetDepart.kTagetDepartCate.content}" />
-						</p:column>
-						<p:column style="font-size: 1.2em;padding: 10px;">
-							<h:outputText value="#{item.weightedParent/100}">
-								<f:convertNumber pattern="##0%" />
-							</h:outputText>
-						</p:column>
-					</p:headerRow>
-					<f:facet name="header">
-						<div style="float: right">
-							<p:commandButton type="submit" value="Đưa vào KPI"
-								update=":menuformid" action="#{kPIDepMonthBean.getListTaget()}"
-								icon="ui-icon-arrowreturnthick-1-s" />
-						</div>
-						<div style="clear: both;" />
-					</f:facet>
-					<p:column headerText="..." style="width:20px;">
-						<p:selectBooleanCheckbox value="#{item.select}">
-							<p:ajax process="@this" />
-						</p:selectBooleanCheckbox>
-					</p:column>
-					<p:column headerText="STT" style="width:20px;">
-						<h:outputText value="#{item.no}" />
-					</p:column>
-					<p:column headerText="Nội dung" style="text-align:left;">
-						<h:outputText value="#{item.contentAppreciate}" />
-					</p:column>
-					<p:column headerText="Trọng số" width="80" style="text-align:left;">
-						<h:outputText value="#{item.weighted}%" />
-					</p:column>
-					<f:facet name="footer">
-						<div style="clear: both;" />
-					</f:facet>
-				</p:dataTable>
+					action="#{kPIToBeanNew.updateFormula()}" update=":menuformid" />
 			</h:form>
 		</p:dialog>
 		<p:dialog widgetVar="dialogCopy" resizable="false"
@@ -615,12 +546,12 @@
 				<h:panelGrid columns="4" style="width:100%" cellspacing="4"
 					cellpadding="10">
 					<p:outputLabel value="Tháng" />
-					<p:spinner size="10" value="#{kPIDepMonthBean.monthCopy}" min="1"
+					<p:spinner size="10" value="#{kPIToBeanNew.monthCopy}" min="1"
 						max="12">
 						<p:ajax process="@this" />
 					</p:spinner>
 					<p:outputLabel value="Năm" />
-					<p:spinner size="10" value="#{kPIDepMonthBean.yearCopy}" min="2017"
+					<p:spinner size="10" value="#{kPIToBeanNew.yearCopy}" min="2017"
 						max="2050">
 						<p:ajax process="@this" />
 					</p:spinner>
@@ -628,7 +559,7 @@
 				<p:separator />
 				<div style="width: 100%; text-align: center">
 					<p:commandButton value="Chọn" oncomplete="PF('dialogCopy').hide()"
-						action="#{kPIDepMonthBean.createCopy()}"
+						action="#{kPIToBeanNew.createCopy()}"
 						update=":menuformid,:messages" />
 				</div>
 			</h:form>
@@ -640,7 +571,7 @@
 				<p:separator />
 				<p:commandButton value="OK"
 					oncomplete="PF('dialogConfirmCopy').hide()"
-					action="#{kPIDepMonthBean.createAndDeleteCopy()}"
+					action="#{kPIToBeanNew.createAndDeleteCopy()}"
 					update=":messages,:menuformid:tv:detail" />
 				<p:commandButton value="Cancel"
 					oncomplete="PF('dialogConfirmCopy').hide()" />
@@ -654,10 +585,10 @@
 					dragDropSupport="true" allowTypes="/(\.|\/)(pdf)$/"
 					label="Chọn file từ máy tính" cancelLabel="Huỷ"
 					uploadLabel="Tải lên" fileLimit="1"
-					fileUploadListener="#{kPIDepMonthBean.updateDataAssign}"
+					fileUploadListener="#{kPIToBeanNew.updateDataAssign}"
 					mode="advanced" sizeLimit="204800000" />
 				<p:panelGrid columns="1" style="width:100%">
-					<p:selectBooleanCheckbox value="#{kPIDepMonthBean.orverideData}"
+					<p:selectBooleanCheckbox value="#{kPIToBeanNew.orverideData}"
 						itemLabel="Nạp lại dữ liệu">
 						<p:ajax process="@this" />
 					</p:selectBooleanCheckbox>
@@ -672,10 +603,10 @@
 		<!-- Thai -->
 		<p:dialog widgetVar="dialogAddKPIHieuSuat" resizable="false"
 			width="600" closeOnEscape="true"
-			header="Ngân hàng KPI hiệu suất của phòng">
+			header="Ngân hàng KPI hiệu suất của tổ">
 			<h:form id="formDialogAddKPIHieuSuat">
-				<p:dataTable value="#{kPIDepMonthBean.kpiDepPerformances}"
-					lazy="true" sortBy="#{item.id}" expandableRowGroups="true"
+				<p:dataTable value="#{kPIToBeanNew.kpiToPerformances}" lazy="true"
+					sortBy="#{item.id}" expandableRowGroups="true"
 					paginatorPosition="bottom" rowsPerPageTemplate="20,40,60"
 					paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
 					style="width:100%" id="dtTableAddKPIHieuSuat" scrollHeight="370"
@@ -685,7 +616,7 @@
 						<div style="float: right">
 							<p:commandButton type="submit" value="Đưa vào KPI"
 								update=":menuformid"
-								action="#{kPIDepMonthBean.getListKPIPerformance()}"
+								action="#{kPIToBeanNew.getListKPIPerformance()}"
 								icon="ui-icon-arrowreturnthick-1-s" />
 						</div>
 						<div style="clear: both;" />

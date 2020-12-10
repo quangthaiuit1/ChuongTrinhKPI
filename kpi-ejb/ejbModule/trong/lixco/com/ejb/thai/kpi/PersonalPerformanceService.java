@@ -56,7 +56,7 @@ public class PersonalPerformanceService extends AbstractService<KPIPersonalPerfo
 	}
 	public List<KPIPersonalPerformance> find(List<String> codeJobs){
 	    //primary
-	    if (codeJobs != null) {
+	    if (codeJobs != null && !codeJobs.isEmpty()) {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<KPIPersonalPerformance> cq = cb.createQuery(KPIPersonalPerformance.class);
 			Root<KPIPersonalPerformance> root = cq.from(KPIPersonalPerformance.class);

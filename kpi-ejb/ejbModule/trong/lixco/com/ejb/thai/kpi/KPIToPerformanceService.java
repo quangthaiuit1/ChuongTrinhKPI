@@ -17,11 +17,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import trong.lixco.com.ejb.service.AbstractService;
-import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
+import trong.lixco.com.jpa.thai.KPIToPerformance;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
-public class DepPerformanceService extends AbstractService<KPIDepPerformanceJPA> {
+public class KPIToPerformanceService extends AbstractService<KPIToPerformance> {
 	@Inject
 	private EntityManager em;
 	@Resource
@@ -38,15 +38,15 @@ public class DepPerformanceService extends AbstractService<KPIDepPerformanceJPA>
 	}
 
 	@Override
-	protected Class<KPIDepPerformanceJPA> getEntityClass() {
-		return KPIDepPerformanceJPA.class;
+	protected Class<KPIToPerformance> getEntityClass() {
+		return KPIToPerformance.class;
 	}
 
-	public List<KPIDepPerformanceJPA> findSubDisable(int year, String codeDepart) {
+	public List<KPIToPerformance> findSubDisable(int year, String codeDepart) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIDepPerformanceJPA> cq = cb.createQuery(KPIDepPerformanceJPA.class);
-		Root<KPIDepPerformanceJPA> root = cq.from(KPIDepPerformanceJPA.class);
+		CriteriaQuery<KPIToPerformance> cq = cb.createQuery(KPIToPerformance.class);
+		Root<KPIToPerformance> root = cq.from(KPIToPerformance.class);
 		List<Predicate> queries = new ArrayList<>();
 		if (year != 0) {
 			Predicate answerTypeQuery = cb.equal(root.get("year"), year);
@@ -65,15 +65,15 @@ public class DepPerformanceService extends AbstractService<KPIDepPerformanceJPA>
 		}
 		Predicate finalPredicate = cb.and(data);
 		cq.where(finalPredicate);
-		TypedQuery<KPIDepPerformanceJPA> query = em.createQuery(cq);
+		TypedQuery<KPIToPerformance> query = em.createQuery(cq);
 		return query.getResultList();
 	}
 
-	public List<KPIDepPerformanceJPA> find(int year, String codeDepart) {
+	public List<KPIToPerformance> find(int year, String codeDepart) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<KPIDepPerformanceJPA> cq = cb.createQuery(KPIDepPerformanceJPA.class);
-		Root<KPIDepPerformanceJPA> root = cq.from(KPIDepPerformanceJPA.class);
+		CriteriaQuery<KPIToPerformance> cq = cb.createQuery(KPIToPerformance.class);
+		Root<KPIToPerformance> root = cq.from(KPIToPerformance.class);
 		List<Predicate> queries = new ArrayList<>();
 		if (year != 0) {
 			Predicate answerTypeQuery = cb.equal(root.get("year"), year);
@@ -89,8 +89,7 @@ public class DepPerformanceService extends AbstractService<KPIDepPerformanceJPA>
 		}
 		Predicate finalPredicate = cb.and(data);
 		cq.where(finalPredicate);
-		TypedQuery<KPIDepPerformanceJPA> query = em.createQuery(cq);
+		TypedQuery<KPIToPerformance> query = em.createQuery(cq);
 		return query.getResultList();
 	}
-
 }

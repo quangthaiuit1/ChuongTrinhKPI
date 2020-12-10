@@ -19,7 +19,6 @@ import javax.persistence.criteria.Root;
 import trong.lixco.com.ejb.service.AbstractService;
 import trong.lixco.com.jpa.thai.KPIPersonalOther;
 import trong.lixco.com.jpa.thai.KPIPersonalOtherDetail;
-import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h="http://java.sun.com/jsf/html" template="/pages/home.xhtml">
+	<ui:define name="content">
+		<h3 style="margin: 0px">Thái độ - hành vi (nhóm không làm KPI
+			hàng tháng)</h3>
+		<p:separator />
+		<p:growl id="growlThaiDoHanhViKhac" showDetail="true" sticky="false" />
+		<h:form id="menuformid">
+			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60"
+				styleClass="panelthreeColumn">
+				<p:panel header="Thông tin" styleClass="panelw100">
+					<h:panelGrid id="info">
+						<p:outputLabel value="Code*" />
+						<p:inputText value="#{behaviourPersonOtherBean.behaviourNew.code}" />
+						<p:outputLabel value="Nội dung*" />
+						<p:inputTextarea rows="3"
+							value="#{behaviourPersonOtherBean.behaviourNew.content}" />
+						<p:outputLabel value="Tiêu đề" />
+						<p:selectBooleanCheckbox
+							value="#{behaviourPersonOtherBean.behaviourNew.header}" />
+						<p:outputLabel value="Điểm trừ" />
+						<p:inputNumber
+							value="#{behaviourPersonOtherBean.behaviourNew.minusPoint}"
+							symbol="%" decimalPlaces="0" symbolPosition="s">
+							<p:ajax process="@this" />
+						</p:inputNumber>
+						<p:outputLabel value="Ghi chú:" />
+						<p:inputTextarea cols="24" rows="4" styleClass="upper"
+							value="#{behaviourPersonOtherBean.behaviourNew.note}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Lưu/Cập nhật"
+						action="#{behaviourPersonOtherBean.saveOrUpdate()}"
+						update=":messages,:menuformid" />
+					<p:commandButton value="Tạo mới"
+						action="#{behaviourPersonOtherBean.reset()}" update=":menuformid" />
+					<p:commandButton value="File excel mẫu" immediate="true"
+						styleClass="btlink"
+						onclick="monitorDownload( showStatus , hideStatus)"
+						actionListener="#{behaviourPersonOtherBean.fileDuLieuThaiDoHanhViMau()}" />
+					<p:separator />
+					<!-- Upload file excel -->
+					<h:form enctype="multipart/form-data">
+						<p:fileUpload
+							fileUploadListener="#{behaviourPersonOtherBean.handleFileUpload}"
+							mode="advanced" dragDropSupport="false" multiple="true"
+							update="messagesh, growlThaiDoHanhViKhac" sizeLimit="10000000"
+							allowTypes="/(\.|\/)(xls|xlsx)$/" label="Chọn tệp tải lên"
+							uploadLabel="Tải lên" cancelLabel="Hủy" process="@form" />
+						<p:growl id="messagesh" showDetail="true" />
+					</h:form>
+					<!-- End upload file excel -->
+				</p:panel>
+				<p:panel header="Danh sách" id="preview">
+					<h:panelGrid id="mainGrid" columns="6"
+						style="float:left; margin-bottom:5px">
+						<p:tooltip for="xoact" value="Xoá form" />
+						<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
+							update=":messages,:menuformid"
+							action="#{behaviourPersonOtherBean.deleteItem()}">
+							<p:confirm icon="ui-icon-alert" />
+						</p:commandButton>
+					</h:panelGrid>
+					<div style="clear: both" />
+					<p:dataTable value="#{behaviourPersonOtherBean.allBehaviourOther}"
+						lazy="true" paginatorPosition="bottom"
+						rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+						rowKey="#{item.id}"
+						selection="#{behaviourPersonOtherBean.behaviourSelected}"
+						scrollable="true" selectionMode="single" scrollWidth="670"
+						id="tableid" scrollHeight="370" widgetVar="datatb"
+						resizableColumns="true" var="item" rowIndexVar="index">
+						<p:ajax event="rowSelect"
+							listener="#{behaviourPersonOtherBean.behaviourSelected()}"
+							update=":menuformid" />
+						<p:column headerText="STT" style="width:30px">
+							<h:outputText value="#{index + 1}" />
+						</p:column>
+						<p:column headerText="Code" style="width:20px">
+							<h:outputText value="#{item.code}"
+								styleClass="#{item.header==true?'textboldoutput':''}" />
+						</p:column>
+						<p:column headerText="Nội dung" style="text-align:left">
+							<h:outputText value="#{item.content}"
+								styleClass="#{item.header==true?'textboldoutput':''}" />
+						</p:column>
+						<p:column headerText="Điểm trừ" style="text-align:center"
+							width="80">
+							<h:outputText value="#{item.minusPoint/100}"
+								styleClass="#{item.header==true?'textboldoutput':''}">
+								<f:convertNumber pattern="##0%" />
+							</h:outputText>
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -46,6 +46,7 @@ import trong.lixco.com.jpa.entitykpi.FormulaKPI;
 import trong.lixco.com.jpa.entitykpi.PositionJob;
 import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
+import trong.lixco.com.thai.bean.staticentity.MessageView;
 import trong.lixco.com.util.Notify;
 
 @Named
@@ -68,6 +69,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 	private KPIPersonalPerformance kpiPersonalPerformanceUpdated;
 	private PositionJob positionJobEdit;
 	private String namePositionJob;
+	private boolean enablePerformance;
 	// private List<OrientationPerson> allPersonalPerformance;
 
 	// Cong thuc tinh
@@ -98,6 +100,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	@Override
 	public void initItem() {
+		enablePerformance = false;
 		kpiPersonalPerformance = new KPIPersonalPerformance();
 		kpiPersonalPerformanceUpdated = new KPIPersonalPerformance();
 		year = new DateTime().getYear();
@@ -106,6 +109,7 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 			departmentServicePublic = new DepartmentServicePublicProxy();// use
 			allDepartmentTemp = departmentServicePublic.findAll();
 			allDepartment = Arrays.asList(allDepartmentTemp);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -145,7 +149,6 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 			}
 		}
 		this.departmentSelected = new Department();
-
 	}
 
 	// public String nameDepart() {
@@ -205,6 +208,47 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 		positionJobEdit = POSITION_JOB_SERVICE.findByCode(kpiPersonalPerformance.getCodePJob());
 		namePositionJob = positionJobEdit.getName();
 		// codeDepart = this.kpi.getCodeDepart();
+		if (kpiPersonalPerformanceUpdated.isDisable()) {
+			enablePerformance = false;
+		} else {
+			enablePerformance = true;
+		}
+	}
+
+	public void handleEnable() {
+		try {
+			if (kpiPersonalPerformanceUpdated.getId() == null) {
+				return;
+			}
+			kpiPersonalPerformanceUpdated.setDisable(false);
+			KPIPersonalPerformance k = PERSONAL_PERFORMANCE_SERVICE.update(kpiPersonalPerformanceUpdated);
+			if (k != null) {
+				kpiPersonalPerformanceUpdated = new KPIPersonalPerformance();
+				MessageView.INFO("Thành công");
+			} else {
+				MessageView.ERROR("Lỗi");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void handleDisable() {
+		try {
+			if (kpiPersonalPerformanceUpdated.getId() == null) {
+				return;
+			}
+			kpiPersonalPerformanceUpdated.setDisable(true);
+			KPIPersonalPerformance k = PERSONAL_PERFORMANCE_SERVICE.update(kpiPersonalPerformanceUpdated);
+			if (k != null) {
+				kpiPersonalPerformanceUpdated = new KPIPersonalPerformance();
+				MessageView.INFO("Thành công");
+			} else {
+				MessageView.ERROR("Lỗi");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void showListFormula(KPIPersonalPerformance param) {
@@ -492,5 +536,13 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	public void setFormulaKPIs(List<FormulaKPI> formulaKPIs) {
 		this.formulaKPIs = formulaKPIs;
+	}
+
+	public boolean isEnablePerformance() {
+		return enablePerformance;
+	}
+
+	public void setEnablePerformance(boolean enablePerformance) {
+		this.enablePerformance = enablePerformance;
 	}
 }

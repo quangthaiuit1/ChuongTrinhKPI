@@ -37,19 +37,19 @@ import trong.lixco.com.account.servicepublics.DepartmentServicePublicProxy;
 import trong.lixco.com.account.servicepublics.Member;
 import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.ejb.servicekpi.FormulaKPIService;
-import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.ejb.thai.kpi.DepPerformanceService;
+import trong.lixco.com.ejb.thai.kpi.KPIToPerformanceService;
+import trong.lixco.com.ejb.thai.kpi.KPIToService;
 import trong.lixco.com.jpa.entitykpi.FormulaKPI;
 import trong.lixco.com.jpa.thai.KPIDepPerformanceJPA;
-import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
-import trong.lixco.com.thai.bean.entities.InfoDepPerformance;
-import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
+import trong.lixco.com.jpa.thai.KPIToPerformance;
+import trong.lixco.com.thai.bean.entities.InfoToPerformance;
 import trong.lixco.com.thai.bean.staticentity.MessageView;
 import trong.lixco.com.util.Notify;
 
 @Named
 @ViewScoped
-public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
+public class ToPerformanceBean extends AbstractBean<KPIToPerformance> {
 	private static final long serialVersionUID = 1L;
 	private Notify notify;
 
@@ -71,12 +71,15 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	}
 
 	// Thai
-	KPIDepPerformanceJPA kpiDepPerformance;
+	private KPIToPerformance kpiToPerformance;
+
+	@Inject
+	private KPIToPerformanceService KPI_TO_PERFORMANCE_SERVICE;
 
 	@Override
 	public void initItem() {
 		enablePerformance = false;
-		kpiDepPerformance = new KPIDepPerformanceJPA();
+		kpiToPerformance = new KPIToPerformance();
 		year = new DateTime().getYear();
 		try {
 			departmentServicePublic = new DepartmentServicePublicProxy();
@@ -99,33 +102,33 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	public void createOrUpdate() {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		try {
-			if (kpiDepPerformance != null) {
-				if (!"".equals(kpiDepPerformance.getYear() != 0)) {
-					if (kpiDepPerformance.getId() == null) {
+			if (kpiToPerformance != null) {
+				if (!"".equals(kpiToPerformance.getYear() != 0)) {
+					if (kpiToPerformance.getId() == null) {
 						if (allowSave(null)) {
 							if (codeDepart != null) {
-								kpiDepPerformance = installSave(kpiDepPerformance);
-								kpiDepPerformance.setCodeDepart(codeDepart);
-								kpiDepPerformance = DEPARTMENT_PERFORMANCE_SERVICE.create(kpiDepPerformance);
-								listDepartPerformance.add(0, kpiDepPerformance);
+								kpiToPerformance = installSave(kpiToPerformance);
+								kpiToPerformance.setCodeDepart(codeDepart);
+								kpiToPerformance = KPI_TO_PERFORMANCE_SERVICE.create(kpiToPerformance);
+								listToPerformance.add(0, kpiToPerformance);
 								searchItem();// test
-								writeLogInfo("Tạo mới " + kpiDepPerformance.toString());
+								writeLogInfo("Tạo mới " + kpiToPerformance.toString());
 								notify.success();
 							} else {
 								notify.warning("Tài khoản không thuộc phòng ban nào.");
 							}
 						} else {
-							kpiDepPerformanceUpdate = new KPIDepPerformanceJPA();
+							kpiToPerformanceUpdate = new KPIToPerformance();
 							notify.warningDetail();
 						}
 					} else {
 						if (allowUpdate(null)) {
-							kpiDepPerformance = installUpdate(kpiDepPerformance);
-							kpiDepPerformance = DEPARTMENT_PERFORMANCE_SERVICE.update(kpiDepPerformance);
-							int index = listDepartPerformance.indexOf(kpiDepPerformance);
-							listDepartPerformance.set(index, kpiDepPerformance);
+							kpiToPerformance = installUpdate(kpiToPerformance);
+							kpiToPerformance = KPI_TO_PERFORMANCE_SERVICE.update(kpiToPerformance);
+							int index = listToPerformance.indexOf(kpiToPerformance);
+							listToPerformance.set(index, kpiToPerformance);
 							searchItem();// test
-							writeLogInfo("Cập nhật " + kpiDepPerformance.toString());
+							writeLogInfo("Cập nhật " + kpiToPerformance.toString());
 							notify.success();
 						} else {
 							notify.warningDetail();
@@ -143,15 +146,15 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	}
 
 	public void reset() {
-		int year = kpiDepPerformance.getYear();
-		kpiDepPerformance = new KPIDepPerformanceJPA();
-		kpiDepPerformance.setYear(year);
+		int year = kpiToPerformance.getYear();
+		kpiToPerformance = new KPIToPerformance();
+		kpiToPerformance.setYear(year);
 	}
 
 	public void showEdit() {
-		this.kpiDepPerformance = kpiDepPerformanceUpdate;
-		codeDepart = this.kpiDepPerformance.getCodeDepart();
-		if (kpiDepPerformanceUpdate.isDisable()) {
+		this.kpiToPerformance = kpiToPerformanceUpdate;
+		codeDepart = this.kpiToPerformance.getCodeDepart();
+		if (kpiToPerformanceUpdate.isDisable()) {
 			enablePerformance = false;
 		} else {
 			enablePerformance = true;
@@ -160,13 +163,13 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 
 	public void handleEnable() {
 		try {
-			if (kpiDepPerformanceUpdate.getId() == null) {
+			if (kpiToPerformanceUpdate.getId() == null) {
 				return;
 			}
-			kpiDepPerformanceUpdate.setDisable(false);
-			KPIDepPerformanceJPA k = DEPARTMENT_PERFORMANCE_SERVICE.update(kpiDepPerformanceUpdate);
+			kpiToPerformanceUpdate.setDisable(false);
+			KPIToPerformance k = KPI_TO_PERFORMANCE_SERVICE.update(kpiToPerformanceUpdate);
 			if (k != null) {
-				kpiDepPerformanceUpdate = new KPIDepPerformanceJPA();
+				kpiToPerformanceUpdate = new KPIToPerformance();
 				MessageView.INFO("Thành công");
 			} else {
 				MessageView.ERROR("Lỗi");
@@ -178,13 +181,13 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 
 	public void handleDisable() {
 		try {
-			if (kpiDepPerformanceUpdate.getId() == null) {
+			if (kpiToPerformanceUpdate.getId() == null) {
 				return;
 			}
-			kpiDepPerformanceUpdate.setDisable(true);
-			KPIDepPerformanceJPA k = DEPARTMENT_PERFORMANCE_SERVICE.update(kpiDepPerformanceUpdate);
+			kpiToPerformanceUpdate.setDisable(true);
+			KPIToPerformance k = KPI_TO_PERFORMANCE_SERVICE.update(kpiToPerformanceUpdate);
 			if (k != null) {
-				kpiDepPerformanceUpdate = new KPIDepPerformanceJPA();
+				kpiToPerformanceUpdate = new KPIToPerformance();
 				MessageView.INFO("Thành công");
 			} else {
 				MessageView.ERROR("Lỗi");
@@ -196,18 +199,18 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 
 	public void delete() {
 		notify = new Notify(FacesContext.getCurrentInstance());
-		if (kpiDepPerformance.getId() != null) {
+		if (kpiToPerformance.getId() != null) {
 			if (allowDelete(null)) {
-				boolean status = DEPARTMENT_PERFORMANCE_SERVICE.delete(kpiDepPerformance);
+				boolean status = KPI_TO_PERFORMANCE_SERVICE.delete(kpiToPerformance);
 				if (status) {
-					listDepartPerformance.remove(kpiDepPerformance);
+					listToPerformance.remove(kpiToPerformance);
 					updateListInfo();
-					writeLogInfo("Xoá " + kpiDepPerformance.toString());
+					writeLogInfo("Xoá " + kpiToPerformance.toString());
 					reset();
 
 					notify.success();
 				} else {
-					writeLogError("Lỗi khi xoá " + kpiDepPerformance.toString());
+					writeLogError("Lỗi khi xoá " + kpiToPerformance.toString());
 					notify.error();
 				}
 			} else {
@@ -220,17 +223,17 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 
 	// update list info personal performance
 	public void updateListInfo() {
-		Map<String, List<KPIDepPerformanceJPA>> datagroups1 = listDepartPerformance.stream()
+		Map<String, List<KPIToPerformance>> datagroups1 = listToPerformance.stream()
 				.collect(Collectors.groupingBy(p -> p.getCodeDepart(), Collectors.toList()));
 
-		listInfoDepartPerformance = new ArrayList<InfoDepPerformance>();
+		listInfoToPerformance = new ArrayList<InfoToPerformance>();
 		for (String key : datagroups1.keySet()) {
-			List<KPIDepPerformanceJPA> invs = datagroups1.get(key);
+			List<KPIToPerformance> invs = datagroups1.get(key);
 			try {
-				InfoDepPerformance tgi = new InfoDepPerformance();
+				InfoToPerformance tgi = new InfoToPerformance();
 				tgi.setNameDepart(departmentServicePublic.findByCode("code", key).getName());
-				tgi.setListDepPerformance(invs);
-				listInfoDepartPerformance.add(tgi);
+				tgi.setListToPerformance(invs);
+				listInfoToPerformance.add(tgi);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -297,19 +300,19 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 				long formulaKPIIdLong = (long) formulaKPIIdInt;
 				int year = (int) Double.parseDouble(row.getCell(3).toString());
 				// Luu doi tuong xuong DB
-				KPIDepPerformanceJPA kpiDepPerformanceCreate = new KPIDepPerformanceJPA();
-				kpiDepPerformanceCreate.setCodeDepart(Integer.toString(codeDepart));
-				kpiDepPerformanceCreate.setContent(content);
+				KPIToPerformance kpiToPerformanceCreate = new KPIToPerformance();
+				kpiToPerformanceCreate.setCodeDepart(Integer.toString(codeDepart));
+				kpiToPerformanceCreate.setContent(content);
 				FormulaKPI formulaKPITemp = FORMULA_KPI_SERVICE.findById(formulaKPIIdLong);
-				kpiDepPerformanceCreate.setComputation(formulaKPITemp.getCode());
-				kpiDepPerformanceCreate.setFormulaKPI(formulaKPITemp);
-				kpiDepPerformanceCreate.setYear(year);
-				kpiDepPerformanceCreate.setCreatedDate(new Date());
-				kpiDepPerformanceCreate.setCreatedUser(member.getName());
-				kpiDepPerformanceCreate.setDisable(false);
-				kpiDepPerformanceCreate.setOldData(false);
+				kpiToPerformanceCreate.setComputation(formulaKPITemp.getCode());
+				kpiToPerformanceCreate.setFormulaKPI(formulaKPITemp);
+				kpiToPerformanceCreate.setYear(year);
+				kpiToPerformanceCreate.setCreatedDate(new Date());
+				kpiToPerformanceCreate.setCreatedUser(member.getName());
+				kpiToPerformanceCreate.setDisable(false);
+				kpiToPerformanceCreate.setOldData(false);
 				try {
-					DEPARTMENT_PERFORMANCE_SERVICE.create(kpiDepPerformanceCreate);
+					KPI_TO_PERFORMANCE_SERVICE.create(kpiToPerformanceCreate);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -327,13 +330,13 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	public void fileDuLieuKPICaNhanMau() {
 		try {
 			PrimeFaces.current().executeScript("target='_blank';monitorDownload( showStatus , hideStatus)");
-			String filename = "KPIPhong_dulieumau";
+			String filename = "KPITo_dulieumau";
 			HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance()
 					.getExternalContext().getResponse();
 			httpServletResponse.addHeader("Content-disposition", "attachment; filename=" + filename + ".xlsx");
 			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
 			String file = FacesContext.getCurrentInstance().getExternalContext()
-					.getRealPath("/resources/maufile/kpiphong_dulieumau.xlsx");
+					.getRealPath("/resources/maufile/KPITo_dulieumau.xlsx");
 			InputStream inputStream = new FileInputStream(file);
 			byte[] buffer = new byte[1024];
 			int len;
@@ -349,27 +352,27 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	// Thai
 	@Inject
 	DepPerformanceService DEPARTMENT_PERFORMANCE_SERVICE;
-	List<InfoDepPerformance> listInfoDepartPerformance;
-	List<KPIDepPerformanceJPA> listDepartPerformance;
-	private KPIDepPerformanceJPA kpiDepPerformanceUpdate;
+	List<InfoToPerformance> listInfoToPerformance;
+	List<KPIToPerformance> listToPerformance;
+	private KPIToPerformance kpiToPerformanceUpdate;
 
 	public void searchItem() {
 		if (getAccount().isAdmin())
-			listDepartPerformance = DEPARTMENT_PERFORMANCE_SERVICE.find(year, null);
+			listToPerformance = KPI_TO_PERFORMANCE_SERVICE.find(year, null);
 		else
-			listDepartPerformance = DEPARTMENT_PERFORMANCE_SERVICE.find(year, member.getDepartment().getCode());
+			listToPerformance = KPI_TO_PERFORMANCE_SERVICE.find(year, member.getDepartment().getCode());
 
-		Map<String, List<KPIDepPerformanceJPA>> datagroups1 = listDepartPerformance.stream()
+		Map<String, List<KPIToPerformance>> datagroups1 = listToPerformance.stream()
 				.collect(Collectors.groupingBy(p -> p.getCodeDepart(), Collectors.toList()));
 
-		listInfoDepartPerformance = new ArrayList<InfoDepPerformance>();
+		listInfoToPerformance = new ArrayList<InfoToPerformance>();
 		for (String key : datagroups1.keySet()) {
-			List<KPIDepPerformanceJPA> invs = datagroups1.get(key);
+			List<KPIToPerformance> invs = datagroups1.get(key);
 			try {
-				InfoDepPerformance tgi = new InfoDepPerformance();
+				InfoToPerformance tgi = new InfoToPerformance();
 				tgi.setNameDepart(departmentServicePublic.findByCode("code", key).getName());
-				tgi.setListDepPerformance(invs);
-				listInfoDepartPerformance.add(tgi);
+				tgi.setListToPerformance(invs);
+				listInfoToPerformance.add(tgi);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -379,11 +382,11 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 
 	private List<FormulaKPI> formulaKPIs;
 	private FormulaKPI formulaKPISelect;
-	private KPIDepPerformanceJPA kpy;
+	private KPIToPerformance kpy;
 	@Inject
 	private FormulaKPIService formulaKPIService;
 
-	public void showListFormula(KPIDepPerformanceJPA param) {
+	public void showListFormula(KPIToPerformance param) {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		formulaKPIs = formulaKPIService.findAll();
 		formulaKPISelect = param.getFormulaKPI();
@@ -393,7 +396,7 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	}
 
 	@Inject
-	private KPIDepMonthService kpiDepMonthService;
+	private KPIToService KPI_TO_SERVICE;
 
 	public void updateFormula() {
 		notify = new Notify(FacesContext.getCurrentInstance());
@@ -401,12 +404,12 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 			if (formulaKPISelect == null) {
 				notify.warning("Chưa chọn công thức!");
 			} else {
-				for (int i = 0; i < listDepartPerformance.size(); i++) {
-					KPIDepPerformanceJPA kp = listDepartPerformance.get(i);
-					if (listDepartPerformance.get(i).getIndex() == kpy.getIndex()) {
+				for (int i = 0; i < listToPerformance.size(); i++) {
+					KPIToPerformance kp = listToPerformance.get(i);
+					if (listToPerformance.get(i).getIndex() == kpy.getIndex()) {
 						kpy.setFormulaKPI(formulaKPISelect);
 						kpy.setComputation(formulaKPISelect.getCode());
-						listDepartPerformance.set(i, kpy);
+						listToPerformance.set(i, kpy);
 						notify.success();
 						break;
 					}
@@ -417,25 +420,15 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		}
 	}
 
-	public List<InfoDepPerformance> getListInfoDepartPerformance() {
-		return listInfoDepartPerformance;
-	}
-
-	public void setListInfoDepartPerformance(List<InfoDepPerformance> listInfoDepartPerformance) {
-		this.listInfoDepartPerformance = listInfoDepartPerformance;
-	}
-
-	public List<KPIDepPerformanceJPA> getListDepartPerformance() {
-		return listDepartPerformance;
-	}
-
-	public void setListDepartPerformance(List<KPIDepPerformanceJPA> listDepartPerformance) {
-		this.listDepartPerformance = listDepartPerformance;
-	}
-
 	// End Thai
 
-	// End Thai
+	public List<InfoToPerformance> getListInfoToPerformance() {
+		return listInfoToPerformance;
+	}
+
+	public void setListInfoToPerformance(List<InfoToPerformance> listInfoToPerformance) {
+		this.listInfoToPerformance = listInfoToPerformance;
+	}
 
 	public int getYear() {
 		return year;
@@ -461,20 +454,12 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		this.codeDepart = codeDepart;
 	}
 
-	public KPIDepPerformanceJPA getKpiDepPerformanceUpdate() {
-		return kpiDepPerformanceUpdate;
+	public KPIToPerformance getKpiToPerformanceUpdate() {
+		return kpiToPerformanceUpdate;
 	}
 
-	public void setKpiDepPerformanceUpdate(KPIDepPerformanceJPA kpiDepPerformanceUpdate) {
-		this.kpiDepPerformanceUpdate = kpiDepPerformanceUpdate;
-	}
-
-	public KPIDepPerformanceJPA getKpiDepPerformance() {
-		return kpiDepPerformance;
-	}
-
-	public void setKpiDepPerformance(KPIDepPerformanceJPA kpiDepPerformance) {
-		this.kpiDepPerformance = kpiDepPerformance;
+	public void setKpiToPerformanceUpdate(KPIToPerformance kpiToPerformanceUpdate) {
+		this.kpiToPerformanceUpdate = kpiToPerformanceUpdate;
 	}
 
 	public List<FormulaKPI> getFormulaKPIs() {
@@ -493,11 +478,11 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		this.formulaKPISelect = formulaKPISelect;
 	}
 
-	public KPIDepPerformanceJPA getKpy() {
+	public KPIToPerformance getKpy() {
 		return kpy;
 	}
 
-	public void setKpy(KPIDepPerformanceJPA kpy) {
+	public void setKpy(KPIToPerformance kpy) {
 		this.kpy = kpy;
 	}
 
@@ -517,4 +502,11 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		this.enablePerformance = enablePerformance;
 	}
 
+	public KPIToPerformance getKpiToPerformance() {
+		return kpiToPerformance;
+	}
+
+	public void setKpiToPerformance(KPIToPerformance kpiToPerformance) {
+		this.kpiToPerformance = kpiToPerformance;
+	}
 }

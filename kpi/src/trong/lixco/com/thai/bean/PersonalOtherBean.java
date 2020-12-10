@@ -1,6 +1,5 @@
 package trong.lixco.com.thai.bean;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,15 +29,17 @@ import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.ejb.servicekpi.EmpPJobService;
 import trong.lixco.com.ejb.servicekpi.KPIPersonService;
 import trong.lixco.com.ejb.servicekpi.PositionJobService;
+import trong.lixco.com.ejb.thai.kpi.BehaviourPersonOtherService;
 import trong.lixco.com.ejb.thai.kpi.PersonalOtherDetailService;
 import trong.lixco.com.ejb.thai.kpi.PersonalOtherService;
 import trong.lixco.com.ejb.thai.kpi.PersonalPerformanceService;
-import trong.lixco.com.jpa.entitykpi.EmpPJob;
-import trong.lixco.com.jpa.entitykpi.KPIPerson;
+import trong.lixco.com.ejb.thai.kpi.PositionDontKPIService;
 import trong.lixco.com.jpa.entitykpi.PositionJob;
+import trong.lixco.com.jpa.thai.BehaviourPersonOther;
 import trong.lixco.com.jpa.thai.KPIPersonalOther;
 import trong.lixco.com.jpa.thai.KPIPersonalOtherDetail;
 import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
+import trong.lixco.com.jpa.thai.PositionDontKPI;
 import trong.lixco.com.servicepublic.EmployeeDTO;
 import trong.lixco.com.servicepublic.EmployeeServicePublic;
 import trong.lixco.com.servicepublic.EmployeeServicePublicProxy;
@@ -46,6 +48,7 @@ import trong.lixco.com.thai.apitrong.DepartmentDataService;
 import trong.lixco.com.thai.apitrong.PositionJobData;
 import trong.lixco.com.thai.apitrong.PositionJobDataService;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
+import trong.lixco.com.thai.bean.staticentity.MessageView;
 import trong.lixco.com.util.Notify;
 
 @Named
@@ -88,6 +91,16 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 	private MemberServicePublic MEMBER_SERVICE_PUBLIC;
 	DepartmentServicePublic DEPARTMENT_SERVICE_PUBLIC;
 
+	private List<BehaviourPersonOther> behaviourOthers;
+	private List<BehaviourPersonOther> behaviourOthersSelected;
+	private List<KPIPersonalOtherDetail> personDetails;
+	private List<KPIPersonalOtherDetail> personDetailsDeleted;
+
+	@Inject
+	private BehaviourPersonOtherService BEHAVIOUR_PERSON_OTHER_SERVICE;
+	@Inject
+	private PositionDontKPIService POSITION_DONT_KPI_SERVICE;
+
 	@Override
 	protected void initItem() {
 		sf = new SimpleDateFormat("dd/MM/yyyy");
@@ -97,6 +110,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 		daySearch = lc.getDayOfMonth();
 
 		listKPIPersonalOtherDetailUpdate = new ArrayList<>();
+		personDetailsDeleted = new ArrayList<>();
 
 		EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
 		MEMBER_SERVICE_PUBLIC = new MemberServicePublicProxy();
@@ -108,12 +122,24 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+		// neu danh sach nhan vien khong lam kpi rong
+		if (personalOthers.isEmpty()) {
+			kpiPersonalOthers = new ArrayList<>();
+		} else {
+			kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+		}
+
+		personDetails = new ArrayList<>();
 	}
 
 	public void searchItem() {
 		try {
-			kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+			// neu danh sach nhan vien khong lam kpi rong
+			if (personalOthers.isEmpty()) {
+				kpiPersonalOthers = new ArrayList<>();
+			} else {
+				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+			}
 		} catch (Exception e) {
 		}
 	}
@@ -140,34 +166,145 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 	}
 
-	public void ajaxHandleQuantityChange(KPIPersonalOtherDetail item) {
+	public void saveBehaviourDetail() {
 		try {
-			KPIPersonalOther itemSelected = item.getKpiPersonalOther();
-			// cap nhat so luong moi
-			KPIPersonalOtherDetail update = PERSONAL_OTHER_DETAIL_SERVICE.update(item);
-			// tinh lai tong so diem
-			if (update != null) {
-				List<KPIPersonalOtherDetail> totalDetail = PERSONAL_OTHER_DETAIL_SERVICE.find(itemSelected);
-				double totalPoint = 0;
-				for (int i = 0; i < totalDetail.size(); i++) {
-					totalPoint = totalPoint + totalDetail.get(i).getMinuspoint();
+			// personDetails
+			KPIPersonalOther personOtherTemp;
+			List<KPIPersonalOther> personOthers = PERSONAL_OTHER_SERVICE.find(null, monthSearch, yearSearch,
+					personSelected.getCodeEmp());
+			// kpi nhom khac da duoc tao
+			if (!personOthers.isEmpty()) {
+				personOtherTemp = personOthers.get(0);
+				if (personOtherTemp.isSignResult()) {
+					MessageView.WARN("KPI đã được duyệt không thể chỉnh sửa");
+					return;
 				}
-				itemSelected.setTotal(100 - totalPoint);
-				KPIPersonalOther updateOther = PERSONAL_OTHER_SERVICE.update(itemSelected);
-				// cap nhat lai danh sach other
-				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
-				// cap nhat lai danh sach detail
-				// details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
-			} else {
-				noticeError("Lỗi");
+				// List<KPIPersonalOtherDetail> details =
+				// PERSONAL_OTHER_DETAIL_SERVICE.find(personOther);
+				// chi tiet hanh vi da duoc luu chua
+				if (personDetails.size() != 0) {
+					// xoa danh sach hanh vi
+					for (int p = 0; p < personDetailsDeleted.size(); p++) {
+						PERSONAL_OTHER_DETAIL_SERVICE.delete(personDetailsDeleted.get(p));
+					}
+
+					// for(int i = 0; i < details.size(); i++){
+					for (int j = 0; j < personDetails.size(); j++) {
+						List<KPIPersonalOtherDetail> listDetailByContent = PERSONAL_OTHER_DETAIL_SERVICE
+								.find(personDetails.get(j).getContent(), personOtherTemp.getId());
+						// da co hanh vi ben bang chi tiet
+						if (listDetailByContent.size() != 0) {
+							listDetailByContent.get(0).setQuantity(personDetails.get(j).getQuantity());
+							KPIPersonalOtherDetail check = PERSONAL_OTHER_DETAIL_SERVICE
+									.update(listDetailByContent.get(0));
+							if (check == null) {
+								System.out.println("loi");
+							}
+						} else {
+							personDetails.get(j).setKpiPersonalOther(personOtherTemp);
+							KPIPersonalOtherDetail check = PERSONAL_OTHER_DETAIL_SERVICE.create(personDetails.get(j));
+							if (check.getId() == null) {
+								System.out.println("Loi: khong luu duoc chi tiet kpi ca nhan khac");
+							}
+						}
+					}
+					// Tinh tong so diem con lai theo tung nhan vien
+					List<KPIPersonalOtherDetail> listDetailByContent = PERSONAL_OTHER_DETAIL_SERVICE
+							.find(personOtherTemp);
+					if (listDetailByContent.size() != 0) {
+						double tongdiem;
+						double sodiembitru = 0;
+						for (int k = 0; k < listDetailByContent.size(); k++) {
+							sodiembitru = sodiembitru + (listDetailByContent.get(k).getMinuspoint()
+									* listDetailByContent.get(k).getQuantity());
+						}
+						tongdiem = 100 - sodiembitru;
+						// cap nhat kpi ca nhan khac
+						// query personOtherTemp truoc vi khi update lay data cu
+						personOtherTemp = PERSONAL_OTHER_SERVICE.findById(personOtherTemp.getId());
+						personOtherTemp.setTotal(tongdiem);
+						KPIPersonalOther kOther = PERSONAL_OTHER_SERVICE.update(personOtherTemp);
+						if (kOther != null) {
+							kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+						} else {
+							System.out.println("loi");
+						}
+					}
+
+					// notify.success("Thành công");
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_INFO, "Thông báo", "Thành công"));
+					// }
+				} else {
+					// notify.warning("Không có thông tin thay đổi");
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_WARN, "Thông báo", "Không có thông tin thay đổi"));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void showDialogOrien(KPIPersonalOther personSelected) {
-		this.personSelected = personSelected;
+	public void showBehaviour() {
+		behaviourOthers = BEHAVIOUR_PERSON_OTHER_SERVICE.findAll();
+	}
+
+	public void addBehaviourDetail() {
+		for (BehaviourPersonOther b : behaviourOthers) {
+			if (b.isSelect()) {
+				// kiem tra thu co chua moi cho them vao
+				boolean isExist = false;
+				for (int i = 0; i < personDetails.size(); i++) {
+					if (b.getContent().equals(personDetails.get(i).getContent())) {
+						isExist = true;
+						break;
+					}
+				}
+				if (!isExist) {
+					KPIPersonalOtherDetail k = new KPIPersonalOtherDetail();
+					k.setContent(b.getContent());
+					k.setMinuspoint(b.getMinusPoint());
+					k.setQuantity(1);
+					personDetails.add(k);
+				}
+			}
+		}
+	}
+
+	public void addViTriChucVu() {
+		// Them moi
+		List<KPIPersonalOtherDetail> listDetailAdd = new ArrayList<>();
+		try {
+			for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
+				List<KPIPersonalPerformance> vitrichucvu = listInfoPersonalPerformances.get(i)
+						.getPersonalPerformances();
+				for (int j = 0; j < vitrichucvu.size(); j++) {
+					if (vitrichucvu.get(j).isSelect()) {
+						// kiem tra da duoc them truoc do chua
+						boolean isExist = false;
+						for (int k = 0; k < personDetails.size(); k++) {
+							if (vitrichucvu.get(j).getContent().equals(personDetails.get(k).getContent())) {
+								isExist = true;
+								break;
+							}
+						}
+						if (!isExist) {
+							KPIPersonalOtherDetail k = new KPIPersonalOtherDetail();
+							k.setContent(vitrichucvu.get(j).getContent());
+							k.setMinuspoint(vitrichucvu.get(j).getMinuspoint());
+							k.setQuantity(1);
+							personDetails.add(k);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	public void showVitriChucVuCongViec() {
 		listInfoPersonalPerformances = new ArrayList<>();
 		notify = new Notify(FacesContext.getCurrentInstance());
 		if (personSelected.getId() != null) {
@@ -235,13 +372,142 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 				}
 				// End Thai
 				RequestContext context = RequestContext.getCurrentInstance();
-				context.execute("PF('widgetKPIPersonalOther').show();");
-				return;
+				context.execute("PF('wgvTableViTriChucVu').show();");
 			}
 			if (!existPosition) {
 				noticeError("Không tìm thấy vị trí công việc phù hợp");
 				return;
 			}
+		}
+	}
+
+	public void removePersonDetail(KPIPersonalOtherDetail item) {
+		List<KPIPersonalOtherDetail> personDetailsNew = new ArrayList<>();
+		for (int i = 0; i < personDetails.size(); i++) {
+			if (!personDetails.get(i).getContent().equals(item.getContent())) {
+				personDetailsNew.add(personDetails.get(i));
+			} else {
+				personDetailsDeleted.add(personDetails.get(i));
+			}
+		}
+		personDetails = new ArrayList<>();
+		personDetails.addAll(personDetailsNew);
+	}
+
+	public void ajaxHandleQuantityChange(KPIPersonalOtherDetail item) {
+		try {
+			KPIPersonalOther itemSelected = item.getKpiPersonalOther();
+			// cap nhat so luong moi
+			KPIPersonalOtherDetail update = PERSONAL_OTHER_DETAIL_SERVICE.update(item);
+			// tinh lai tong so diem
+			if (update != null) {
+				List<KPIPersonalOtherDetail> totalDetail = PERSONAL_OTHER_DETAIL_SERVICE.find(itemSelected);
+				double totalPoint = 0;
+				for (int i = 0; i < totalDetail.size(); i++) {
+					totalPoint = totalPoint + totalDetail.get(i).getMinuspoint();
+				}
+				itemSelected.setTotal(100 - totalPoint);
+				KPIPersonalOther updateOther = PERSONAL_OTHER_SERVICE.update(itemSelected);
+				// cap nhat lai danh sach other
+				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+				// cap nhat lai danh sach detail
+				// details = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+			} else {
+				noticeError("Lỗi");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void showDialogOrien(KPIPersonalOther personSelected) {
+		this.personSelected = personSelected;
+		personDetailsDeleted = new ArrayList<>();
+		// listInfoPersonalPerformances = new ArrayList<>();
+		notify = new Notify(FacesContext.getCurrentInstance());
+		if (personSelected.getId() != null) {
+			// // tat ca vi tri cong viec
+			// positionJobs = new ArrayList<PositionJob>();
+			// // List<EmpPJob> empPJobs =
+			// // empPJobService.findByEmployee(personSelected.getCodeEmp());
+			//
+			// // tim vi tri cong viec theo nhan vien
+			// PositionJobData[] empPJobs =
+			// PositionJobDataService.vttheonhanvien(personSelected.getCodeEmp());
+			// boolean existPosition = true;
+			// if (empPJobs == null || empPJobs.length == 0) {
+			// existPosition = false;
+			// }
+			// // co vi tri cong viec
+			// else {
+			// for (int i = 0; i < empPJobs.length; i++) {
+			// PositionJob pj =
+			// POSITION_JOB_SERVICE.findByCode(empPJobs[i].getCode());
+			// if (pj != null)
+			// positionJobs.add(pj);
+			// }
+			//
+			// if (positionJobs.size() != 0)
+			// positionJobSelect = positionJobs.get(0);
+			// // Thai
+			// // Tao danh sach code PJob theo tung nhan vien
+			// List<String> listCodePJob = new ArrayList<>();
+			// for (int i = 0; i < positionJobs.size(); i++) {
+			// listCodePJob.add(positionJobs.get(i).getCode());
+			// }
+			// // Tao list info
+			// if (!listCodePJob.isEmpty()) {
+			// listKPIPersonalByEmployee =
+			// PERSONAL_PERFORMANCE_SERVICE.find(listCodePJob);
+			// Map<String, List<KPIPersonalPerformance>> datagroups11 =
+			// listKPIPersonalByEmployee.stream()
+			// .collect(Collectors.groupingBy(a -> a.getCodePJob(),
+			// Collectors.toList()));
+			//
+			// listKPIPersonalByEmployee = new ArrayList<>();
+			// for (String key : datagroups11.keySet()) {
+			// List<KPIPersonalPerformance> invs = datagroups11.get(key);
+			// try {
+			// InfoPersonalPerformance tgi = new InfoPersonalPerformance();
+			// tgi.setPositionJobName(POSITION_JOB_SERVICE.findByCode(key).getName());
+			// tgi.setPersonalPerformances(invs);
+			// listInfoPersonalPerformances.add(tgi);
+			// } catch (Exception e) {
+			// // TODO: handle exception
+			// }
+			// }
+			// // kiem tra bang other_detail row nao co set selecte = true;
+			// for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
+			// this.details =
+			// PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+			// for (int j = 0; j <
+			// listInfoPersonalPerformances.get(i).getPersonalPerformances().size();
+			// j++) {
+			// for (int k = 0; k < details.size(); k++) {
+			// if
+			// (listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j).getContent()
+			// .equals(details.get(k).getContent())) {
+			// listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
+			// .setSelect(true);
+			// listInfoPersonalPerformances.get(i).getPersonalPerformances().get(j)
+			// .setQuantity(details.get(k).getQuantity());
+			// break;
+			// }
+			// }
+			// }
+			// }
+			// }
+			// // End Thai
+			// // tim danh muc hanh vi vi pham
+			personDetails = PERSONAL_OTHER_DETAIL_SERVICE.find(personSelected);
+			RequestContext context = RequestContext.getCurrentInstance();
+			context.execute("PF('widgetKPIPersonalOther').show();");
+			return;
+			// }
+			// if (!existPosition) {
+			// noticeError("Không tìm thấy vị trí công việc phù hợp");
+			// return;
+			// }
 		} else {
 			notify.warning("Chưa lưu thông tin phòng ban/nhân viên!");
 		}
@@ -251,15 +517,19 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 	public List<String> createAllCodeMemberOther() throws RemoteException {
 		List<String> personalOthersTemp = new ArrayList<>();
 		Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findId(memberPlaying.getDepartment().getId());
+		Department depTempLv2 = null;
+		if (depTemp.getLevelDep().getLevel() == 3) {
+			depTempLv2 = depTemp.getDepartment();
+		}
+		if (depTemp.getLevelDep().getLevel() == 2) {
+			depTempLv2 = depTemp;
+		}
 		// tim tat ca cac to duoi cap phong
-		DepartmentData[] totalDepByDepartmentArray = DepartmentDataService.timtheophongquanly(depTemp.getCode());
+		DepartmentData[] totalDepByDepartmentArray = DepartmentDataService.timtheophongquanly(depTempLv2.getCode());
 		List<DepartmentData> totalDepByDepartment = new ArrayList<>(Arrays.asList(totalDepByDepartmentArray));
 		try {
 			// toan bo nhan vien nhom khac
 			List<EmployeeDTO> allMemberOther = new ArrayList<>();
-			// tat ca nhan vien binh thuong
-			List<EmployeeDTO> allMemberNormal = new ArrayList<>();
-
 			// Phong ban
 			List<String> depList = new ArrayList<>();
 			for (int t = 0; t < totalDepByDepartment.size(); t++) {
@@ -272,46 +542,64 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 			EmployeeDTO[] allMemberTemp = EMPLOYEE_SERVICE_PUBLIC.findByDep(depArray);
 			// tat ca nhan vien
 			List<EmployeeDTO> allMember = Arrays.asList(allMemberTemp);
-			for (int i = 0; i < allMember.size(); i++) {
-				KPIPerson temp = KPI_PERSON_SERVICE.findRangeNew(allMember.get(i).getCode(), monthSearch, yearSearch);
-				// kiem tra co hay khong
-				if (temp != null) {
-					allMemberNormal.add(allMember.get(i));
-				} else {
-					// neu khong phai truong phong thi them vao
-					if (!allMember.get(i).getCode().equals(depTemp.getCodeMem())) {
+			List<PositionDontKPI> allPositionDontKPI = POSITION_DONT_KPI_SERVICE.findAll();
+			if (allPositionDontKPI.size() == 0) {
+				MessageView.ERROR("Không có vị trí chức vụ");
+				return null;
+			} else {
+				for (int i = 0; i < allMember.size(); i++) {
+					// tim vi tri cong viec theo nhan vien
+					boolean vitriKhongLamKPI = false;
+					PositionJobData[] empPJobs = PositionJobDataService.vttheonhanvien(allMember.get(i).getCode());
+					// kiem tra vi tri chuc vu khong lam kpi
+					for (int k = 0; k < empPJobs.length; k++) {
+						for (int j = 0; j < allPositionDontKPI.size(); j++) {
+							if (empPJobs[k].getCode().equals(allPositionDontKPI.get(j).getPositionjob().getCode())) {
+								vitriKhongLamKPI = true;
+								break;
+							}
+						}
+						break;
+					}
+					if (vitriKhongLamKPI) {
 						allMemberOther.add(allMember.get(i));
 					}
+					// neu khong phai truong phong thi them vao
+					// if
+					// (!allMember.get(i).getCode().equals(depTemp.getCodeMem()))
+					// {
+					// allMemberOther.add(allMember.get(i));
+					// }
 				}
+				// Tao list tring toan bo code employee nhom khac
+				for (EmployeeDTO m : allMemberOther) {
+					personalOthersTemp.add(m.getCode());
+				}
+				return personalOthersTemp;
 			}
-			// Tao list tring toan bo code employee nhom khac
-			for (EmployeeDTO m : allMemberOther) {
-				personalOthersTemp.add(m.getCode());
-			}
-			return personalOthersTemp;
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			return null;
 		}
 	}
 
-	public void create() throws RemoteException {
-		this.personalOthers = this.createAllCodeMemberOther();
-		if (allowSave(null)) {
-			// kiem tra -> ngay cua thang hien tai
-			java.util.Date date = new Date();
-			Calendar currentDate = Calendar.getInstance();
-			currentDate.setTime(date);
-			int monthCurrent = currentDate.get(Calendar.MONTH) + 1;
-			int yearCurrent = currentDate.get(Calendar.YEAR);
-			if (monthSearch != monthCurrent || yearCurrent != yearSearch) {
-				noticeError("Không thể tạo mới");
-				return;
-			}
-			// check cho phep tao tu ngay 10
-			if (daySearch <= 5) {
-				noticeError("Chỉ được tạo sau ngày 10");
-			} else {
+	public void create() {
+		try {
+			this.personalOthers = this.createAllCodeMemberOther();
+			if (allowSave(null)) {
+				// kiem tra -> ngay cua thang hien tai
+				java.util.Date date = new Date();
+				Calendar currentDate = Calendar.getInstance();
+				currentDate.setTime(date);
+				int monthCurrent = currentDate.get(Calendar.MONTH) + 1;
+				int yearCurrent = currentDate.get(Calendar.YEAR);
+				// khong cho tao kpi thang truoc hoac thang sau
+				// if (monthSearch != monthCurrent || yearCurrent != yearSearch)
+				// {
+				// noticeError("Không thể tạo mới");
+				// return;
+				// }
 				for (int i = 0; i < personalOthers.size(); i++) {
 					EmployeeDTO memberTemp = EMPLOYEE_SERVICE_PUBLIC.findByCode(personalOthers.get(i));
 					KPIPersonalOther temp = new KPIPersonalOther();
@@ -334,9 +622,11 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 				}
 				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
 				notice("Thành công");
+			} else {
+				noticeError("Không có quyền");
 			}
-		} else {
-			noticeError("Không có quyền");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -412,7 +702,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 				}
 			}
 			kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
-			notice("Thanh cong");
+			notice("Thành công");
 		} else {
 			noticeError("Không có quyền cập nhật");
 		}
@@ -673,4 +963,27 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 		this.listInfoPersonalPerformances = listInfoPersonalPerformances;
 	}
 
+	public List<BehaviourPersonOther> getBehaviourOthers() {
+		return behaviourOthers;
+	}
+
+	public void setBehaviourOthers(List<BehaviourPersonOther> behaviourOthers) {
+		this.behaviourOthers = behaviourOthers;
+	}
+
+	public List<BehaviourPersonOther> getBehaviourOthersSelected() {
+		return behaviourOthersSelected;
+	}
+
+	public void setBehaviourOthersSelected(List<BehaviourPersonOther> behaviourOthersSelected) {
+		this.behaviourOthersSelected = behaviourOthersSelected;
+	}
+
+	public List<KPIPersonalOtherDetail> getPersonDetails() {
+		return personDetails;
+	}
+
+	public void setPersonDetails(List<KPIPersonalOtherDetail> personDetails) {
+		this.personDetails = personDetails;
+	}
 }

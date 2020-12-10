@@ -18,6 +18,7 @@
 </style>
 		<h3 style="margin: 0px">KPI cá nhân (Nhóm khác)</h3>
 		<p:separator />
+		<p:growl id="growl" showDetail="true" sticky="false" />
 		<h:form id="menuformid">
 			<p:tabView id="tv" widgetVar="myTab">
 				<p:tab title="Danh Sách">
@@ -31,19 +32,25 @@
 									<p:spinner size="10" value="#{personalOtherBean.monthSearch}"
 										min="1" max="12">
 										<p:ajax process="@this"
-											listener="#{personalOtherBean.searchItem()}" update="tableid"
-											oncomplete="PF('dtlistkpiperson').clearFilters()" />
+											listener="#{personalOtherBean.searchItem()}"
+											update="tableid_new"
+											oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
 									</p:spinner>
 									<p:outputLabel value="Năm" />
 									<p:spinner size="10" value="#{personalOtherBean.yearSearch}"
 										min="2017" max="2050">
-										<p:ajax process="@this" />
+										<p:ajax process="@this"
+											listener="#{personalOtherBean.searchItem()}"
+											update="tableid_new"
+											oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
 									</p:spinner>
 								</h:panelGrid>
 								<h:panelGrid columns="1">
 									<p:commandButton type="submit" value="Tạo mới" process="@this"
 										id="btnew" action="#{personalOtherBean.create()}"
-										update="tableid" icon="ui-icon-document" />
+										update="menuformid:tv:list:tableid_new"
+										icon="ui-icon-document"
+										oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
 								</h:panelGrid>
 								<h:panelGrid columns="2" style="width:100%" cellspacing="10">
 									<p:selectOneMenu
@@ -66,17 +73,17 @@
 						</p:panel>
 						<div style="clear: both" />
 						<p:dataTable value="#{personalOtherBean.kpiPersonalOthers}"
-							widgetVar="dtlistkpiperson" styleClass="tableparent"
+							widgetVar="dtlistkpiperson_new" styleClass="tableparent"
 							paginator="true" paginatorPosition="bottom" rows="50"
 							scrollable="true" scrollHeight="400"
 							filteredValue="#{personalPerformanceOthersBean.kPIPersonFilters}"
-							id="tableid" var="item">
+							id="tableid_new" var="item">
 							<p:ajax event="rowSelect"
 								listener="#{personalPerformanceOthersBean.showEdit}" />
 							<p:column headerText="..." style="width:10px; text-align:center">
 								<p:commandButton icon="ui-icon-closethick"
 									style="margin-left: -9px;background: none;border: none; box-shadow: none;"
-									update="tableid" styleClass="btnoneformat" process="@this"
+									update="tableid_new" styleClass="btnoneformat" process="@this"
 									actionListener="#{personalOtherBean.removeKPIPersonOther(item)}" />
 							</p:column>
 							<p:column headerText="Duyệt KQ"
@@ -103,11 +110,11 @@
 								filterFunction="#{abstractCustomFilter.filterByText}">
 								<h:outputText value="#{item.nameEmp}" />
 							</p:column>
-							<p:column headerText="Thái độ hành vi"
+							<p:column headerText="Chi tiết"
 								style="width:15px;text-align:center">
 								<p:commandLink type="submit" value="Thêm"
 									actionListener="#{personalOtherBean.showDialogOrien(item)}"
-									update=":dialogKPIPersonalOther,:messages,:menuformid:tv:list:tableid"
+									update=":dialogKPIPersonalOther,:messages,:menuformid:tv:list:tableid_new"
 									process="@this" icon="ui-icon-plus"
 									style="font-style:italic;font-weight:bold" />
 							</p:column>
@@ -121,9 +128,141 @@
 		</h:form>
 
 		<p:dialog widgetVar="widgetKPIPersonalOther" resizable="false"
-			width="700" closeOnEscape="true" id="idKPIPersonalOtherBehaviour"
-			header="Bảng thái độ/hành vi">
+			width="700" height="500" closeOnEscape="true"
+			id="idKPIPersonalOtherBehaviour" header="Bảng chi tiết vi phạm"
+			modal="true">
 			<h:form id="dialogKPIPersonalOther">
+				<p:fieldset legend="Danh sách" toggleable="true" toggleSpeed="500"
+					collapsed="false"
+					style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;margin-top:10px"
+					styleClass="toggleabldetail">
+					<p:dataTable var="item" styleClass="tableformat1" id="tableidHV"
+						scrollable="true" value="#{personalOtherBean.personDetails}"
+						scrollWidth="100%">
+						<f:facet name="header">
+							<p:commandButton action="#{personalOtherBean.showBehaviour()}"
+								oncomplete="PF('dialogBeh').show();" process="@this"
+								value="Thêm thái độ hành vi" style="float:left"
+								update=":dialogBehid" icon="ui-icon-plus" />
+							<p:commandButton
+								action="#{personalOtherBean.showVitriChucVuCongViec()}"
+								process="@this" value="Vị trí/chức vụ công việc"
+								style="float:left" update="formViTriChucVu" icon="ui-icon-plus" />
+							<p:commandButton value="Lưu/cập nhật"
+								action="#{personalOtherBean.saveBehaviourDetail()}"
+								style="float:right"
+								update="growl, menuformid:tv:list:tableid_new" />
+							<div style="clear: both;" />
+						</f:facet>
+						<p:column headerText="..." style="width:6px; text-align:center">
+							<p:commandButton icon="ui-icon-closethick"
+								style="margin-left: -9px;background: none;border: none; box-shadow: none;"
+								update="tableidHV" styleClass="btnoneformat" process="@this"
+								actionListener="#{personalOtherBean.removePersonDetail(item)}" />
+						</p:column>
+						<p:column headerText="Tiêu chí/ Mục tiêu đánh giá" width="170">
+							<p:outputLabel value="#{item.content}" rows="2"
+								autoResize="false" />
+						</p:column>
+						<p:column headerText="Điểm trừ (%)" width="60"
+							style="text-align:center">
+							<h:outputText value="#{item.minuspoint/100}" rows="2"
+								style="text-align:center">
+								<f:convertNumber pattern="##0%" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Số lượng" width="40">
+							<p:spinner size="10" value="#{item.quantity}" min="1" max="10" />
+						</p:column>
+					</p:dataTable>
+				</p:fieldset>
+				<!-- o day ne -->
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="widgetKPIPersonalOtherBehaviour"
+			resizable="false" width="700" closeOnEscape="true"
+			header="Chi tiết thái độ/hành vi">
+			<h:form id="formDialogKPIPersonalOtherBehaviour">
+				<p:dataTable var="item" styleClass="tableformat1" id="tableidHV"
+					paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
+					rowsPerPageTemplate="20,40,60" sortBy="#{item.id}"
+					expandableRowGroups="true" style="width:100%"
+					paginatorPosition="bottom" scrollHeight="370"
+					value="#{personalOtherBean.details}" rowIndexVar="rowIndex">
+
+					<p:column headerText="..." style="width:6px; text-align:center">
+						<p:commandButton icon="ui-icon-closethick"
+							style="margin-left: -9px;background: none;border: none; box-shadow: none;"
+							update=":menuformid:tv:list:tableid_new,tableidHV"
+							styleClass="btnoneformat" process="@this"
+							actionListener="#{personalOtherBean.removeDetail(item)}" />
+					</p:column>
+					<p:column headerText="STT" width="5" style="text-align:center">
+						<p:outputLabel value="#{rowIndex+1}" rows="2"
+							style="text-align:center" />
+					</p:column>
+					<p:column headerText="Tiêu chí/ Mục tiêu đánh giá" width="170">
+						<p:outputLabel value="#{item.content}" rows="2" autoResize="false" />
+					</p:column>
+					<p:column headerText="Điểm trừ (%)" width="60"
+						style="text-align:center">
+						<h:outputText value="#{item.minuspoint/100}" rows="2"
+							style="text-align:center">
+							<f:convertNumber pattern="##0%" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dialogBeh" resizable="false" width="700"
+			closeOnEscape="true" header="Danh mục thái độ - hành vi" modal="true">
+			<h:form id="dialogBehid">
+				<p:dataTable value="#{personalOtherBean.behaviourOthers}"
+					lazy="true" paginatorPosition="bottom"
+					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"
+					rowKey="#{item.id}" scrollable="true" style="width:100%"
+					id="tablebehid" scrollHeight="470" widgetVar="databehtb"
+					resizableColumns="true" var="item">
+					<f:facet name="header">
+						<div style="float: right">
+							<p:commandButton type="submit" value="Thêm"
+								update="dialogKPIPersonalOther:tableidHV"
+								action="#{personalOtherBean.addBehaviourDetail()}"
+								icon="ui-icon-arrowreturnthick-1-s" />
+						</div>
+						<div style="clear: both;" />
+					</f:facet>
+					<p:column headerText="..." style="width:20px;">
+						<p:selectBooleanCheckbox value="#{item.select}"
+							rendered="#{!item.header}">
+							<p:ajax process="@this" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column headerText="STT" style="width:20px">
+						<h:outputText value="#{item.code}"
+							styleClass="#{item.header==true?'textboldoutput':''}" />
+					</p:column>
+					<p:column headerText="Nội dung" style="text-align:left">
+						<h:outputText value="#{item.content}"
+							styleClass="#{item.header==true?'textboldoutput':''}" />
+					</p:column>
+					<p:column headerText="Điểm trừ" width="80"
+						style="text-align:center">
+						<h:outputText value="#{item.header!=true?item.minusPoint/100:''}">
+							<f:convertNumber pattern="##0%" />
+						</h:outputText>
+					</p:column>
+					<f:facet name="footer">
+						<div style="clear: both;" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="wgvTableViTriChucVu" resizable="false"
+			width="700" closeOnEscape="true" header="Vị trí chức vụ công việc"
+			modal="true">
+			<h:form id="formViTriChucVu">
 				<p:dataTable
 					value="#{personalOtherBean.listInfoPersonalPerformances}"
 					id="tbreportimptargetsale" expandableRowGroups="true"
@@ -131,9 +270,10 @@
 					scrollHeight="500" resizableColumns="true" var="itemp">
 					<f:facet name="header">
 						<div style="float: right">
-							<p:commandButton type="submit" value="Lưu/cập nhật"
-								action="#{personalOtherBean.updateListKPIPersonalOtherNew()}"
-								update=":menuformid:tv:list:tableid" icon="fa fa-save" />
+							<p:commandButton type="submit" value="Thêm"
+								action="#{personalOtherBean.addViTriChucVu()}"
+								update="dialogKPIPersonalOther:tableidHV"
+								icon="ui-icon-arrowreturnthick-1-s" />
 						</div>
 						<div style="clear: both;" />
 					</f:facet>
@@ -170,51 +310,11 @@
 									<f:convertNumber pattern="##0%" />
 								</h:outputText>
 							</p:column>
-							<p:column headerText="Số lượng" style="width:40px">
-								<p:spinner size="10" value="#{item.quantity}" min="1" max="10">
-									<p:ajax process="@this" update=":menuformid:tv:list:tableid" />
-								</p:spinner>
-							</p:column>
 							<f:facet name="footer">
 								<div style="clear: both;" />
 							</f:facet>
 						</p:dataTable>
 					</p:rowExpansion>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-		<p:dialog widgetVar="widgetKPIPersonalOtherBehaviour"
-			resizable="false" width="700" closeOnEscape="true"
-			header="Chi tiết thái độ/hành vi">
-			<h:form id="formDialogKPIPersonalOtherBehaviour">
-				<p:dataTable var="item" styleClass="tableformat1" id="tableidHV"
-					paginator="true" rows="40" rowKey="#{item.id}" scrollable="true"
-					rowsPerPageTemplate="20,40,60" sortBy="#{item.id}"
-					expandableRowGroups="true" style="width:100%"
-					paginatorPosition="bottom" scrollHeight="370"
-					value="#{personalOtherBean.details}" rowIndexVar="rowIndex">
-
-					<p:column headerText="..." style="width:6px; text-align:center">
-						<p:commandButton icon="ui-icon-closethick"
-							style="margin-left: -9px;background: none;border: none; box-shadow: none;"
-							update=":menuformid:tv:list:tableid,tableidHV"
-							styleClass="btnoneformat" process="@this"
-							actionListener="#{personalOtherBean.removeDetail(item)}" />
-					</p:column>
-					<p:column headerText="STT" width="5" style="text-align:center">
-						<p:outputLabel value="#{rowIndex+1}" rows="2"
-							style="text-align:center" />
-					</p:column>
-					<p:column headerText="Tiêu chí/ Mục tiêu đánh giá" width="170">
-						<p:outputLabel value="#{item.content}" rows="2" autoResize="false" />
-					</p:column>
-					<p:column headerText="Điểm trừ (%)" width="60"
-						style="text-align:center">
-						<h:outputText value="#{item.minuspoint/100}" rows="2"
-							style="text-align:center">
-							<f:convertNumber pattern="##0%" />
-						</h:outputText>
-					</p:column>
 				</p:dataTable>
 			</h:form>
 		</p:dialog>

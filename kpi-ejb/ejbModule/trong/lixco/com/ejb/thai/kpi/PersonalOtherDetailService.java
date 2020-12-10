@@ -45,19 +45,21 @@ public class PersonalOtherDetailService extends AbstractService<KPIPersonalOther
 	protected Class<KPIPersonalOtherDetail> getEntityClass() {
 		return KPIPersonalOtherDetail.class;
 	}
+
 	@Override
 	public boolean delete(KPIPersonalOtherDetail account) {
 		boolean result = true;
 		try {
-			KPIPersonalOtherDetail a=findById(account.getId());
+			KPIPersonalOtherDetail a = findById(account.getId());
 			getEntityManager().remove(a);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = false;
-//			getLogger().error(e.getLocalizedMessage());
+			// getLogger().error(e.getLocalizedMessage());
 		}
 		return result;
 	}
+
 	public List<KPIPersonalOtherDetail> find(KPIPersonalOther kpiPersonalOther) {
 		// primary
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -66,6 +68,31 @@ public class PersonalOtherDetailService extends AbstractService<KPIPersonalOther
 		List<Predicate> queries = new ArrayList<>();
 		if (kpiPersonalOther != null) {
 			Predicate nameDepartQuery = cb.equal(root.get("kpiPersonalOther"), kpiPersonalOther);
+			queries.add(nameDepartQuery);
+		}
+		Predicate data[] = new Predicate[queries.size()];
+		for (int i = 0; i < queries.size(); i++) {
+			data[i] = queries.get(i);
+		}
+		Predicate finalPredicate = cb.and(data);
+		cq.where(finalPredicate);
+		TypedQuery<KPIPersonalOtherDetail> query = em.createQuery(cq);
+		List<KPIPersonalOtherDetail> results = query.getResultList();
+		return results;
+	}
+
+	public List<KPIPersonalOtherDetail> find(String content, long kPIPersonalOtherId) {
+		// primary
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPersonalOtherDetail> cq = cb.createQuery(KPIPersonalOtherDetail.class);
+		Root<KPIPersonalOtherDetail> root = cq.from(KPIPersonalOtherDetail.class);
+		List<Predicate> queries = new ArrayList<>();
+		if (content != null) {
+			Predicate nameDepartQuery = cb.equal(root.get("content"), content);
+			queries.add(nameDepartQuery);
+		}
+		if (kPIPersonalOtherId != 0) {
+			Predicate nameDepartQuery = cb.equal(root.get("kpiPersonalOther").get("id"), kPIPersonalOtherId);
 			queries.add(nameDepartQuery);
 		}
 		Predicate data[] = new Predicate[queries.size()];
