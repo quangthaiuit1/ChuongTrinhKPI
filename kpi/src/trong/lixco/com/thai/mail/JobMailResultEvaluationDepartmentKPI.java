@@ -20,8 +20,8 @@ import trong.lixco.com.account.servicepublics.DepartmentServicePublicProxy;
 import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.jpa.entitykpi.KPIDepMonth;
-import trong.lixco.com.thai.bean.Mail;
 import trong.lixco.com.jpa.entitykpi.KPIPerson;
+import trong.lixco.com.thai.bean.staticentity.Mail;
 
 public class JobMailResultEvaluationDepartmentKPI extends AbstractBean<KPIPerson> implements Job {
 	@Inject

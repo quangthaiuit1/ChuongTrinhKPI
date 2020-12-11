@@ -138,7 +138,7 @@ public class EmployeeDataService {
 	}
 
 	private static String process(String link) throws Exception {
-		URL url = new URL(StaticPath.getPathCenter() + "/api/" + NAME + link);
+		URL url = new URL("http://192.168.0.5" + "/api/" + NAME + link);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
 		conn.setRequestMethod("GET");
@@ -163,6 +163,20 @@ public class EmployeeDataService {
 			DataResponseAPI ketqua = gson.fromJson(data, DataResponseAPI.class);
 			EmployeeData[] employeeDatas = gson.fromJson(ketqua.getDt(), EmployeeData[].class);
 			return employeeDatas;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public static EmployeeData[] timtheophongbancomail(String param) {
+		try {
+			String link = "?cm=nvtheophongbanhaveemail&dt=" + param;
+			String data = process(link);
+			DataResponseAPI ketqua = gson.fromJson(data, DataResponseAPI.class);
+			EmployeeData[] departmentDatas = gson.fromJson(ketqua.getDt(), EmployeeData[].class);
+			return departmentDatas;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

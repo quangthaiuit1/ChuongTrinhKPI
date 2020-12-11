@@ -10,10 +10,18 @@ import trong.lixco.com.jpa.entitykpi.PositionJob;
 @Entity
 @Table(name = "position_dont_kpi")
 public class PositionDontKPI extends AbstractEntity {
-	
+
 	@OneToOne
 	private PositionJob positionjob;
 
+	public PositionDontKPI() {
+		super();
+	}
+
+	public PositionDontKPI(PositionJob positionjob) {
+		super();
+		this.positionjob = positionjob;
+	}
 
 	public PositionJob getPositionjob() {
 		return positionjob;
