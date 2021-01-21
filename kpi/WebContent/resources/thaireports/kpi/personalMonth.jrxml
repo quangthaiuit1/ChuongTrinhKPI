@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="personalMonth" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="bbf823c1-4c6c-47e8-8073-598fa034c7d7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="listKPIDepartMonthByYearDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
@@ -7,6 +7,7 @@
 	<parameter name="year" class="java.lang.Integer"/>
 	<parameter name="month" class="java.lang.Integer"/>
 	<parameter name="department" class="java.lang.String"/>
+	<parameter name="location" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -59,39 +60,52 @@
 				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="222" y="30" width="96" height="14" forecolor="#0E5EC7" uuid="3a7e948f-c2c0-4baf-8305-262ef712055a"/>
+				<reportElement x="211" y="30" width="96" height="14" forecolor="#0E5EC7" uuid="3a7e948f-c2c0-4baf-8305-262ef712055a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<text><![CDATA[Khu vực   :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="222" y="44" width="95" height="20" forecolor="#0E5EC7" uuid="266efb98-4c18-4621-bbfb-a2962d1e1dcb"/>
+				<reportElement x="211" y="44" width="95" height="20" forecolor="#0E5EC7" uuid="266efb98-4c18-4621-bbfb-a2962d1e1dcb"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<text><![CDATA[Thời điểm: Tháng]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="313" y="44" width="52" height="20" forecolor="#0E5EC7" uuid="5eca0cbe-724e-4d76-8635-be03de5e5723"/>
+				<reportElement x="302" y="44" width="52" height="20" forecolor="#0E5EC7" uuid="5eca0cbe-724e-4d76-8635-be03de5e5723"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="FontReport" size="12" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{month}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="325" y="30" width="60" height="14" forecolor="#0E5EC7" uuid="066a820a-a40b-4945-9418-84ca00d2f1e4"/>
+				<reportElement x="360" y="30" width="64" height="14" forecolor="#0E5EC7" uuid="066a820a-a40b-4945-9418-84ca00d2f1e4"/>
+				<box>
+					<pen lineColor="#0E5EC7"/>
+				</box>
 				<textElement>
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<text><![CDATA[Phòng ban:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="385" y="30" width="176" height="14" forecolor="#0E5EC7" uuid="bb713a29-795a-4aad-a09f-b032f3ece192"/>
+				<reportElement x="420" y="30" width="137" height="14" forecolor="#0E5EC7" uuid="bb713a29-795a-4aad-a09f-b032f3ece192"/>
 				<textElement>
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{department}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="269" y="30" width="80" height="14" forecolor="#0E5EC7" uuid="bc02b37d-4bfc-4724-9642-2bc30c62a459"/>
+				<box>
+					<pen lineColor="#0E5EC7"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{location}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

@@ -41,7 +41,7 @@ public class KPIDepOfMonth extends AbstractEntity {
 	private String nameAssign;
 	// check KPI hieu suat
 	@Column(name = "is_kpi_performance")
-	private boolean isKPIPerformance;
+	private boolean isKPIPerformance = false;
 
 	private boolean isShowFormual = true;
 

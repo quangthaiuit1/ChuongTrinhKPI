@@ -6,9 +6,9 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
@@ -34,15 +34,16 @@ import org.joda.time.LocalDate;
 import com.ibm.icu.text.SimpleDateFormat;
 
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import trong.lixco.com.account.servicepublics.Account;
 import trong.lixco.com.account.servicepublics.Department;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublic;
 import trong.lixco.com.account.servicepublics.DepartmentServicePublicProxy;
+import trong.lixco.com.account.servicepublics.Member;
 import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.ejb.servicekpi.KPIDepMonthService;
 import trong.lixco.com.ejb.servicekpi.KPIDepService;
@@ -53,6 +54,10 @@ import trong.lixco.com.jpa.entitykpi.KPIPerson;
 import trong.lixco.com.servicepublic.EmployeeDTO;
 import trong.lixco.com.servicepublic.EmployeeServicePublic;
 import trong.lixco.com.servicepublic.EmployeeServicePublicProxy;
+import trong.lixco.com.thai.apitrong.DepartmentData;
+import trong.lixco.com.thai.apitrong.DepartmentDataService;
+import trong.lixco.com.thai.apitrong.EmployeeData;
+import trong.lixco.com.thai.apitrong.EmployeeDataService;
 import trong.lixco.com.thai.bean.entities.DepartmentTotalMonth;
 import trong.lixco.com.thai.bean.entities.PersonalMonth;
 import trong.lixco.com.thai.bean.entities.PersonalQuy;
@@ -106,10 +111,13 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	private Department departmentSelectedPersonalQuy;
 	private Department departmentSelectedPersonalMonth;
 	private String[] allCodeDepartmentArray;
+	private Member member;
+	private Department departLv1;
+	private String nameLocation;
 
 	@Override
 	protected void initItem() {
-
+		member = getAccount().getMember();
 		sf = new SimpleDateFormat("dd/MM/yyyy");
 		LocalDate lc = new LocalDate();
 		monthSelectedPersonal = lc.getMonthOfYear();
@@ -127,7 +135,8 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		allCodeEmployee = new ArrayList<>();
 		departments = new ArrayList<Department>();
 
-		// handle get list department from Department table // lam the nao de lay duoc
+		// handle get list department from Department table // lam the nao de
+		// lay duoc
 		// danh sach phong ban tai ho chi minh
 		try {
 			Department[] allDepartmentArray = DEPARTMENT_SERVICE_PUBLIC.findAll();
@@ -163,6 +172,25 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 				departments = DepartmentUtil.sort(departments);
 			}
 
+			if (member.getDepartment().getLevelDep().getLevel() == 3) {
+				departLv1 = member.getDepartment().getDepartment().getDepartment();
+			}
+			if (member.getDepartment().getLevelDep().getLevel() == 2) {
+				departLv1 = member.getDepartment().getDepartment();
+			}
+			if (member.getDepartment().getLevelDep().getLevel() == 1) {
+				departLv1 = member.getDepartment();
+			}
+			if (departLv1.getCode().equals("20002")) {
+				nameLocation = "Hồ Chí Minh";
+			}
+			if (departLv1.getCode().equals("20001")) {
+				nameLocation = "Bình Dương";
+			}
+			if (departLv1.getCode().equals("20003")) {
+				nameLocation = "Bắc Ninh";
+			}
+
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -175,6 +203,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		departmentName = getDepartmentName(departmentSelectedPersonalMonth);
 		List<PersonalMonth> dataReportPersonalMonth = createDataReportKPIPersonalMonth(this.monthSelectedPersonal,
 				this.yearSelectedPersonal1, departmentSelectedPersonalMonth);
+		dataReportPersonalMonth.sort(Comparator.comparing(PersonalMonth::getDepartmentName));
 		if (!dataReportPersonalMonth.isEmpty()) {
 			String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 					.getRealPath("/resources/thaireports/kpi/personalMonth.jasper");
@@ -184,6 +213,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			String image = FacesContext.getCurrentInstance().getExternalContext()
 					.getRealPath("/resources/gfx/lixco_logo.png");
 			importParam.put("logo", image);
+			importParam.put("location", nameLocation);
 			importParam.put("year", yearSelectedPersonal1);
 			importParam.put("month", monthSelectedPersonal);
 			importParam.put("department", departmentName);
@@ -199,7 +229,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		}
 	}
 
-//
+	//
 	public void showReportPersonalQuy() throws JRException, IOException {
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/personalQuy.jasper");
@@ -207,6 +237,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		departmentName = getDepartmentName(departmentSelectedPersonalQuy);
 		List<PersonalQuy> dataReportPersonalQuy = createDataReportKPIPersonalQuy(this.quySelectedPersonal,
 				this.yearSelectedPersonal2, departmentSelectedPersonalQuy);
+		dataReportPersonalQuy.sort(Comparator.comparing(PersonalQuy::getNameDepartment));
 		// check neu list rong~
 		if (!dataReportPersonalQuy.isEmpty()) {
 			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalQuy);
@@ -215,6 +246,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			String image = FacesContext.getCurrentInstance().getExternalContext()
 					.getRealPath("/resources/gfx/lixco_logo.png");
 			importParam.put("logo", image);
+			importParam.put("location", nameLocation);
 			importParam.put("year", yearSelectedPersonal2);
 			importParam.put("quy", quySelectedPersonal);
 			importParam.put("department", departmentName);
@@ -242,6 +274,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 
 		List<PersonalYear> dataReportPersonalYear = createDataReportKPIPersonalYear(this.departmentSelectedPersonalYear,
 				this.yearSelectedPersonal3);
+		dataReportPersonalYear.sort(Comparator.comparing(PersonalYear::getNameDepartment));
 		if (!dataReportPersonalYear.isEmpty()) {
 			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportPersonalYear);
 			Map<String, Object> importParam = new HashMap<String, Object>();
@@ -249,6 +282,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			String image = FacesContext.getCurrentInstance().getExternalContext()
 					.getRealPath("/resources/gfx/lixco_logo.png");
 			importParam.put("logo", image);
+			importParam.put("location", nameLocation);
 			importParam.put("year", yearSelectedPersonal3);
 			importParam.put("department", departmentString);
 			importParam.put("listKPIDepartmentYear", beanDataSource);
@@ -267,6 +301,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/departmentYear.jasper");
 		List<DepartmentTotalMonth> dataReportDepartmentYear = createDataReportKPIDepartmentYear(yearSelectedDepartment);
+		dataReportDepartmentYear.sort(Comparator.comparing(DepartmentTotalMonth::getNameDepart));
 		if (!dataReportDepartmentYear.isEmpty()) {
 			JRDataSource beanDataSource = new JRBeanCollectionDataSource(dataReportDepartmentYear);
 			Map<String, Object> importParam = new HashMap<String, Object>();
@@ -281,17 +316,18 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			OutputStream outputStream;
 			outputStream = facesContext.getExternalContext().getResponseOutputStream();
 			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-//			//print excel
-//			JRXlsxExporter exporter = new JRXlsxExporter();
-//			exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-//			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("D:\\demo\\sample_report.xlsx"));
-//			//Set configuration as you like it!!
-//			SimpleXlsxExporterConfiguration configuration = null;
-//	        configuration = new SimpleXlsxExporterConfiguration();
-//	        configuration.setKeepWorkbookTemplateSheets(true);
-//	        exporter.setConfiguration(configuration);
-//	        exporter.exportReport();
-//			//end excel
+			// //print excel
+			// JRXlsxExporter exporter = new JRXlsxExporter();
+			// exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+			// exporter.setExporterOutput(new
+			// SimpleOutputStreamExporterOutput("D:\\demo\\sample_report.xlsx"));
+			// //Set configuration as you like it!!
+			// SimpleXlsxExporterConfiguration configuration = null;
+			// configuration = new SimpleXlsxExporterConfiguration();
+			// configuration.setKeepWorkbookTemplateSheets(true);
+			// exporter.setConfiguration(configuration);
+			// exporter.exportReport();
+			// //end excel
 			facesContext.responseComplete();
 		} else {
 			noticeError("Không có dữ liệu");
@@ -305,21 +341,57 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		List<PersonalYear> personalYears = new ArrayList<>();
 		// search by code Emp and year -> all KPIPerson 2019
 
-		// ****cho nay lam sao lay duoc list nhan vien (- nhan vien thang do chua vo lam
+		// ****cho nay lam sao lay duoc list nhan vien (- nhan vien thang do
+		// chua vo lam
 		// thang sau vo)
 
 		// truong hop khong co phong ban
 		allCodeEmployee = new ArrayList<>();
 		if (department == null || department.getCode() == null) {
-			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
-			for (EmployeeDTO e : allEmployeeArray) {
-				allCodeEmployee.add(e.getCode());
+			DepartmentData[] allDepartByLv1 = DepartmentDataService.timtheophongquanly(departLv1.getCode());
+			if (allDepartByLv1 != null) {
+				StringBuilder builder = new StringBuilder();
+				for (DepartmentData d : allDepartByLv1) {
+					builder.append(d.getCode());
+					builder.append(",");
+				}
+				String s = "";
+				if (builder.toString().endsWith(",")) {
+					s = builder.toString().substring(0, builder.toString().length() - 1);
+				}
+				EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongbancomail(s);
+				// EmployeeDTO[] allEmployeeArray =
+				// EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
+				if (allEmployeeArrayNew != null) {
+					for (EmployeeData e : allEmployeeArrayNew) {
+						allCodeEmployee.add(e.getCode());
+					}
+				}
 			}
 		}
 		if (department != null && department.getCode() != null) {
-			String[] tempDepartmentArr = { department.getCode() };
-			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
-			for (EmployeeDTO e : allEmployeeArray) {
+			DepartmentData[] depsNew = null;
+			if (department.getLevelDep().getLevel() == 2) {
+				depsNew = DepartmentDataService.timtheophongquanly(department.getCode());
+			}
+			if (department.getLevelDep().getLevel() == 3) {
+				depsNew = DepartmentDataService.timtheophongquanly(department.getDepartment().getCode());
+			}
+			// EmployeeDTO[] allEmployeeArray =
+			// EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
+			StringBuilder builder = new StringBuilder();
+			for (DepartmentData s : depsNew) {
+				builder.append(s.getCode());
+				builder.append(",");
+			}
+			String s = "";
+			if (builder.toString().endsWith(",")) {
+				s = builder.toString().substring(0, builder.toString().length() - 1);
+			}
+
+			EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongbancomail(s);
+
+			for (EmployeeData e : allEmployeeArrayNew) {
 				allCodeEmployee.add(e.getCode());
 			}
 		}
@@ -393,17 +465,60 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		// Tim list nhan vien theo phong ban
 		allCodeEmployee = new ArrayList<>();
 		if (department == null || department.getCode() == null) {
-			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
-			for (EmployeeDTO e : allEmployeeArray) {
-				allCodeEmployee.add(e.getCode());
+			// EmployeeDTO[] allEmployeeArray =
+			// EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
+			// if (allEmployeeArray != null) {
+			// for (EmployeeDTO e : allEmployeeArray) {
+			// allCodeEmployee.add(e.getCode());
+			// }
+			// }
+			DepartmentData[] allDepartByLv1 = DepartmentDataService.timtheophongquanly(departLv1.getCode());
+			if (allDepartByLv1 != null) {
+				StringBuilder builder = new StringBuilder();
+				for (DepartmentData d : allDepartByLv1) {
+					builder.append(d.getCode());
+					builder.append(",");
+				}
+				String s = "";
+				if (builder.toString().endsWith(",")) {
+					s = builder.toString().substring(0, builder.toString().length() - 1);
+				}
+				EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongbancomail(s);
+				// EmployeeDTO[] allEmployeeArray =
+				// EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
+				if (allEmployeeArrayNew != null) {
+					for (EmployeeData e : allEmployeeArrayNew) {
+						allCodeEmployee.add(e.getCode());
+					}
+				}
 			}
 		}
 		if (department != null && department.getCode() != null) {
-			String[] tempDepartmentArr = { department.getCode() };
-			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
-			for (EmployeeDTO e : allEmployeeArray) {
+			DepartmentData[] depsNew = null;
+			if (department.getLevelDep().getLevel() == 2) {
+				depsNew = DepartmentDataService.timtheophongquanly(department.getCode());
+			}
+			if (department.getLevelDep().getLevel() == 3) {
+				depsNew = DepartmentDataService.timtheophongquanly(department.getDepartment().getCode());
+			}
+			// EmployeeDTO[] allEmployeeArray =
+			// EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
+			StringBuilder builder = new StringBuilder();
+			for (DepartmentData s : depsNew) {
+				builder.append(s.getCode());
+				builder.append(",");
+			}
+			String s = "";
+			if (builder.toString().endsWith(",")) {
+				s = builder.toString().substring(0, builder.toString().length() - 1);
+			}
+
+			EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongbancomail(s);
+
+			for (EmployeeData e : allEmployeeArrayNew) {
 				allCodeEmployee.add(e.getCode());
 			}
+
 		}
 		for (String k : allCodeEmployee) {
 			// tao 1 item personalYear
@@ -509,15 +624,62 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			List<PersonalMonth> dataPersonalMonth = new ArrayList<>();
 			allCodeEmployee = new ArrayList<>();
 			if (department == null || department.getCode() == null) {
-				EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
-				for (EmployeeDTO e : allEmployeeArray) {
-					allCodeEmployee.add(e.getCode());
+				DepartmentData[] allDepartByLv1 = DepartmentDataService.timtheophongquanly(departLv1.getCode());
+				if (allDepartByLv1 != null) {
+					StringBuilder builder = new StringBuilder();
+					for (DepartmentData d : allDepartByLv1) {
+						builder.append(d.getCode());
+						builder.append(",");
+					}
+					String s = "";
+					if (builder.toString().endsWith(",")) {
+						s = builder.toString().substring(0, builder.toString().length() - 1);
+					}
+					EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongbancomail(s);
+					// EmployeeDTO[] allEmployeeArray =
+					// EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
+					if (allEmployeeArrayNew != null) {
+						for (EmployeeData e : allEmployeeArrayNew) {
+							allCodeEmployee.add(e.getCode());
+						}
+					}
 				}
+
+				// List<KPIPerson> kpiPersonByCodeEmp =
+				// KPI_PERSON_SERVICE.findRange(month, year);
+				// if (kpiPersonByCodeEmp != null &&
+				// !kpiPersonByCodeEmp.isEmpty()) {
+				// for (KPIPerson k : kpiPersonByCodeEmp) {
+				// if (k.getCodeEmp() != null) {
+				// allCodeEmployee.add(k.getCodeEmp());
+				// }
+				// }
+				// }
 			}
 			if (department != null && department.getCode() != null) {
-				String[] tempDepartmentArr = { department.getCode() };
-				EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
-				for (EmployeeDTO e : allEmployeeArray) {
+				// String[] tempDepartmentArr = { department.getCode() };
+				DepartmentData[] depsNew = null;
+				if (department.getLevelDep().getLevel() == 2) {
+					depsNew = DepartmentDataService.timtheophongquanly(department.getCode());
+				}
+				if (department.getLevelDep().getLevel() == 3) {
+					depsNew = DepartmentDataService.timtheophongquanly(department.getDepartment().getCode());
+				}
+				// EmployeeDTO[] allEmployeeArray =
+				// EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
+				StringBuilder builder = new StringBuilder();
+				for (DepartmentData s : depsNew) {
+					builder.append(s.getCode());
+					builder.append(",");
+				}
+				String s = "";
+				if (builder.toString().endsWith(",")) {
+					s = builder.toString().substring(0, builder.toString().length() - 1);
+				}
+
+				EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongbancomail(s);
+
+				for (EmployeeData e : allEmployeeArrayNew) {
 					allCodeEmployee.add(e.getCode());
 				}
 			}
@@ -611,7 +773,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		Department departmentTemp = new Department();
 		// Danh sach diem phong thang
 		List<DepartmentTotalMonth> departmentTotalMonth = new ArrayList<>();
-//		for (Department d : allDepartment) {
+		// for (Department d : allDepartment) {
 		for (String d : allCodeDepartment) {
 			// danh sach kpi phong nam -> 12 thang
 			List<KPIDepMonth> temp = KPI_DEPARTMENT_MONTH.find(d, yearSelectedDepartment);
@@ -735,7 +897,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		}
 	}
 
-//EXCEL
+	// EXCEL
 	private static XSSFCellStyle createStyleForTitle(XSSFWorkbook workbook) {
 		XSSFFont font = workbook.createFont();
 		font.setBold(true);
@@ -746,6 +908,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 
 	public void excelDepartmentYear() throws IOException {
 		List<DepartmentTotalMonth> dataReportDepartmentYear = createDataReportKPIDepartmentYear(yearSelectedDepartment);
+		dataReportDepartmentYear.sort(Comparator.comparing(DepartmentTotalMonth::getNameDepart));
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet("KPI PHÒNG NĂM");
 
@@ -816,7 +979,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		cell = row.createCell(14);
 		cell.setCellValue("KPI năm");
 		cell.setCellStyle(style);
-//		 Data
+		// Data
 		for (DepartmentTotalMonth kq : dataReportDepartmentYear) {
 			rownum++;
 			row = sheet.createRow(rownum);
@@ -882,6 +1045,8 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	public void excelPersonalYear() throws IOException {
 		List<PersonalYear> dataReportPersonalYear = createDataReportKPIPersonalYear(this.departmentSelectedPersonalYear,
 				this.yearSelectedPersonal3);
+		dataReportPersonalYear.sort(Comparator.comparing(PersonalYear::getNameDepartment));
+
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet("KPI CÁ NHÂN NĂM");
 
@@ -1171,7 +1336,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		// cancel progress
 		facesContext.responseComplete();
 	}
-//END EXCEL
+	// END EXCEL
 
 	@Override
 	protected Logger getLogger() {

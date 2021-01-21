@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="personalQuy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bbf823c1-4c6c-47e8-8073-598fa034c7d7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="listKPIDepartMonthByYearDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
@@ -10,6 +10,7 @@
 	<parameter name="secondMonth" class="java.lang.String"/>
 	<parameter name="firstMonth" class="java.lang.String"/>
 	<parameter name="department" class="java.lang.String"/>
+	<parameter name="location" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -63,7 +64,7 @@
 				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="189" y="30" width="96" height="14" forecolor="#0E5EC7" uuid="3a7e948f-c2c0-4baf-8305-262ef712055a"/>
+				<reportElement x="189" y="30" width="61" height="14" forecolor="#0E5EC7" uuid="3a7e948f-c2c0-4baf-8305-262ef712055a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="FontReport" size="12"/>
 				</textElement>
@@ -84,18 +85,25 @@
 				<textFieldExpression><![CDATA[$P{quy}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="323" y="30" width="60" height="14" forecolor="#0E5EC7" uuid="7ad14380-8e0e-472b-9002-39fbd6bf7b20"/>
+				<reportElement x="351" y="30" width="60" height="14" forecolor="#0E5EC7" uuid="7ad14380-8e0e-472b-9002-39fbd6bf7b20"/>
 				<textElement>
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<text><![CDATA[Phòng ban:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="383" y="30" width="178" height="14" forecolor="#0E5EC7" uuid="b7465765-57f9-437f-bc0e-466561e0268c"/>
+				<reportElement x="411" y="30" width="150" height="14" forecolor="#0E5EC7" uuid="b7465765-57f9-437f-bc0e-466561e0268c"/>
 				<textElement>
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{department}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="247" y="30" width="77" height="14" forecolor="#0E5EC7" uuid="34856cd1-f8e4-4471-aba4-faff88bbd895"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{location}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

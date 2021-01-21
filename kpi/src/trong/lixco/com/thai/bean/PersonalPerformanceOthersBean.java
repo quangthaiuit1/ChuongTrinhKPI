@@ -167,7 +167,12 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 				}
 
 			} else {
-				departmentSearchs.add(member.getDepartment());
+//				departmentSearchs.add(member.getDepartment());
+				Department[] deps = departmentServicePublic
+						.getAllDepartSubByParent(member.getDepartment().getDepartment().getCode());
+				for (int i = 0; i < deps.length; i++) {
+					departmentSearchs.add(deps[i]);
+				}
 			}
 			if (departmentSearchs.size() != 0) {
 				departmentSearchs = DepartmentUtil.sort(departmentSearchs);
@@ -193,6 +198,7 @@ public class PersonalPerformanceOthersBean extends AbstractBean<KPIPerson> {
 
 		allMemberByDepartment = Arrays.asList(membersTemp);
 	}
+	
 
 	public void showEdit() {
 		kpiPersonOfMonthRemoves.clear();

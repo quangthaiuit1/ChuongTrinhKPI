@@ -1,33 +1,30 @@
 package trong.lixco.com.jpa.thai;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import trong.lixco.com.jpa.entitykpi.AbstractEntity;
-import trong.lixco.com.jpa.entitykpi.PositionJob;
 
 @Entity
 @Table(name = "position_dont_kpi")
 public class PositionDontKPI extends AbstractEntity {
 
-	@OneToOne
-	private PositionJob positionjob;
+	private String position_code;
 
 	public PositionDontKPI() {
 		super();
 	}
 
-	public PositionDontKPI(PositionJob positionjob) {
+	public PositionDontKPI(String position_code) {
 		super();
-		this.positionjob = positionjob;
+		this.position_code = position_code;
 	}
 
-	public PositionJob getPositionjob() {
-		return positionjob;
+	public String getPosition_code() {
+		return position_code;
 	}
 
-	public void setPositionjob(PositionJob positionjob) {
-		this.positionjob = positionjob;
+	public void setPosition_code(String position_code) {
+		this.position_code = position_code;
 	}
 }

@@ -1,14 +1,20 @@
 package trong.lixco.com.beankpi;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.PrimeFaces;
 
 import trong.lixco.com.bean.AbstractBean;
 import trong.lixco.com.ejb.servicekpi.BehaviourPersonService;
@@ -112,6 +118,29 @@ public class BehaviourPersonBean extends AbstractBean<BehaviourPerson> {
 			notify.warning("Chưa chọn trong danh sách!");
 		}
 	}
+	
+	// end import file excel
+		public void fileDuLieuKPICaNhanMau() {
+			try {
+				PrimeFaces.current().executeScript("target='_blank';monitorDownload( showStatus , hideStatus)");
+				String filename = "KPIPhong_dulieumau";
+				HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance()
+						.getExternalContext().getResponse();
+				httpServletResponse.addHeader("Content-disposition", "attachment; filename=" + filename + ".xlsx");
+				ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+				String file = FacesContext.getCurrentInstance().getExternalContext()
+						.getRealPath("/resources/maufile/kpiphong_dulieumau.xlsx");
+				InputStream inputStream = new FileInputStream(file);
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = inputStream.read(buffer)) != -1) {
+					servletOutputStream.write(buffer, 0, len);
+				}
+				FacesContext.getCurrentInstance().responseComplete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 	public void searchItem() {
 		behaviourPersons = behaviourPersonService.findAll();

@@ -28,27 +28,29 @@
 								style="float:left; margin-bottom:5px">
 								<h:panelGrid columns="4" style="width:100%" cellspacing="10">
 									<p:outputLabel value="Tháng" />
-									<p:spinner size="10" value="#{personalOtherBean.monthSearch}"
-										min="1" max="12">
+									<p:spinner size="10"
+										value="#{personalOtherDuyetBean.monthSearch}" min="1" max="12">
 										<p:ajax process="@this"
-											listener="#{personalOtherBean.searchItem()}" update="tableid"
-											oncomplete="PF('dtlistkpiperson').clearFilters()" />
+											listener="#{personalOtherDuyetBean.searchItem()}"
+											update="dtTableNhomKhacDuyet"
+											oncomplete="PF('dtlistNhomKhacDuyet').clearFilters()" />
 									</p:spinner>
 									<p:outputLabel value="Năm" />
-									<p:spinner size="10" value="#{personalOtherBean.yearSearch}"
-										min="2017" max="2050">
+									<p:spinner size="10"
+										value="#{personalOtherDuyetBean.yearSearch}" min="2017"
+										max="2050">
 										<p:ajax process="@this" />
 									</p:spinner>
 								</h:panelGrid>
 
 								<h:panelGrid columns="2" style="width:100%" cellspacing="10">
 									<p:selectOneMenu
-										value="#{personalPerformanceOthersBean.departmentSelected}"
+										value="#{personalOtherDuyetBean.departmentSelected}"
 										converter="abstractConverter" effect="fade" var="t"
 										style="width:150px;" id="iddeps" filter="true"
 										filterMatchMode="custom" filterFunction="customFilter">
 										<f:selectItems
-											value="#{personalPerformanceOthersBean.departmentSearchs}"
+											value="#{personalOtherDuyetBean.departmentSearchs}"
 											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
 										<p:column>
 											<h:outputText value="#{t.code}" />
@@ -58,21 +60,26 @@
 										</p:column>
 									</p:selectOneMenu>
 								</h:panelGrid>
+								<p:commandButton value="Tìm" style="float:right;"
+									icon="ui-icon-search" update="dtTableNhomKhacDuyet"
+									process="@form"
+									oncomplete="PF('dtlistNhomKhacDuyet').clearFilters()"
+									actionListener="#{personalOtherDuyetBean.searchItem()}" />
 							</h:panelGrid>
 						</p:panel>
 						<div style="clear: both" />
-						<p:dataTable value="#{personalOtherBean.kpiPersonalOthers}"
-							widgetVar="dtlistkpiperson" styleClass="tableparent"
+						<p:dataTable value="#{personalOtherDuyetBean.kpiPersonalOthers}"
+							widgetVar="dtlistNhomKhacDuyet" styleClass="tableparent"
 							scrollable="true" scrollHeight="400" paginator="true"
 							paginatorPosition="bottom" rows="50"
 							filteredValue="#{personalPerformanceOthersBean.kPIPersonFilters}"
-							id="tableid" var="item">
+							id="dtTableNhomKhacDuyet" var="item">
 							<f:facet name="header">
 								<div style="float: right">
 									<p:commandButton type="submit" value="Lưu/cập nhật"
 										process="@this" id="btnew"
-										action="#{personalOtherBean.updateSignResult()}"
-										update="tableid" icon="ui-icon-document" />
+										action="#{personalOtherDuyetBean.updateSignResult()}"
+										update="dtTableNhomKhacDuyet" icon="ui-icon-document" />
 								</div>
 								<div style="clear: both;" />
 							</f:facet>
@@ -105,15 +112,15 @@
 							<p:column headerText="Thái độ hành vi"
 								style="width:15px;text-align:center">
 								<p:commandLink type="submit" value="Thêm"
-									actionListener="#{personalOtherBean.showDialogOrien(item)}"
-									update=":dialogKPIPersonalOther,:messages,:menuformid:tv:list:tableid"
+									actionListener="#{personalOtherDuyetBean.showDialogOrien(item)}"
+									update=":dialogKPIPersonalOther,:messages,:menuformid:tv:list:dtTableNhomKhacDuyet"
 									process="@this" icon="ui-icon-plus"
 									style="font-style:italic;font-weight:bold" />
 							</p:column>
 							<p:column headerText="Chi tiết"
 								style="width:30px;text-align:center">
 								<p:commandLink id="cmlDetail" type="submit"
-									actionListener="#{personalOtherBean.showDetailKPI(item)}"
+									actionListener="#{personalOtherDuyetBean.showDetailKPI(item)}"
 									update=":formDialogKPIPersonalOtherBehaviour:tableidHV,:messages"
 									process="@this" style="margin-right:20px;">
 									<h:outputText value="Xem"
@@ -134,7 +141,7 @@
 			header="Bảng thái độ/hành vi">
 			<h:form id="dialogKPIPersonalOther">
 				<p:dataTable
-					value="#{personalOtherBean.listInfoPersonalPerformances}"
+					value="#{personalOtherDuyetBean.listInfoPersonalPerformances}"
 					id="tbreportimptargetsale" expandableRowGroups="true"
 					paginatorPosition="bottom" paginator="true" scrollable="true"
 					scrollHeight="500" resizableColumns="true" var="itemp">
@@ -142,8 +149,9 @@
 						<div style="float: right">
 							<p:commandButton type="submit" value="Lưu/cập nhật"
 								disabled="true"
-								action="#{personalOtherBean.updateListKPIPersonalOther()}"
-								update=":menuformid:tv:list:tableid" icon="fa fa-save" />
+								action="#{personalOtherDuyetBean.updateListKPIPersonalOther()}"
+								update=":menuformid:tv:list:dtTableNhomKhacDuyet"
+								icon="fa fa-save" />
 						</div>
 						<div style="clear: both;" />
 					</f:facet>
@@ -202,14 +210,14 @@
 					rowsPerPageTemplate="20,40,60" sortBy="#{item.id}"
 					expandableRowGroups="true" style="width:100%"
 					paginatorPosition="bottom" scrollHeight="370"
-					value="#{personalOtherBean.details}" rowIndexVar="rowIndex">
+					value="#{personalOtherDuyetBean.details}" rowIndexVar="rowIndex">
 
 					<p:column headerText="..." style="width:6px; text-align:center">
 						<p:commandButton icon="ui-icon-closethick"
 							style="margin-left: -9px;background: none;border: none; box-shadow: none;"
-							update=":menuformid:tv:list:tableid,tableidHV"
+							update=":menuformid:tv:list:dtTableNhomKhacDuyet,tableidHV"
 							styleClass="btnoneformat" process="@this"
-							actionListener="#{personalOtherBean.removeDetail(item)}" />
+							actionListener="#{personalOtherDuyetBean.removeDetail(item)}" />
 					</p:column>
 					<p:column headerText="STT" width="5" style="text-align:center">
 						<p:outputLabel value="#{rowIndex+1}" rows="2"
@@ -228,8 +236,8 @@
 					<p:column headerText="Số lượng" style="width:40px">
 						<p:spinner size="10" value="#{item.quantity}" min="1" max="10">
 							<p:ajax process="@this"
-								update="menuformid:tv:list:tableid,tableidHV"
-								listener="#{personalOtherBean.ajaxHandleQuantityChange(item)}" />
+								update="menuformid:tv:list:dtTableNhomKhacDuyet,tableidHV"
+								listener="#{personalOtherDuyetBean.ajaxHandleQuantityChange(item)}" />
 						</p:spinner>
 					</p:column>
 				</p:dataTable>

@@ -42,9 +42,11 @@ import trong.lixco.com.ejb.servicekpi.FormulaKPIService;
 import trong.lixco.com.ejb.servicekpi.OrientationPersonService;
 import trong.lixco.com.ejb.servicekpi.PositionJobService;
 import trong.lixco.com.ejb.thai.kpi.PersonalPerformanceService;
+import trong.lixco.com.ejb.thai.kpi.PositionDontKPIService;
 import trong.lixco.com.jpa.entitykpi.FormulaKPI;
 import trong.lixco.com.jpa.entitykpi.PositionJob;
 import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
+import trong.lixco.com.jpa.thai.PositionDontKPI;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
 import trong.lixco.com.thai.bean.staticentity.MessageView;
 import trong.lixco.com.util.Notify;
@@ -89,6 +91,8 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	@Inject
 	private PositionJobService POSITION_JOB_SERVICE;
+	@Inject
+	private PositionDontKPIService POSITION_DONT_KPI_SERVICE;
 
 	@Inject
 	private Logger logger;
@@ -389,7 +393,8 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 				}
 				// get diem tru
 				double diemtru = 0;
-				if (row.getCell(3).toString() != null && !row.getCell(3).toString().isEmpty()) {
+				if (row.getCell(3) != null && row.getCell(3).toString() != null
+						&& !row.getCell(3).toString().isEmpty()) {
 					diemtru = Double.parseDouble(row.getCell(3).toString());
 				}
 				long formulaKPIIdLong = (long) formulaKPIIdInt;
@@ -544,5 +549,80 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	public void setEnablePerformance(boolean enablePerformance) {
 		this.enablePerformance = enablePerformance;
+	}
+
+	// su dung de nap du lieu mau
+	public void handleFileUploadTest(FileUploadEvent event) throws IOException {
+
+		// context.execute("PF('dlg1').show();");
+		long size = event.getFile().getSize();
+
+		String filename = FilenameUtils.getBaseName(event.getFile().getFileName());
+
+		String path = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/temp/");
+		File checkFile = new File(path);
+		if (!checkFile.exists()) {
+			checkFile.mkdirs();
+		}
+
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
+		String name = filename + fmt.format(new Date())
+				+ event.getFile().getFileName().substring(event.getFile().getFileName().lastIndexOf('.'));
+		File file = new File(path + "/" + name);
+
+		InputStream is = event.getFile().getInputstream();
+		OutputStream out = new FileOutputStream(file);
+		byte buf[] = new byte[(int) size];
+		int len;
+		while ((len = is.read(buf)) > 0)
+			out.write(buf, 0, len);
+		is.close();
+		out.close();
+
+		InputStream inp = null;
+		try {
+			inp = new FileInputStream(file.getAbsolutePath());
+			Workbook wb = WorkbookFactory.create(inp);
+
+			for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+				System.out.println(wb.getSheetAt(i).getSheetName());
+				echoAsCSVFileTest(wb.getSheetAt(i));
+			}
+		} catch (Exception ex) {
+		} finally {
+			try {
+				inp.close();
+			} catch (IOException ex) {
+			}
+		}
+	}
+
+	public void echoAsCSVFileTest(Sheet sheet) {
+		Row row = null;
+		boolean isError = false;
+
+		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+			row = sheet.getRow(i);
+			try {
+				int codePJob = (int) Double.parseDouble(row.getCell(0).toString());
+				// //Luu doi tuong xuong DB
+				PositionDontKPI cpCreate = new PositionDontKPI();
+				cpCreate.setPosition_code(Integer.toString(codePJob));
+				cpCreate.setCreatedDate(new Date());
+				try {
+					POSITION_DONT_KPI_SERVICE.create(cpCreate);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} catch (Exception e) {
+				isError = true;
+				e.printStackTrace();
+			}
+		}
+		if (isError) {
+			MessageView.ERROR("Lỗi!");
+		} else {
+			MessageView.INFO("Thành công");
+		}
 	}
 }

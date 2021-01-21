@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="personalYear" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="bbf823c1-4c6c-47e8-8073-598fa034c7d7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -15,6 +15,7 @@
 	<parameter name="logo" class="java.lang.String"/>
 	<parameter name="year" class="java.lang.Integer"/>
 	<parameter name="department" class="java.lang.String"/>
+	<parameter name="location" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -110,6 +111,13 @@
 					<font fontName="FontReport" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{department}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="258" y="30" width="100" height="14" forecolor="#0E5EC7" uuid="40e2fcb5-1ffc-4ae1-bd33-a0c25ca19707"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{location}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -486,9 +494,9 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="120" splitType="Stretch">
+		<band height="107" splitType="Stretch">
 			<rectangle>
-				<reportElement x="-11" y="13" width="819" height="107" forecolor="#0E5EC7" uuid="5a7c80a3-2088-4c42-84e2-3ab74dc2c92d">
+				<reportElement x="-10" y="0" width="819" height="107" forecolor="#0E5EC7" uuid="5a7c80a3-2088-4c42-84e2-3ab74dc2c92d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<graphicElement>
@@ -496,7 +504,7 @@
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="60" y="32" width="64" height="16" uuid="779e480c-25ee-482d-a502-b05e5874b902"/>
+				<reportElement x="61" y="19" width="64" height="16" uuid="779e480c-25ee-482d-a502-b05e5874b902"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 				</box>
@@ -506,47 +514,47 @@
 				<text><![CDATA[Tổng giám đốc]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="52" y="85" width="80" height="20" uuid="47946f03-2d22-411b-b148-a3df89954a5e"/>
+				<reportElement x="53" y="72" width="80" height="20" uuid="47946f03-2d22-411b-b148-a3df89954a5e"/>
 				<textElement verticalAlignment="Bottom">
 					<font isBold="false"/>
 				</textElement>
 				<text><![CDATA[Date:....../....../...]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="341" y="26" width="100" height="76" uuid="d14d3104-922e-4aa5-9b58-d0832f15a32f"/>
+				<reportElement x="342" y="13" width="100" height="76" uuid="d14d3104-922e-4aa5-9b58-d0832f15a32f"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="348" y="28" width="90" height="16" uuid="fd5534c5-8b6a-40ae-bed4-3529f551e35b"/>
+				<reportElement x="349" y="15" width="90" height="16" uuid="fd5534c5-8b6a-40ae-bed4-3529f551e35b"/>
 				<textElement>
 					<font fontName="FontReport" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Phó Tổng giám đốc]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="351" y="82" width="80" height="20" uuid="012e128c-4590-42f1-9192-d73af8f2686a"/>
+				<reportElement x="352" y="69" width="80" height="20" uuid="012e128c-4590-42f1-9192-d73af8f2686a"/>
 				<textElement verticalAlignment="Bottom">
 					<font isBold="false"/>
 				</textElement>
 				<text><![CDATA[Date:....../....../...]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="640" y="26" width="100" height="80" isRemoveLineWhenBlank="true" uuid="80f8a6e0-639d-4c78-b84f-a4d4849ae28b"/>
+				<reportElement x="641" y="13" width="100" height="80" isRemoveLineWhenBlank="true" uuid="80f8a6e0-639d-4c78-b84f-a4d4849ae28b"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="654" y="28" width="72" height="16" uuid="2ffaefee-b951-427a-a73d-6e32783f8e51"/>
+				<reportElement x="655" y="15" width="72" height="16" uuid="2ffaefee-b951-427a-a73d-6e32783f8e51"/>
 				<textElement>
 					<font fontName="FontReport" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Phòng Nhân sự]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="650" y="86" width="80" height="20" uuid="721ca59c-f3a7-47c4-b31e-75af7ddac99a"/>
+				<reportElement x="651" y="73" width="80" height="20" uuid="721ca59c-f3a7-47c4-b31e-75af7ddac99a"/>
 				<textElement verticalAlignment="Bottom">
 					<font isBold="false"/>
 				</textElement>

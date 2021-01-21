@@ -38,6 +38,22 @@
 						update=":messages,:menuformid" />
 					<p:commandButton value="Tạo mới"
 						action="#{behaviourPersonBean.reset()}" update=":menuformid" />
+					<p:commandButton value="File excel mẫu" immediate="true"
+						styleClass="btlink"
+						onclick="monitorDownload( showStatus , hideStatus)"
+						actionListener="#{departPerformanceBean.fileDuLieuKPICaNhanMau()}" />
+					<p:separator />
+					<!-- Upload file excel -->
+					<h:form enctype="multipart/form-data">
+						<p:fileUpload
+							fileUploadListener="#{departPerformanceBean.handleFileUpload}"
+							mode="advanced" dragDropSupport="false" multiple="true"
+							update="messagesh" sizeLimit="10000000"
+							allowTypes="/(\.|\/)(xls|xlsx)$/" label="Chọn tệp tải lên"
+							uploadLabel="Tải lên" cancelLabel="Hủy" process="@form" />
+						<p:growl id="messagesh" showDetail="true" />
+					</h:form>
+					<!-- End upload file excel -->
 				</p:panel>
 				<p:panel header="Danh sách" id="preview">
 					<h:panelGrid id="mainGrid" columns="6"
@@ -71,7 +87,8 @@
 							<h:outputText value="#{item.content}"
 								styleClass="#{item.header==true?'textboldoutput':''}" />
 						</p:column>
-						<p:column headerText="Điểm trừ" style="text-align:center" width="80">
+						<p:column headerText="Điểm trừ" style="text-align:center"
+							width="80">
 							<h:outputText value="#{item.minusPoint/100}"
 								styleClass="#{item.header==true?'textboldoutput':''}">
 								<f:convertNumber pattern="##0%" />

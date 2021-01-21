@@ -184,8 +184,9 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 				}
 
 			} else {
-				departmentSearchs.add(member.getDepartment());
-				Department[] deps = departmentServicePublic.getAllDepartSubByParent(member.getDepartment().getCode());
+//				departmentSearchs.add(member.getDepartment());
+				Department[] deps = departmentServicePublic
+						.getAllDepartSubByParent(member.getDepartment().getDepartment().getCode());
 				for (int i = 0; i < deps.length; i++) {
 					departmentSearchs.add(deps[i]);
 				}
@@ -571,8 +572,8 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 		kPIPerson.setTotalHV(0);
 		kPIPerson.setTotalCV(0);
 		kPIPerson.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
-		kPIPerson.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1)
-				.minusDays(1).toDate());
+		kPIPerson.setDateAssignResult(
+				new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1).minusDays(1).toDate());
 		List<KPIPerson> temps = kPIPersonService.findRange(kPIPerson.getCodeEmp(), kPIPerson.getKmonth(),
 				kPIPerson.getKyear());
 		for (int i = 0; i < temps.size(); i++) {
@@ -607,7 +608,7 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 			Date date = new Date(kPIPerson.getKyear(), kPIPerson.getKmonth(), 1);
 			if (allowUpdate(date)) {
 				KPIPerson wf = kPIPersonService.updateSign(kPIPerson);
-				int index=kPIPersons.indexOf(kPIPerson);
+				int index = kPIPersons.indexOf(kPIPerson);
 				wf.setNameEmp(kPIPersons.get(index).getNameEmp());
 				kPIPersons.set(index, wf);
 				kPIPersonFilters.set(kPIPersons.indexOf(kPIPerson), wf);
@@ -618,7 +619,7 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 			}
 		} catch (Exception e) {
 		}
-		
+
 	}
 
 	public void updatesignResultKPI() {
@@ -626,7 +627,7 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 		Date date = new Date(kPIPerson.getKyear(), kPIPerson.getKmonth(), 1);
 		if (allowUpdate(date)) {
 			KPIPerson wf = kPIPersonService.updateSignResult(kPIPerson);
-			int index=kPIPersons.indexOf(kPIPerson);
+			int index = kPIPersons.indexOf(kPIPerson);
 			wf.setNameEmp(kPIPersons.get(index).getNameEmp());
 			kPIPersons.set(index, wf);
 			kPIPersonFilters.set(kPIPersons.indexOf(kPIPerson), wf);
@@ -665,10 +666,10 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 				kPIPerson.setTotal(0);
 				kPIPerson.setTotalHV(0);
 				kPIPerson.setTotalCV(0);
-				kPIPerson.setDateRecei(new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1)
-						.toDate());
-				kPIPerson.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1)
-						.withDayOfMonth(1).minusDays(1).toDate());
+				kPIPerson.setDateRecei(
+						new DateTime(yearCopy, monthCopy, 1, 0, 0).withDayOfMonth(1).minusDays(1).toDate());
+				kPIPerson.setDateAssignResult(new DateTime(yearCopy, monthCopy, 1, 0, 0).plusMonths(1).withDayOfMonth(1)
+						.minusDays(1).toDate());
 				List<KPIPersonOfMonth> listSaves = new ArrayList<KPIPersonOfMonth>();
 				listSaves.addAll(kpiPersonOfMonths);
 				listSaves.addAll(kpiPersonOfMonthAdds);
@@ -833,8 +834,8 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 											noticeError("Xảy ra lỗi không lưu được");
 										}
 									} else {
-										KPIPerson wf = kPIPersonService
-												.saveOrUpdate(kPIPerson, kpiPersonOfMonthRemoves);
+										KPIPerson wf = kPIPersonService.saveOrUpdate(kPIPerson,
+												kpiPersonOfMonthRemoves);
 										if (wf != null) {
 											this.kPIPersonEdit = wf;
 											showEdit();
@@ -1419,8 +1420,8 @@ public class KPIPersonAssignBean extends AbstractBean<KPIPerson> {
 
 				for (int i = 0; i < kPIPersons.size(); i++) {
 					try {
-						kPIPersons.get(i).setNameEmp(
-								memberServicePublic.findByCode(kPIPersons.get(i).getCodeEmp()).getName());
+						kPIPersons.get(i)
+								.setNameEmp(memberServicePublic.findByCode(kPIPersons.get(i).getCodeEmp()).getName());
 					} catch (Exception e) {
 					}
 				}

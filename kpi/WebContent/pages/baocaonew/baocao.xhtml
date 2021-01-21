@@ -76,6 +76,20 @@ function cancel() {
 				</h:panelGrid>
 			</p:panel>
 		</h:form>
+		<p:separator style="margin-top:80px" />
+		<h:form id="list1" style="margin-top:10px">
+			<p:panel
+				style="float:right; border:0px; margin-top:-35px !important;background:none;">
+				<h:panelGrid id="mainGrid" columns="9"
+					style="float:left; margin-bottom:5px">
+					<p:commandButton type="submit" value="BC KPI cá nhân năm"
+						onclick="PF('widgetKPIPersonalYear').show()"
+						update="
+									:dialogKPIPersonalYear,:messages"
+						process="@this" icon="fa fa-file-pdf-o" />
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
 		<!-- Phong nam -->
 		<p:dialog widgetVar="widgetKPIDepartmentYear" resizable="false"
 			width="500" height="100" closeOnEscape="true"
