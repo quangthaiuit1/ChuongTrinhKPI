@@ -115,6 +115,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 			monthSearch = lc.getMonthOfYear();
 			yearSearch = lc.getYear();
 			daySearch = lc.getDayOfMonth();
+			personSelected = new KPIPersonalOther();
 
 			listKPIPersonalOtherDetailUpdate = new ArrayList<>();
 			personDetailsDeleted = new ArrayList<>();
@@ -1073,5 +1074,13 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 	public void setkPIPersonFilters(List<KPIPerson> kPIPersonFilters) {
 		this.kPIPersonFilters = kPIPersonFilters;
+	}
+
+	public KPIPersonalOther getPersonSelected() {
+		return personSelected;
+	}
+
+	public void setPersonSelected(KPIPersonalOther personSelected) {
+		this.personSelected = personSelected;
 	}
 }

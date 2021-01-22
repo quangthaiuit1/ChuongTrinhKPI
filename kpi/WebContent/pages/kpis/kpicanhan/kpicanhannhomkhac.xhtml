@@ -19,119 +19,119 @@
 		<h3 style="margin: 0px">KPI cá nhân (Nhóm khác)</h3>
 		<p:separator />
 		<p:growl id="growl" showDetail="true" sticky="false" />
-		<h:form id="menuformid">
-			<p:tabView id="tv" widgetVar="myTab">
-				<p:tab title="Danh Sách">
-					<h:form id="list">
-						<p:panel
-							style="float:right; border:0px; margin-top:-65px !important;background:none;">
-							<h:panelGrid id="mainGrid" columns="9"
-								style="float:left; margin-bottom:5px">
-								<h:panelGrid columns="4" style="width:100%" cellspacing="10">
-									<p:outputLabel value="Tháng" />
-									<p:spinner size="10" value="#{personalOtherBean.monthSearch}"
-										min="1" max="12">
-										<p:ajax process="@this"
-											listener="#{personalOtherBean.searchItem()}"
-											update="tableid_new_2"
-											oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
-									</p:spinner>
-									<p:outputLabel value="Năm" />
-									<p:spinner size="10" value="#{personalOtherBean.yearSearch}"
-										min="2017" max="2050">
-										<p:ajax process="@this"
-											listener="#{personalOtherBean.searchItem()}"
-											oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
-									</p:spinner>
-								</h:panelGrid>
-								<h:panelGrid columns="1">
-									<p:commandButton type="submit" value="Tạo mới" process="@this"
-										id="btnew" action="#{personalOtherBean.create()}"
-										icon="ui-icon-document"
+		<p:tabView id="tv" widgetVar="myTab">
+			<p:tab title="Danh Sách">
+				<h:form id="list">
+					<p:panel
+						style="float:right; border:0px; margin-top:-65px !important;background:none;">
+						<h:panelGrid id="mainGrid" columns="9"
+							style="float:left; margin-bottom:5px">
+							<h:panelGrid columns="4" style="width:100%" cellspacing="10">
+								<p:outputLabel value="Tháng" />
+								<p:spinner size="10" value="#{personalOtherBean.monthSearch}"
+									min="1" max="12">
+									<p:ajax process="@this"
+										listener="#{personalOtherBean.searchItem()}"
+										update="tableid_new_2"
 										oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
-								</h:panelGrid>
-								<h:panelGrid columns="2" style="width:100%" cellspacing="10">
-									<p:selectOneMenu
-										value="#{personalOtherBean.departmentSelected}"
-										converter="abstractConverter" effect="fade" var="t"
-										style="width:150px;" id="iddeps" filter="true"
-										filterMatchMode="custom" filterFunction="customFilter">
-										<f:selectItems value="#{personalOtherBean.departmentSearchs}"
-											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
-										<p:ajax process="@this"
-											listener="#{personalOtherBean.searchItem()}"
-											oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
-										<p:column>
-											<h:outputText value="#{t.code}" />
-										</p:column>
-										<p:column>
-											<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
-										</p:column>
-									</p:selectOneMenu>
-								</h:panelGrid>
+								</p:spinner>
+								<p:outputLabel value="Năm" />
+								<p:spinner size="10" value="#{personalOtherBean.yearSearch}"
+									min="2017" max="2050">
+									<p:ajax process="@this"
+										listener="#{personalOtherBean.searchItem()}"
+										oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
+								</p:spinner>
 							</h:panelGrid>
-						</p:panel>
-						<div style="clear: both" />
-						<p:dataTable value="#{personalOtherBean.kpiPersonalOthers}"
-							widgetVar="dtlistkpiperson_new" styleClass="tableparent"
-							paginator="true" paginatorPosition="bottom" rows="50"
-							scrollable="true" scrollHeight="400"
-							filteredValue="#{personalOtherBean.kPIPersonFilters}"
-							id="tableid_new_2" var="item">
-							<p:ajax event="rowSelect"
-								listener="#{personalPerformanceOthersBean.showEdit}" />
-							<p:column headerText="..." style="width:10px; text-align:center">
-								<p:commandButton icon="ui-icon-closethick"
-									style="margin-left: -9px;background: none;border: none; box-shadow: none;"
-									update="tableid_new_2" styleClass="btnoneformat"
-									process="@this"
-									actionListener="#{personalOtherBean.removeKPIPersonOther(item)}" />
-							</p:column>
-							<p:column headerText="Duyệt KQ"
-								style="width:15px;text-align:center">
-								<p:selectBooleanCheckbox value="#{item.signResult}"
-									disabled="true" />
-							</p:column>
-							<p:column headerText="Tháng"
-								style="width:10px; text-align:center">
-								<p:tooltip for="mlist" value="ID: #{item.id}" />
-								<h:outputText value="#{item.kMonth}" id="mlist" />
-							</p:column>
-							<p:column headerText="Năm" style="width:10px;text-align:center">
-								<h:outputText value="#{item.kYear}" />
-							</p:column>
-							<p:column headerText="Tổng điểm"
-								style="width:10px;text-align:center">
-								<h:outputText value="#{item.total/100}">
-									<f:convertNumber pattern="##0%" />
-								</h:outputText>
-							</p:column>
-							<p:column headerText="Nhân viên" style="width:50px"
-								filterBy="#{item.nameEmp}"
-								filterFunction="#{abstractCustomFilter.filterByText}">
-								<h:outputText value="#{item.nameEmp}" />
-							</p:column>
-							<p:column headerText="Chi tiết"
-								style="width:15px;text-align:center">
-								<p:commandLink type="submit" value="Thêm"
-									actionListener="#{personalOtherBean.showDialogOrien(item)}"
-									update=":dialogKPIPersonalOther,:messages,:menuformid:tv:list:tableid_new_2"
-									process="@this" icon="ui-icon-plus"
-									style="font-style:italic;font-weight:bold" />
-							</p:column>
-							<f:facet name="footer">
-								<div style="clear: both;" />
-							</f:facet>
-						</p:dataTable>
-					</h:form>
-				</p:tab>
-			</p:tabView>
-		</h:form>
+							<h:panelGrid columns="1">
+								<p:commandButton type="submit" value="Tạo danh sách"
+									process="@this" id="btnew"
+									action="#{personalOtherBean.create()}" icon="ui-icon-document"
+									oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
+							</h:panelGrid>
+							<h:panelGrid columns="2" style="width:100%" cellspacing="10">
+								<p:selectOneMenu value="#{personalOtherBean.departmentSelected}"
+									converter="abstractConverter" effect="fade" var="t"
+									style="width:150px;" id="iddeps" filter="true"
+									filterMatchMode="custom" filterFunction="customFilter">
+									<f:selectItems value="#{personalOtherBean.departmentSearchs}"
+										var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+									<p:ajax process="@this"
+										listener="#{personalOtherBean.searchItem()}"
+										oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
+									<p:column>
+										<h:outputText value="#{t.code}" />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
+									</p:column>
+								</p:selectOneMenu>
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:panel>
+					<div style="clear: both" />
+					<p:dataTable value="#{personalOtherBean.kpiPersonalOthers}"
+						widgetVar="dtlistkpiperson_new" styleClass="tableparent"
+						paginator="true" paginatorPosition="bottom" rows="50"
+						scrollable="true" scrollHeight="400"
+						filteredValue="#{personalOtherBean.kPIPersonFilters}"
+						id="tableid_new_2" var="item" rowIndexVar="index">
+						<p:column headerText="..." style="width:5%; text-align:center">
+							<p:commandButton icon="ui-icon-closethick"
+								style="margin-left: -9px;background: none;border: none; box-shadow: none;"
+								update="tableid_new_2" styleClass="btnoneformat" process="@this"
+								actionListener="#{personalOtherBean.removeKPIPersonOther(item)}" />
+						</p:column>
+						<p:column headerText="STT" style="width:5%;text-align:center">
+							<h:outputText value="#{index + 1}" />
+						</p:column>
+						<p:column headerText="Duyệt KQ" style="width:10%;text-align:center">
+							<p:selectBooleanCheckbox value="#{item.signResult}"
+								disabled="true" />
+						</p:column>
+						<p:column headerText="Tháng" style="width:5%; text-align:center">
+							<p:tooltip for="mlist" value="ID: #{item.id}" />
+							<h:outputText value="#{item.kMonth}" id="mlist" />
+						</p:column>
+						<p:column headerText="Năm" style="width:10%;text-align:center">
+							<h:outputText value="#{item.kYear}" />
+						</p:column>
+						<p:column headerText="Tổng điểm"
+							style="width:10%;text-align:center">
+							<h:outputText value="#{item.total/100}">
+								<f:convertNumber pattern="##0%" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Nhân viên" style="width:45%;text-align:center"
+							filterBy="#{item.nameEmp}"
+							filterFunction="#{abstractCustomFilter.filterByText}">
+							<h:outputText value="#{item.nameEmp}" />
+						</p:column>
+						<p:column headerText="Chi tiết"
+							style="width:10%;text-align:center">
+							<p:commandLink type="submit" value="Đánh giá"
+								actionListener="#{personalOtherBean.showDialogOrien(item)}"
+								update=":dialogKPIPersonalOther,:messages,tv:list:tableid_new_2,idKPIPersonalOtherBehaviour"
+								process="@this" icon="ui-icon-plus"
+								style="font-style:italic;font-weight:bold" />
+						</p:column>
+						<f:facet name="footer">
+							<div style="clear: both;" />
+						</f:facet>
+					</p:dataTable>
+				</h:form>
+			</p:tab>
+		</p:tabView>
 
 		<p:dialog widgetVar="widgetKPIPersonalOther" resizable="false"
 			width="700" height="500" closeOnEscape="true"
-			id="idKPIPersonalOtherBehaviour" header="Bảng chi tiết vi phạm"
-			modal="true">
+			id="idKPIPersonalOtherBehaviour" header="" modal="true">
+			<f:facet name="header">
+				<h:outputText value="Bảng chi tiết vi phạm:"
+					style="margin-right:50px" />
+				<h:outputText value="#{personalOtherBean.personSelected.nameEmp}"
+					style="font-size:20px" />
+			</f:facet>
 			<h:form id="dialogKPIPersonalOther">
 				<p:fieldset legend="Danh sách" toggleable="true" toggleSpeed="500"
 					collapsed="false"
@@ -151,8 +151,8 @@
 								style="float:left" update="formViTriChucVu" icon="ui-icon-plus" />
 							<p:commandButton value="Lưu/cập nhật"
 								action="#{personalOtherBean.saveBehaviourDetail()}"
-								style="float:right"
-								update="growl, menuformid:tv:list:tableid_new_2" />
+								style="float:right" update="growl, tv:list:tableid_new_2"
+								oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
 							<div style="clear: both;" />
 						</f:facet>
 						<p:column headerText="..." style="width:6px; text-align:center">
@@ -194,7 +194,7 @@
 					<p:column headerText="..." style="width:6px; text-align:center">
 						<p:commandButton icon="ui-icon-closethick"
 							style="margin-left: -9px;background: none;border: none; box-shadow: none;"
-							update=":menuformid:tv:list:tableid_new_2,tableidHV"
+							update="tv:list:tableid_new_2,tableidHV"
 							styleClass="btnoneformat" process="@this"
 							actionListener="#{personalOtherBean.removeDetail(item)}" />
 					</p:column>
@@ -230,7 +230,8 @@
 							<p:commandButton type="submit" value="Thêm"
 								update="dialogKPIPersonalOther:tableidHV"
 								action="#{personalOtherBean.addBehaviourDetail()}"
-								icon="ui-icon-arrowreturnthick-1-s" />
+								icon="ui-icon-arrowreturnthick-1-s"
+								oncomplete="PF('dialogBeh').hide();" />
 						</div>
 						<div style="clear: both;" />
 					</f:facet>
@@ -275,7 +276,8 @@
 							<p:commandButton type="submit" value="Thêm"
 								action="#{personalOtherBean.addViTriChucVu()}"
 								update="dialogKPIPersonalOther:tableidHV"
-								icon="ui-icon-arrowreturnthick-1-s" />
+								icon="ui-icon-arrowreturnthick-1-s"
+								oncomplete="PF('wgvTableViTriChucVu').hide();" />
 						</div>
 						<div style="clear: both;" />
 					</f:facet>
