@@ -123,17 +123,6 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 			// MEMBER_SERVICE_PUBLIC = new MemberServicePublicProxy();
 			memberPlaying = getAccount().getMember();
-			// get all member is personal other
-
-			personalOthers = createAllCodeMemberOther();
-
-			// neu danh sach nhan vien khong lam kpi rong
-			if (personalOthers == null || personalOthers.isEmpty()) {
-				kpiPersonalOthers = new ArrayList<>();
-			} else {
-				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
-			}
-
 			departmentSearchs = new ArrayList<Department>();
 			if (getAccount().isAdmin()) {
 				Department[] deps = DEPARTMENT_SERVICE_PUBLIC.findAll();
@@ -156,6 +145,15 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 				// departmentSearch = departmentSearchs.get(0);
 			}
 
+			// get all member is personal other
+			personalOthers = createAllCodeMemberOther();
+
+			// neu danh sach nhan vien khong lam kpi rong
+			if (personalOthers == null || personalOthers.isEmpty()) {
+				kpiPersonalOthers = new ArrayList<>();
+			} else {
+				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+			}
 			personDetails = new ArrayList<>();
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -164,13 +162,16 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 	public void searchItem() {
 		try {
+			// get all member is personal other
+			personalOthers = createAllCodeMemberOther();
 			// neu danh sach nhan vien khong lam kpi rong
-			if (personalOthers.isEmpty()) {
+			if (personalOthers == null || personalOthers.isEmpty()) {
 				kpiPersonalOthers = new ArrayList<>();
 			} else {
 				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -212,64 +213,61 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 				// List<KPIPersonalOtherDetail> details =
 				// PERSONAL_OTHER_DETAIL_SERVICE.find(personOther);
 				// chi tiet hanh vi da duoc luu chua
-				if (personDetails.size() != 0) {
-					// xoa danh sach hanh vi
-					for (int p = 0; p < personDetailsDeleted.size(); p++) {
-						PERSONAL_OTHER_DETAIL_SERVICE.delete(personDetailsDeleted.get(p));
-					}
+				// if (personDetailsDeleted.size() != 0) {
+				// xoa danh sach hanh vi
+				for (int p = 0; p < personDetailsDeleted.size(); p++) {
+					PERSONAL_OTHER_DETAIL_SERVICE.delete(personDetailsDeleted.get(p));
+				}
 
-					// for(int i = 0; i < details.size(); i++){
-					for (int j = 0; j < personDetails.size(); j++) {
-						List<KPIPersonalOtherDetail> listDetailByContent = PERSONAL_OTHER_DETAIL_SERVICE
-								.find(personDetails.get(j).getContent(), personOtherTemp.getId());
-						// da co hanh vi ben bang chi tiet
-						if (listDetailByContent.size() != 0) {
-							listDetailByContent.get(0).setQuantity(personDetails.get(j).getQuantity());
-							KPIPersonalOtherDetail check = PERSONAL_OTHER_DETAIL_SERVICE
-									.update(listDetailByContent.get(0));
-							if (check == null) {
-								System.out.println("loi");
-							}
-						} else {
-							personDetails.get(j).setKpiPersonalOther(personOtherTemp);
-							KPIPersonalOtherDetail check = PERSONAL_OTHER_DETAIL_SERVICE.create(personDetails.get(j));
-							if (check.getId() == null) {
-								System.out.println("Loi: khong luu duoc chi tiet kpi ca nhan khac");
-							}
-						}
-					}
-					// Tinh tong so diem con lai theo tung nhan vien
+				// for(int i = 0; i < details.size(); i++){
+				for (int j = 0; j < personDetails.size(); j++) {
 					List<KPIPersonalOtherDetail> listDetailByContent = PERSONAL_OTHER_DETAIL_SERVICE
-							.find(personOtherTemp);
+							.find(personDetails.get(j).getContent(), personOtherTemp.getId());
+					// da co hanh vi ben bang chi tiet
 					if (listDetailByContent.size() != 0) {
-						double tongdiem;
-						double sodiembitru = 0;
-						for (int k = 0; k < listDetailByContent.size(); k++) {
-							sodiembitru = sodiembitru + (listDetailByContent.get(k).getMinuspoint()
-									* listDetailByContent.get(k).getQuantity());
-						}
-						tongdiem = 100 - sodiembitru;
-						// cap nhat kpi ca nhan khac
-						// query personOtherTemp truoc vi khi update lay data cu
-						personOtherTemp = PERSONAL_OTHER_SERVICE.findById(personOtherTemp.getId());
-						personOtherTemp.setTotal(tongdiem);
-						KPIPersonalOther kOther = PERSONAL_OTHER_SERVICE.update(personOtherTemp);
-						if (kOther != null) {
-							kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
-						} else {
+						listDetailByContent.get(0).setQuantity(personDetails.get(j).getQuantity());
+						KPIPersonalOtherDetail check = PERSONAL_OTHER_DETAIL_SERVICE.update(listDetailByContent.get(0));
+						if (check == null) {
 							System.out.println("loi");
 						}
+					} else {
+						personDetails.get(j).setKpiPersonalOther(personOtherTemp);
+						KPIPersonalOtherDetail check = PERSONAL_OTHER_DETAIL_SERVICE.create(personDetails.get(j));
+						if (check.getId() == null) {
+							System.out.println("Loi: khong luu duoc chi tiet kpi ca nhan khac");
+						}
 					}
-
-					// notify.success("Thành công");
-					FacesContext.getCurrentInstance().addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_INFO, "Thông báo", "Thành công"));
-					// }
-				} else {
-					// notify.warning("Không có thông tin thay đổi");
-					FacesContext.getCurrentInstance().addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_WARN, "Thông báo", "Không có thông tin thay đổi"));
 				}
+				// Tinh tong so diem con lai theo tung nhan vien
+				for (int i = 0; i < kpiPersonalOthers.size(); i++) {
+					List<KPIPersonalOtherDetail> listDetailByContent = PERSONAL_OTHER_DETAIL_SERVICE
+							.find(kpiPersonalOthers.get(i));
+					double tongdiem;
+					double sodiembitru = 0;
+					for (int k = 0; k < listDetailByContent.size(); k++) {
+						sodiembitru = sodiembitru + (listDetailByContent.get(k).getMinuspoint()
+								* listDetailByContent.get(k).getQuantity());
+					}
+					tongdiem = 100 - sodiembitru;
+					// cap nhat kpi ca nhan khac
+					// query personOtherTemp truoc vi khi update lay data cu
+					KPIPersonalOther personOtherTemp123 = PERSONAL_OTHER_SERVICE
+							.findById(kpiPersonalOthers.get(i).getId());
+					personOtherTemp123.setTotal(tongdiem);
+					PERSONAL_OTHER_SERVICE.update(personOtherTemp123);
+				}
+				kpiPersonalOthers = PERSONAL_OTHER_SERVICE.find(personalOthers, monthSearch, yearSearch);
+
+				// notify.success("Thành công");
+				FacesContext.getCurrentInstance().addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_INFO, "Thông báo", "Thành công"));
+				// }
+				// } else {
+				// // notify.warning("Không có thông tin thay đổi");
+				// FacesContext.getCurrentInstance().addMessage(null,
+				// new FacesMessage(FacesMessage.SEVERITY_WARN, "Thông báo",
+				// "Không có thông tin thay đổi"));
+				// }
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -545,9 +543,17 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 	// tra ve danh sach nhom khac
 	public List<String> createAllCodeMemberOther() throws RemoteException {
-		boolean isTruongPhong = false;
+		// boolean isTruongPhong = false;
 		List<String> personalOthersTemp = new ArrayList<>();
-		Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findId(memberPlaying.getDepartment().getId());
+		// Department depTemp =
+		// DEPARTMENT_SERVICE_PUBLIC.findId(memberPlaying.getDepartment().getId());
+		Department depTemp = null;
+		if (departmentSelected.getId() == null || departmentSelected.getId() == 0) {
+			depTemp = DEPARTMENT_SERVICE_PUBLIC.findId(departmentSearchs.get(0).getId());
+		} else {
+			depTemp = departmentSelected;
+		}
+
 		// Department depTempLv2 = null;
 		Department depTempLv3 = null;
 		if (depTemp.getLevelDep().getLevel() == 4) {
@@ -556,39 +562,33 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 		if (depTemp.getLevelDep().getLevel() == 3) {
 			depTempLv3 = depTemp;
 		}
-		if (memberPlaying.getCode().equals(memberPlaying.getDepartment().getCodeMem())) {
-			depTempLv3 = depTemp.getDepartment();
-			isTruongPhong = true;
-		}
-		if (memberPlaying.getCode().equals("admin")) {
-			return new ArrayList<>();
-		}
 		if (depTempLv3 != null) {
-
 			try {
 				// toan bo nhan vien nhom khac
 				List<EmployeeDTO> allMemberOther = new ArrayList<>();
 				EmployeeDTO[] allMemberTemp;
 				List<String> depList = new ArrayList<>();
 				String[] depArray = null;
-				// Phong ban
-				if (isTruongPhong) {
-					// tim tat ca cac to duoi cap phong
-					DepartmentData[] totalDepByDepartmentArray = DepartmentDataService
-							.timtheophongquanly(depTempLv3.getCode());
-					List<DepartmentData> totalDepByDepartment = new ArrayList<>(
-							Arrays.asList(totalDepByDepartmentArray));
-					for (int t = 0; t < totalDepByDepartment.size(); t++) {
-						depList.add(totalDepByDepartment.get(t).getCode());
-					}
-					// tim theo phong quan ly khong bao gom phong do -> phai
-					// them
-					// phong
-					// do vao
-					depList.add(memberPlaying.getDepartment().getCode());
-				} else {
-					depList.add(memberPlaying.getDepartment().getCode());
-				}
+				// // Phong ban
+				// if (isTruongPhong) {
+				// // tim tat ca cac to duoi cap phong
+				// DepartmentData[] totalDepByDepartmentArray =
+				// DepartmentDataService
+				// .timtheophongquanly(depTempLv3.getCode());
+				// List<DepartmentData> totalDepByDepartment = new ArrayList<>(
+				// Arrays.asList(totalDepByDepartmentArray));
+				// for (int t = 0; t < totalDepByDepartment.size(); t++) {
+				// depList.add(totalDepByDepartment.get(t).getCode());
+				// }
+				// // tim theo phong quan ly khong bao gom phong do -> phai
+				// // them
+				// // phong
+				// // do vao
+				// depList.add(memberPlaying.getDepartment().getCode());
+				// } else {
+				// depList.add(memberPlaying.getDepartment().getCode());
+				// }
+				depList.add(depTempLv3.getCode());
 				depArray = depList.toArray(new String[depList.size()]);
 				EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
 				allMemberTemp = EMPLOYEE_SERVICE_PUBLIC.findByDep(depArray);
@@ -648,13 +648,16 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 				EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
 			}
 			this.personalOthers = this.createAllCodeMemberOther();
+			if (personalOthers == null || personalOthers.isEmpty()) {
+				return;
+			}
 			if (allowSave(null)) {
 				// kiem tra -> ngay cua thang hien tai
 				java.util.Date date = new Date();
 				Calendar currentDate = Calendar.getInstance();
 				currentDate.setTime(date);
-				int monthCurrent = currentDate.get(Calendar.MONTH) + 1;
-				int yearCurrent = currentDate.get(Calendar.YEAR);
+				// int monthCurrent = currentDate.get(Calendar.MONTH) + 1;
+				// int yearCurrent = currentDate.get(Calendar.YEAR);
 				// khong cho tao kpi thang truoc hoac thang sau
 				// if (monthSearch != monthCurrent || yearCurrent != yearSearch)
 				// {
@@ -977,8 +980,6 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 	@Override
 	protected Logger getLogger() {

@@ -58,6 +58,9 @@
 										filterMatchMode="custom" filterFunction="customFilter">
 										<f:selectItems value="#{personalOtherBean.departmentSearchs}"
 											var="item" itemLabel="#{item.name}" itemValue="#{item}" />
+										<p:ajax process="@this"
+											listener="#{personalOtherBean.searchItem()}"
+											oncomplete="PF('dtlistkpiperson_new').clearFilters()" />
 										<p:column>
 											<h:outputText value="#{t.code}" />
 										</p:column>
@@ -265,7 +268,8 @@
 					value="#{personalOtherBean.listInfoPersonalPerformances}"
 					id="tbreportimptargetsale" expandableRowGroups="true"
 					paginatorPosition="bottom" paginator="true" scrollable="true"
-					scrollHeight="500" resizableColumns="true" var="itemp">
+					scrollHeight="500" resizableColumns="true" var="itemp"
+					expandedRow="#{true}">
 					<f:facet name="header">
 						<div style="float: right">
 							<p:commandButton type="submit" value="Thêm"
