@@ -469,7 +469,8 @@ public class KPIDepBean extends AbstractBean<KPIDepOfYear> {
 							String code = item.getFormulaKPI().getCodeNotGood();
 							if (isdate) {
 								if (code.contains("TH-KH") || code.contains("KH-TH")) {
-									engine.eval("var KQ = Math.abs((TH.getTime() - KH.getTime()) / (24 * 60 * 60 * 1000))");
+									engine.eval(
+											"var KQ = Math.abs((TH.getTime() - KH.getTime()) / (24 * 60 * 60 * 1000))");
 									code = code.replaceAll("TH-KH", "KQ");
 									code = code.replaceAll("KH-TH", "KQ");
 								}
@@ -541,9 +542,8 @@ public class KPIDepBean extends AbstractBean<KPIDepOfYear> {
 		for (int i = 0; i < kpiDepOfYears.size(); i++) {
 			for (int j = 0; j < tagetDepartCates.size(); j++) {
 				if (kpiDepOfYears.get(i).getTagetDepart().getkTagetDepartCate().equals(tagetDepartCates.get(j))) {
-					tagetDepartCates.get(j).setRatioWeight(
-							tagetDepartCates.get(j).getRatioWeight()
-									+ kpiDepOfYears.get(i).getRatioCompleteIsWeighted());
+					tagetDepartCates.get(j).setRatioWeight(tagetDepartCates.get(j).getRatioWeight()
+							+ kpiDepOfYears.get(i).getRatioCompleteIsWeighted());
 				}
 			}
 		}
@@ -555,7 +555,8 @@ public class KPIDepBean extends AbstractBean<KPIDepOfYear> {
 				if (kpiDepOfYears.get(i).getTagetDepart().getkTagetDepartCate().equals(tagetDepartCates.get(j))) {
 					double value = 0;
 					try {
-						value = (tagetDepartCates.get(j).getRatioWeight() * kpiDepOfYears.get(i).getWeightedParent()) / 100;
+						value = (tagetDepartCates.get(j).getRatioWeight() * kpiDepOfYears.get(i).getWeightedParent())
+								/ 100;
 					} catch (Exception e) {
 					}
 					kpiDepOfYears.get(i).setWeightedParentRation(value);
@@ -860,8 +861,8 @@ public class KPIDepBean extends AbstractBean<KPIDepOfYear> {
 						item.setNo(no);
 						item.setContentAppreciate(tagetDeparts.get(i).getContent());
 
-						TagetDepartCateWeight tw = tagetDepartCateService.findSearch(kpiDep.getYear(), tagetDeparts
-								.get(i).getkTagetDepartCate(), codeDepart);
+						TagetDepartCateWeight tw = tagetDepartCateService.findSearch(kpiDep.getYear(),
+								tagetDeparts.get(i).getkTagetDepartCate(), codeDepart);
 						item.setWeightedParent(tw.getWeigth());
 						tagetDeparts.get(i).getkTagetDepartCate().setWeight(tw.getWeigth());
 
@@ -900,18 +901,17 @@ public class KPIDepBean extends AbstractBean<KPIDepOfYear> {
 						for (int i = 0; i < kpiDepOfYears.size(); i++) {
 							kpiDepOfYears.get(i).setIndex(i);
 						}
-						kpiDepOfYears.stream().sorted(
-								(KPIDepOfYear o1, KPIDepOfYear o2) -> {
-									try {
-										int i = o1.getTagetDepart().getkTagetDepartCate().getCode()
-												.compareTo(o2.getTagetDepart().getkTagetDepartCate().getCode());
-										if (i == 0)
-											return o1.getIndex() > o2.getIndex() ? 1 : 0;
-										return i;
-									} catch (Exception e) {
-										return -1;
-									}
-								});
+						kpiDepOfYears.stream().sorted((KPIDepOfYear o1, KPIDepOfYear o2) -> {
+							try {
+								int i = o1.getTagetDepart().getkTagetDepartCate().getCode()
+										.compareTo(o2.getTagetDepart().getkTagetDepartCate().getCode());
+								if (i == 0)
+									return o1.getIndex() > o2.getIndex() ? 1 : 0;
+								return i;
+							} catch (Exception e) {
+								return -1;
+							}
+						});
 					}
 				}
 			}
@@ -927,7 +927,12 @@ public class KPIDepBean extends AbstractBean<KPIDepOfYear> {
 		kpiDep = new KPIDep();
 		DateTime dt = new DateTime();
 		kpiDep.setYear(dt.getYear());
-		codeDepart = member.getDepartment().getCode();
+		if (member.getDepartment().getLevelDep().getLevel() == 3) {
+			codeDepart = member.getDepartment().getDepartment().getCode();
+		}
+		if (member.getDepartment().getLevelDep().getLevel() == 2) {
+			codeDepart = member.getDepartment().getCode();
+		}
 		try {
 			// String employeeCode = getAccount().getMember().getCode();
 			// employee = employeeService.findByCode(employeeCode);
@@ -1004,7 +1009,7 @@ public class KPIDepBean extends AbstractBean<KPIDepOfYear> {
 				kpiDeps = kpiDepService.findKPIDep(null, year);
 			} else {
 				if (member.getDepartment() != null)
-					kpiDeps = kpiDepService.findKPIDep(member.getDepartment().getCode(), year);
+					kpiDeps = kpiDepService.findKPIDep(member.getDepartment().getDepartment().getCode(), year);
 			}
 			for (int i = 0; i < kpiDeps.size(); i++) {
 				try {
