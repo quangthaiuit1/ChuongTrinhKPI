@@ -970,6 +970,9 @@ public class KPIDepMonthBean extends AbstractBean<KPIDepOfMonth> {
 						KPIDepOfMonth item = new KPIDepOfMonth();
 						item.setContentAppreciate(kpiDepOfYears.get(i).getContentAppreciate());
 						item.setKPIPerformance(true);
+						item.setFormulaKPI(kpiDepOfYears.get(i).getFormulaKPI());
+						item.setShowFormual(false);
+						item.setComputation(kpiDepOfYears.get(i).getFormulaKPI().getCode());
 						kPIDepOfMonths.add(item);
 					}
 				}

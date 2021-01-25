@@ -73,7 +73,6 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 	private String namePositionJob;
 	private boolean enablePerformance;
 	// private List<OrientationPerson> allPersonalPerformance;
-
 	// Cong thuc tinh
 	private List<FormulaKPI> formulaKPIs;
 	private FormulaKPI formulaKPISelect;
@@ -204,7 +203,9 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 	}
 
 	public void reset() {
-		kpiPersonalPerformance = new KPIPersonalPerformance();
+		// kpiPersonalPerformance = new KPIPersonalPerformance();
+		kpiPersonalPerformance.setContent("");
+		kpiPersonalPerformance.setId(null);
 	}
 
 	public void showEdit() {
@@ -257,11 +258,20 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 
 	public void showListFormula(KPIPersonalPerformance param) {
 		notify = new Notify(FacesContext.getCurrentInstance());
-		formulaKPIs = FORMULAKPI_SERVICE.findAll();
-		formulaKPISelect = param.getFormulaKPI();
-		kpy = param;
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('dialogFormula11').show();");
+		// RequestContext context = RequestContext.getCurrentInstance();
+		// tao moi
+		if (param == null || param.getId() == null) {
+			formulaKPIs = FORMULAKPI_SERVICE.findAll();
+			formulaKPISelect = new FormulaKPI();
+			kpy = param;
+		}
+		// cap nhat
+		else {
+			formulaKPIs = FORMULAKPI_SERVICE.findAll();
+			formulaKPISelect = param.getFormulaKPI();
+			kpy = param;
+		}
+		PrimeFaces.current().executeScript("PF('dialogFormula11').show();");
 	}
 
 	public void updateFormula() {

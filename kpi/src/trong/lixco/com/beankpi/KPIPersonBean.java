@@ -1285,6 +1285,11 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 				KPIPersonOfMonth item = new KPIPersonOfMonth();
 				item.setContentAppreciate(kpiDepOfMonths.get(i).getContentAppreciate());
 				item.setKPIPerformance(true);
+				if (kpiDepOfMonths.get(i).getFormulaKPI() != null) {
+					item.setFormulaKPI(kpiDepOfMonths.get(i).getFormulaKPI());
+					item.setCodeFormula(kpiDepOfMonths.get(i).getFormulaKPI().getCode());
+				}
+				item.setShowFormula(false);
 				kpiPersonOfMonths.add(item);
 			}
 		}

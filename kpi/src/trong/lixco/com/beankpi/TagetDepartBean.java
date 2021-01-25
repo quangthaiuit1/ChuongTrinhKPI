@@ -78,7 +78,15 @@ public class TagetDepartBean extends AbstractBean<TagetDepart> {
 			e.printStackTrace();
 		}
 		member = getAccount().getMember();
-		codeDepart = member.getDepartment().getCode();
+		if (member.getDepartment().getLevelDep().getLevel() == 3) {
+			codeDepart = member.getDepartment().getDepartment().getCode();
+		}
+		if (member.getDepartment().getLevelDep().getLevel() == 4) {
+			codeDepart = member.getDepartment().getDepartment().getDepartment().getCode();
+		}
+		if (member.getDepartment().getLevelDep().getLevel() == 2) {
+			codeDepart = member.getDepartment().getCode();
+		}
 
 		ajaxTagetDepart();
 		searchItem();
@@ -304,11 +312,15 @@ public class TagetDepartBean extends AbstractBean<TagetDepart> {
 	public void searchItem() {
 		if (getAccount().isAdmin())
 			tagetDeparts = tagetDepartService.findSearch(year, null);
-		else
+		else if (member.getDepartment().getLevelDep().getLevel() == 3) {
+			tagetDeparts = tagetDepartService.findSearch(year, member.getDepartment().getDepartment().getCode());
+		}
+		if (member.getDepartment().getLevelDep().getLevel() == 2) {
 			tagetDeparts = tagetDepartService.findSearch(year, member.getDepartment().getCode());
+		}
 
-		Map<String, List<TagetDepart>> datagroups1 = tagetDeparts.stream().collect(
-				Collectors.groupingBy(p -> p.getCodeDepart(), Collectors.toList()));
+		Map<String, List<TagetDepart>> datagroups1 = tagetDeparts.stream()
+				.collect(Collectors.groupingBy(p -> p.getCodeDepart(), Collectors.toList()));
 
 		tagetDepartInfos = new ArrayList<TagetDepartInfo>();
 		for (String key : datagroups1.keySet()) {
