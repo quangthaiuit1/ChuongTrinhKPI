@@ -11,14 +11,15 @@
 		<p:separator />
 		<h:form id="menuformid">
 			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
-				<p:panel header="Thông tin" styleClass="panelw100"
+				<p:panel header="Thông tin" id="thaiabc" styleClass="panelw100"
 					style="height:690px">
 					<h:panelGrid id="info">
 						<p:outputLabel value="Phòng ban" />
 						<p:inputText value="#{tagetDepartBean.nameDepart()}"
 							disabled="true" />
 						<p:outputLabel value="Nhóm mục tiêu" />
-						<p:selectOneMenu value="#{tagetDepartBean.tagetDepartCate}"
+						<p:selectOneMenu id="thai"
+							value="#{tagetDepartBean.tagetDepartCate}"
 							converter="abstractConverter" effect="fade" var="t"
 							styleClass="seOnMe95" filter="true" filterMatchMode="custom"
 							filterFunction="customFilter">
@@ -57,7 +58,8 @@
 					</h:panelGrid>
 					<p:separator />
 					<p:commandButton value="Lưu/Cập nhật" process="@form"
-						action="#{tagetDepartBean.createOrUpdate()}" update=":messages,:menuformid" />
+						action="#{tagetDepartBean.createOrUpdate()}"
+						update=":messages,:menuformid" />
 					<p:commandButton value="Tạo mới"
 						action="#{tagetDepartBean.reset()}" update=":menuformid" />
 					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
@@ -102,7 +104,7 @@
 								resizableColumns="true" var="item">
 								<p:ajax event="rowSelect"
 									listener="#{tagetDepartBean.showEdit()}"
-									update=":menuformid:info" />
+									update=":menuformid:thaiabc" />
 								<p:headerRow>
 									<p:column>
 										<h:outputText value="" />

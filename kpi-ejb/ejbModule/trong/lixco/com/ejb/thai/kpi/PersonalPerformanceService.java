@@ -18,9 +18,10 @@ import javax.persistence.criteria.Root;
 
 import trong.lixco.com.ejb.service.AbstractService;
 import trong.lixco.com.jpa.thai.KPIPersonalPerformance;
+
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
-public class PersonalPerformanceService extends AbstractService<KPIPersonalPerformance>{
+public class PersonalPerformanceService extends AbstractService<KPIPersonalPerformance> {
 	@Inject
 	private EntityManager em;
 	@Resource
@@ -54,18 +55,21 @@ public class PersonalPerformanceService extends AbstractService<KPIPersonalPerfo
 			return new ArrayList<KPIPersonalPerformance>();
 		}
 	}
-	public List<KPIPersonalPerformance> find(List<String> codeJobs){
-	    //primary
-	    if (codeJobs != null && !codeJobs.isEmpty()) {
+
+	public List<KPIPersonalPerformance> find(List<String> codeJobs) {
+		// primary
+		if (codeJobs != null && !codeJobs.isEmpty()) {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<KPIPersonalPerformance> cq = cb.createQuery(KPIPersonalPerformance.class);
 			Root<KPIPersonalPerformance> root = cq.from(KPIPersonalPerformance.class);
 			List<Predicate> queries = new ArrayList<>();
-			if(codeJobs != null) {
+			if (codeJobs != null) {
 				Predicate codePJobQuery = cb.in(root.get("codePJob")).value(codeJobs);
 				queries.add(codePJobQuery);
 			}
-			
+			Predicate disable = cb.equal(root.get("disable"), false);
+			queries.add(disable);
+
 			Predicate data[] = new Predicate[queries.size()];
 			for (int i = 0; i < queries.size(); i++) {
 				data[i] = queries.get(i);
@@ -79,14 +83,15 @@ public class PersonalPerformanceService extends AbstractService<KPIPersonalPerfo
 			return new ArrayList<KPIPersonalPerformance>();
 		}
 	}
+
 	public List<KPIPersonalPerformance> findAllCustom() {
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-			CriteriaQuery<KPIPersonalPerformance> cq = cb.createQuery(KPIPersonalPerformance.class);
-			Root<KPIPersonalPerformance> root = cq.from(KPIPersonalPerformance.class);
-			cq.select(root);
-			TypedQuery<KPIPersonalPerformance> query = em.createQuery(cq);
-			List<KPIPersonalPerformance> results = query.getResultList();
-			return results;
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<KPIPersonalPerformance> cq = cb.createQuery(KPIPersonalPerformance.class);
+		Root<KPIPersonalPerformance> root = cq.from(KPIPersonalPerformance.class);
+		cq.select(root);
+		TypedQuery<KPIPersonalPerformance> query = em.createQuery(cq);
+		List<KPIPersonalPerformance> results = query.getResultList();
+		return results;
 	}
-	
+
 }

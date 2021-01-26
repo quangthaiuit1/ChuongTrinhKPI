@@ -203,9 +203,9 @@ public class PersonalPerformanceBean extends AbstractBean<KPIPersonalPerformance
 	}
 
 	public void reset() {
-		// kpiPersonalPerformance = new KPIPersonalPerformance();
-		kpiPersonalPerformance.setContent("");
-		kpiPersonalPerformance.setId(null);
+		kpiPersonalPerformance = new KPIPersonalPerformance();
+		// kpiPersonalPerformance.setContent("");
+		// kpiPersonalPerformance.setId(null);
 	}
 
 	public void showEdit() {

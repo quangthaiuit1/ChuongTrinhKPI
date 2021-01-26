@@ -12,8 +12,8 @@
 		<p:growl id="departmentPerformance" showDetail="true" sticky="false" />
 		<h:form id="menuformid">
 			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
-				<p:panel header="Thông tin" styleClass="panelw100"
-					style="height:690px">
+				<p:panel id="panelThongTin" header="Thông tin"
+					styleClass="panelw100" style="height:690px">
 					<h:panelGrid id="info">
 						<p:outputLabel value="Phòng ban" />
 						<p:inputText value="#{departPerformanceBean.nameDepart()}"
@@ -34,7 +34,7 @@
 								<p:commandLink style="float:right" process="@this"
 									disabled="#{kPIDepMonthBean.kpiDepMonth.signKPI}"
 									actionListener="#{departPerformanceBean.showListFormula(departPerformanceBean.kpiDepPerformance)}"
-									update=":dialogformula1,:messages">
+									update=":formula1,:messages">
 									<h:outputText value="&#8801;" />
 								</p:commandLink>
 							</h:panelGrid>
@@ -46,9 +46,10 @@
 					<p:separator />
 					<p:commandButton value="Lưu/Cập nhật" process="@form"
 						action="#{departPerformanceBean.createOrUpdate()}"
-						update=":messages,:menuformid" />
+						update=":messages,:menuformid:panelThongTin,:menuformid:preview" />
 					<p:commandButton value="Tạo mới"
-						action="#{departPerformanceBean.reset()}" update=":menuformid" />
+						action="#{departPerformanceBean.reset()}"
+						update=":menuformid:panelThongTin" />
 					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
 						value="Xóa" update=":messages,:menuformid"
 						action="#{departPerformanceBean.delete()}">
@@ -139,7 +140,7 @@
 		</h:form>
 		<p:dialog widgetVar="dialogFormula1" resizable="false" width="300"
 			closeOnEscape="true" header="Công thức tính">
-			<h:form id="dialogformula1">
+			<h:form id="formula1">
 				<p:dataTable value="#{departPerformanceBean.formulaKPIs}"
 					lazy="true" paginatorPosition="bottom"
 					rowsPerPageTemplate="20,40,60" paginator="true" rows="40"

@@ -12,7 +12,7 @@
 		<p:growl id="personPerformance" showDetail="true" sticky="false" />
 		<h:form id="formPersonalPerformance">
 			<h:panelGrid columns="2" style="width:100%;" columnClasses="w40, w60">
-				<p:panel header="Thông tin" styleClass="panelw100"
+				<p:panel header="Thông tin" id="idpanel" styleClass="panelw100"
 					style="height:690px">
 					<h:panelGrid id="info">
 						<p:outputLabel value="Vị trí công việc:" />
@@ -46,10 +46,10 @@
 					<p:separator />
 					<p:commandButton value="Lưu/Cập nhật" process="@form"
 						action="#{personalPerformanceBean.createOrUpdate()}"
-						update=":messages,:formPersonalPerformance" />
+						update=":messages,:formPersonalPerformance:idpanel,:formPersonalPerformance:preview" />
 					<p:commandButton value="Tạo mới"
 						action="#{personalPerformanceBean.reset()}"
-						update=":formPersonalPerformance" />
+						update=":formPersonalPerformance:idpanel" />
 					<p:commandButton icon="ui-icon-trash" id="xoact" process="@this"
 						value="Xóa"
 						update=":messages,:formPersonalPerformance,:formPersonalPerformance:dtTablePersonalPerformance"

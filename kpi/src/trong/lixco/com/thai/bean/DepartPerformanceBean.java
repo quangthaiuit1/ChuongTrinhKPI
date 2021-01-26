@@ -357,7 +357,8 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 		if (getAccount().isAdmin())
 			listDepartPerformance = DEPARTMENT_PERFORMANCE_SERVICE.find(year, null);
 		else
-			listDepartPerformance = DEPARTMENT_PERFORMANCE_SERVICE.find(year, member.getDepartment().getCode());
+			listDepartPerformance = DEPARTMENT_PERFORMANCE_SERVICE.find(year,
+					member.getDepartment().getDepartment().getCode());
 
 		Map<String, List<KPIDepPerformanceJPA>> datagroups1 = listDepartPerformance.stream()
 				.collect(Collectors.groupingBy(p -> p.getCodeDepart(), Collectors.toList()));
@@ -371,7 +372,7 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 				tgi.setListDepPerformance(invs);
 				listInfoDepartPerformance.add(tgi);
 			} catch (Exception e) {
-				// TODO: handle exception
+				e.printStackTrace();
 			}
 		}
 
@@ -386,10 +387,13 @@ public class DepartPerformanceBean extends AbstractBean<KPIDepPerformanceJPA> {
 	public void showListFormula(KPIDepPerformanceJPA param) {
 		notify = new Notify(FacesContext.getCurrentInstance());
 		formulaKPIs = formulaKPIService.findAll();
-		formulaKPISelect = param.getFormulaKPI();
+		if (param.getFormulaKPI() == null) {
+			formulaKPISelect = formulaKPIs.get(0);
+		} else {
+			formulaKPISelect = param.getFormulaKPI();
+		}
 		kpy = param;
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('dialogFormula1').show();");
+		PrimeFaces.current().executeScript("PF('dialogFormula1').show();");
 	}
 
 	@Inject
