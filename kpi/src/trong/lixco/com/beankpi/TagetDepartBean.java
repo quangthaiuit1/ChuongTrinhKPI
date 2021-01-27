@@ -279,10 +279,11 @@ public class TagetDepartBean extends AbstractBean<TagetDepart> {
 
 	public void showEdit() {
 		this.tagetDepart = tagetDepartEdit;
+		tagetDepartCate = new TagetDepartCate();
 		tagetDepartCate = this.tagetDepart.getkTagetDepartCate();
 		weight = (int) this.tagetDepart.getWeightParent();
 		codeDepart = this.tagetDepart.getCodeDepart();
-		ajaxTagetDepart();
+		// ajaxTagetDepart();
 	}
 
 	public void delete() {

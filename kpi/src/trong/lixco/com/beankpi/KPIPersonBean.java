@@ -201,8 +201,8 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 		monthSearch = lc.getMonthOfYear();
 		yearSearch = lc.getYear();
 
-		list = Arrays.asList(true, true, true, true, true, false, false, false, false, false, false, true, true, true,
-				true, true, true, false, true);
+		list = Arrays.asList(true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+				true);
 		tabindex = 0;
 		reset();
 		searchItem();
@@ -388,7 +388,10 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 	}
 
 	public void onToggle(ToggleEvent e) {
+		System.out.println(list.size());
+		System.out.println(e.getData()+"-"+(e.getVisibility() == Visibility.VISIBLE));
 		list.set((Integer) e.getData(), e.getVisibility() == Visibility.VISIBLE);
+		
 	}
 
 	// thai
@@ -1370,8 +1373,15 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 
 			} else {
 				try {
+					if(TH!=null&&!"".equals(TH.trim())&&KH!=null&&!"".equals(KH.trim())){
 					engine.eval("var TH = " + TH);
 					engine.eval("var KH = " + KH);
+					}else{
+						iscacul = false;
+						kpiPersonOfMonths.get(i).setRatioComplete(0);
+						kpiPersonOfMonths.get(i).setRatioCompleteIsWeighted(0);
+						totalCV += 0;
+					}
 				} catch (Exception e) {
 					iscacul = false;
 					kpiPersonOfMonths.get(i).setRatioComplete(0);
@@ -1468,6 +1478,10 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 		double a = (double) Math.round(totalCV * 10) / 10;
 		kPIPerson.setTotalCV(Math.round(a));
 		kPIPerson.setTotal(Math.round(kPIPerson.getTotalCV() + totalHV));
+		
+		System.out.println(list.size());
+		System.out.println(list);
+		
 	}
 
 	boolean manager = false;

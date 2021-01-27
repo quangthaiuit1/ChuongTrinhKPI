@@ -206,7 +206,8 @@
 										process="@form" style="background:#fbe4c6"
 										disabled="#{kPIPersonBean.kPIPerson.signResultKPI}"
 										actionListener="#{kPIPersonBean.caculatorResult()}"
-										update=":menuformid:tv:detail" icon="ui-icon-calculator" />
+										update=":menuformid:tv:detail:idtableinput"
+										icon="ui-icon-calculator" />
 									<p:commandButton type="submit" value="Lưu/cập nhật"
 										disabled="#{kPIPersonBean.kPIPerson.signResultKPI}"
 										process="@form" action="#{kPIPersonBean.createOrUpdate()}"
@@ -244,7 +245,7 @@
 
 							</p:panel>
 							<p:fieldset legend="Thái độ hành vi" toggleable="true"
-								toggleSpeed="500" collapsed="true"
+								collapsed="true"
 								style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;margin-top:10px"
 								styleClass="toggleabldetail">
 								<p:dataTable var="item" styleClass="tableformat1" id="tableidHV"
@@ -303,7 +304,6 @@
 								</h:outputText>
 							</p:panel>
 							<p:fieldset legend="Giải quyết công việc" toggleable="true"
-								toggleSpeed="500" collapsed="false"
 								style="border: 0px;border-top: 1px solid #b8bbbb; border-radius: 0px;"
 								styleClass="toggleabldetail">
 								<p:dataTable var="item" styleClass="tableformat1"
@@ -379,14 +379,15 @@
 											</f:facet>
 										</p:cellEditor>
 									</p:column>
-									<p:column headerText="KPI hiệu suất" width="32">
+									<p:column headerText="KPI hiệu suất" width="32"
+										visible="#{kPIPersonBean.list[3]}">
 										<center>
 											<h:outputText rendered="#{item.KPIPerformance}"
 												styleClass="ui-icon ui-icon-check" />
 										</center>
 									</p:column>
 									<p:column headerText="Trọng số(%)" width="20"
-										visible="#{kPIPersonBean.list[3]}">
+										visible="#{kPIPersonBean.list[4]}">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.weighted/100}">
@@ -403,7 +404,7 @@
 										</p:cellEditor>
 									</p:column>
 									<p:column headerText="Phương pháp đo" width="110"
-										visible="#{kPIPersonBean.list[4]}">
+										visible="#{kPIPersonBean.list[5]}">
 										<p:outputLabel value="#{item.codeFormula}" rows="4"
 											autoResize="false" />
 										<p:commandLink style="float:right" process="@this"
@@ -414,7 +415,7 @@
 											<h:outputText value="&#8801;" />
 										</p:commandLink>
 									</p:column>
-									<p:column headerText="A" visible="#{kPIPersonBean.list[5]}"
+									<p:column headerText="A" visible="#{kPIPersonBean.list[6]}"
 										width="30">
 										<p:cellEditor>
 											<f:facet name="output">
@@ -429,23 +430,9 @@
 											</f:facet>
 										</p:cellEditor>
 									</p:column>
-									<p:column headerText="B" visible="#{kPIPersonBean.list[6]}"
-										width="30">
-										<p:cellEditor>
-											<f:facet name="output">
-												<h:outputText value="#{item.paramB}" />
-											</f:facet>
-											<f:facet name="input">
-												<p:inputTextarea value="#{item.paramB}" rows="2"
-													disabled="#{kPIPersonBean.kPIPerson.signResultKPI}"
-													style="text-align:center">
-													<p:ajax process="@this" />
-												</p:inputTextarea>
-											</f:facet>
-										</p:cellEditor>
-									</p:column>
+
 									<p:column headerText="Nguồn dữ liệu chứng minh"
-										visible="#{kPIPersonBean.list[11]}" width="80">
+										visible="#{kPIPersonBean.list[7]}" width="80">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.sourceVerify}" />
@@ -459,7 +446,7 @@
 										</p:cellEditor>
 									</p:column>
 									<p:column headerText="Đơn vị tính"
-										visible="#{kPIPersonBean.list[12]}" width="40">
+										visible="#{kPIPersonBean.list[8]}" width="40">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.unit}" title="ĐVT" />
@@ -475,7 +462,7 @@
 
 									</p:column>
 									<p:column headerText="Kế hoạch(KH)" style="text-align:center"
-										visible="#{kPIPersonBean.list[13]}" width="49">
+										visible="#{kPIPersonBean.list[9]}" width="49">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.planKPI}" title="ĐVT" />
@@ -490,7 +477,7 @@
 										</p:cellEditor>
 									</p:column>
 									<p:column headerText="Thực hiện(TH)" style="text-align:center"
-										visible="#{kPIPersonBean.list[14]}" width="49">
+										visible="#{kPIPersonBean.list[10]}" width="49">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.performKPI}" title="ĐVT" />
@@ -505,7 +492,7 @@
 										</p:cellEditor>
 									</p:column>
 									<p:column headerText="Tỉ lệ hoàn thành"
-										visible="#{kPIPersonBean.list[15]}" width="30"
+										visible="#{kPIPersonBean.list[11]}" width="30"
 										style="text-align:center">
 										<p:outputLabel value="#{item.ratioComplete/100}" rows="2"
 											style="text-align:center">
@@ -513,14 +500,15 @@
 										</p:outputLabel>
 									</p:column>
 									<p:column headerText="Tỉ lệ nhân trọng số "
-										visible="#{kPIPersonBean.list[16]}" width="30"
+										visible="#{kPIPersonBean.list[12]}" width="30"
 										style="text-align:center">
 										<p:outputLabel value="#{item.ratioCompleteIsWeighted/100}"
 											rows="2" style="text-align:center">
 											<f:convertNumber pattern="##0%" />
 										</p:outputLabel>
 									</p:column>
-									<p:column headerText="Ghi chú" width="200">
+									<p:column headerText="Ghi chú" width="200"
+										visible="#{kPIPersonBean.list[13]}">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.note}" title="ĐVT" />
@@ -535,7 +523,7 @@
 										</p:cellEditor>
 									</p:column>
 									<p:column headerText="DL chứng minh"
-										visible="#{kPIPersonBean.list[18]}" width="45">
+										visible="#{kPIPersonBean.list[14]}" width="45">
 										<p:panelGrid id="mainGrid" columns="1" styleClass="noneformat">
 											<p:commandLink value="Xem file" process="@this"
 												style="font-size: 11px;text-decoration: underline;color: blue;font-style: italic;"
