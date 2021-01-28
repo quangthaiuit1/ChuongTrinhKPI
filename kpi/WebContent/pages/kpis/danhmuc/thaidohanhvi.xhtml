@@ -41,12 +41,12 @@
 					<p:commandButton value="File excel mẫu" immediate="true"
 						styleClass="btlink"
 						onclick="monitorDownload( showStatus , hideStatus)"
-						actionListener="#{departPerformanceBean.fileDuLieuKPICaNhanMau()}" />
+						actionListener="#{behaviourPersonBean.fileDuLieuThaiDoHanhViMau()}" />
 					<p:separator />
 					<!-- Upload file excel -->
 					<h:form enctype="multipart/form-data">
 						<p:fileUpload
-							fileUploadListener="#{departPerformanceBean.handleFileUpload}"
+							fileUploadListener="#{behaviourPersonBean.handleFileUpload}"
 							mode="advanced" dragDropSupport="false" multiple="true"
 							update="messagesh" sizeLimit="10000000"
 							allowTypes="/(\.|\/)(xls|xlsx)$/" label="Chọn tệp tải lên"

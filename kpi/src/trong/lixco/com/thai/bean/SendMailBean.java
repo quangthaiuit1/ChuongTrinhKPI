@@ -31,8 +31,8 @@ import trong.lixco.com.jpa.thai.ConfigSendMail;
 import trong.lixco.com.thai.bean.entities.Reminder;
 import trong.lixco.com.thai.mail.JobSendMail;
 
-@Singleton
-@Startup
+//@Singleton
+//@Startup
 
 // @Named
 // @ViewScoped

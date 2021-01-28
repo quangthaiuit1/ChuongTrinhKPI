@@ -82,14 +82,61 @@ function cancel() {
 				style="float:right; border:0px; margin-top:-35px !important;background:none;">
 				<h:panelGrid id="mainGrid" columns="9"
 					style="float:left; margin-bottom:5px">
-					<p:commandButton type="submit" value="BC KPI cá nhân năm"
-						onclick="PF('widgetKPIPersonalYear').show()"
-						update="
-									:dialogKPIPersonalYear,:messages"
-						process="@this" icon="fa fa-file-pdf-o" />
+					<p:commandButton type="submit" value="BC ABC cá nhân tháng"
+						onclick="PF('wgvABCPersonMonth').show()"
+						update=":formABCPersonMonth,:messages" process="@this"
+						icon="fa fa-file-pdf-o" />
 				</h:panelGrid>
 			</p:panel>
 		</h:form>
+		<p:dialog widgetVar="wgvABCPersonMonth" resizable="false" width="700"
+			height="100" closeOnEscape="true"
+			header="Báo cáo ABC cá nhân theo tháng" modal="true">
+			<h:form id="formABCPersonMonth">
+				<center>
+					<p:progressBar id="progressBarClient" widgetVar="pbClient"
+						style="width:480px" />
+					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
+						<p:outputLabel value="Tháng: " />
+						<p:selectOneMenu id="month"
+							value="#{reportBean.monthSelectedPersonal}">
+							<f:selectItems value="#{reportBean.months}" />
+						</p:selectOneMenu>
+						<p:selectOneMenu
+							value="#{reportBean.departmentSelectedPersonalMonth}"
+							converter="abstractConverter" effect="fade" var="t"
+							style="width:150px;" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<p:ajax process="@this" />
+							<f:selectItem itemLabel="--Tất cả phòng ban--"
+								itemValue="#{null}" />
+							<f:selectItems value="#{reportBean.departments}" var="item"
+								itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
+							</p:column>
+						</p:selectOneMenu>
+						<p:outputLabel value="Năm" />
+						<p:spinner size="10" value="#{reportBean.yearSelectedPersonal1}"
+							min="2017" max="2050">
+							<p:ajax process="@this" />
+						</p:spinner>
+						<p:commandButton type="submit" value="PDF" ajax="false"
+							style="background:#fbe4c6"
+							actionListener="#{reportBean.showReportPersonalMonth()}"
+							onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
+						<p:commandButton value="Xuất excel" immediate="true"
+							style="float:right" ajax="false" id="btnPersonalMonth"
+							actionListener="#{reportBean.excelPersonalMonth()}"
+							onclick="start()" widgetVar="startButton1" />
+					</h:panelGrid>
+				</center>
+				<p:separator />
+			</h:form>
+		</p:dialog>
 		<!-- Phong nam -->
 		<p:dialog widgetVar="widgetKPIDepartmentYear" resizable="false"
 			width="500" height="100" closeOnEscape="true"
