@@ -8,7 +8,7 @@ public class ABCPersonMonth {
 	private double kpiCaNhan; // diem kpi ca nhan
 	private double tongdiem;
 	private String xeploai; // A , B, C
-	private String note; // ghi chu: thai san , khong lam
+	private String note = ""; // ghi chu: thai san , khong lam
 
 	public ABCPersonMonth() {
 		super();

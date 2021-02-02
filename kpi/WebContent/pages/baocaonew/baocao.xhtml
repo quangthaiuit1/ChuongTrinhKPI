@@ -57,22 +57,22 @@ function cancel() {
 						onclick="PF('widgetKPIDepartmentYear').show()"
 						update="
 									:dialogKPIDepartmentYear,:messages"
-						process="@this" icon="fa fa-file-pdf-o" />
+						process="@this" icon="fa fa-file-pdf-o" disabled="true" />
 					<p:commandButton type="submit" value="BC KPI cá nhân tháng"
 						onclick="PF('widgetKPIPersonalMonth').show()"
 						update="
 									:dialogKPIPersonalYear,:messages"
-						process="@this" icon="fa fa-file-pdf-o" />
+						process="@this" icon="fa fa-file-pdf-o" disabled="true" />
 					<p:commandButton type="submit" value="BC KPI cá nhân quý"
 						onclick="PF('widgetKPIPersonalQuy').show()"
 						update="
 									:dialogKPIPersonalYear,:messages"
-						process="@this" icon="fa fa-file-pdf-o" />
+						process="@this" icon="fa fa-file-pdf-o" disabled="true" />
 					<p:commandButton type="submit" value="BC KPI cá nhân năm"
 						onclick="PF('widgetKPIPersonalYear').show()"
 						update="
 									:dialogKPIPersonalYear,:messages"
-						process="@this" icon="fa fa-file-pdf-o" />
+						process="@this" icon="fa fa-file-pdf-o" disabled="true" />
 				</h:panelGrid>
 			</p:panel>
 		</h:form>
@@ -126,7 +126,7 @@ function cancel() {
 						</p:spinner>
 						<p:commandButton type="submit" value="PDF" ajax="false"
 							style="background:#fbe4c6"
-							actionListener="#{reportBean.showReportPersonalMonth()}"
+							actionListener="#{reportBean.showReportABCPersonMonth()}"
 							onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
 						<p:commandButton value="Xuất excel" immediate="true"
 							style="float:right" ajax="false" id="btnPersonalMonth"

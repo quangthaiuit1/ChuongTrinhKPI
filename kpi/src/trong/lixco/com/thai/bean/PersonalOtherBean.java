@@ -605,17 +605,19 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 						boolean vitriKhongLamKPI = false;
 						PositionJobData[] empPJobs = PositionJobDataService.vttheonhanvien(allMember.get(i).getCode());
 						// kiem tra vi tri chuc vu khong lam kpi
-						for (int k = 0; k < empPJobs.length; k++) {
-							for (int j = 0; j < allPositionDontKPI.size(); j++) {
-								if (empPJobs[k].getCode().equals(allPositionDontKPI.get(j).getPosition_code())) {
-									vitriKhongLamKPI = true;
-									break;
+						if (empPJobs != null) {
+							for (int k = 0; k < empPJobs.length; k++) {
+								for (int j = 0; j < allPositionDontKPI.size(); j++) {
+									if (empPJobs[k].getCode().equals(allPositionDontKPI.get(j).getPosition_code())) {
+										vitriKhongLamKPI = true;
+										break;
+									}
 								}
+								break;
 							}
-							break;
-						}
-						if (vitriKhongLamKPI) {
-							allMemberOther.add(allMember.get(i));
+							if (vitriKhongLamKPI) {
+								allMemberOther.add(allMember.get(i));
+							}
 						}
 						// neu khong phai truong phong thi them vao
 						// if
@@ -632,7 +634,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 				}
 
 			} catch (Exception e) {
-				// TODO: handle exception
+				e.printStackTrace();
 				return null;
 			}
 		}

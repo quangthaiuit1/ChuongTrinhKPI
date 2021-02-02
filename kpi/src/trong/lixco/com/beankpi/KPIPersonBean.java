@@ -1478,8 +1478,8 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 		kPIPerson.setTotalCV(Math.round(a));
 		kPIPerson.setTotal(Math.round(kPIPerson.getTotalCV() + totalHV));
 
-		System.out.println(list.size());
-		System.out.println(list);
+		// System.out.println(list.size());
+		// System.out.println(list);
 
 	}
 
