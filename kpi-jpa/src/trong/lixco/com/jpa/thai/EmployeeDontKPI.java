@@ -12,6 +12,7 @@ public class EmployeeDontKPI extends AbstractEntity {
 	private String employee_code;
 	private boolean is_temp = false;
 	private boolean is_thaisan = false;
+	private boolean is_nghiom = false;
 	private int month;
 	private int year;
 
@@ -53,5 +54,13 @@ public class EmployeeDontKPI extends AbstractEntity {
 
 	public void setYear(int year) {
 		this.year = year;
+	}
+
+	public boolean isIs_nghiom() {
+		return is_nghiom;
+	}
+
+	public void setIs_nghiom(boolean is_nghiom) {
+		this.is_nghiom = is_nghiom;
 	}
 }

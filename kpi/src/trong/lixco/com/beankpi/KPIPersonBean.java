@@ -1397,18 +1397,62 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 						KQ = item.getOrientationPerson().getFormulaKPI().getCodeVSGood();
 					}
 					engine.eval("var KQ = " + KQ);
-					if (!"".equals(item.getParamA()))
-						engine.eval("var A = " + item.getParamA());
-					if (!"".equals(item.getParamB()))
-						engine.eval("var B = " + item.getParamB());
-					if (!"".equals(item.getParamC()))
-						engine.eval("var C = " + item.getParamC());
-					if (!"".equals(item.getParamD()))
-						engine.eval("var D = " + item.getParamD());
-					if (!"".equals(item.getParamE()))
-						engine.eval("var E = " + item.getParamE());
-					if (!"".equals(item.getParamF()))
-						engine.eval("var F = " + item.getParamF());
+					if (!"".equals(item.getParamA())) {
+						// convert A: string -> int
+						int paramA;
+						try {
+							paramA = Integer.parseInt(item.getParamA());
+						} catch (NumberFormatException e) {
+							paramA = 0;
+						}
+						engine.eval("var A = " + paramA);
+					}
+
+					if (!"".equals(item.getParamB())) {
+						int paramB;
+						try {
+							paramB = Integer.parseInt(item.getParamB());
+						} catch (NumberFormatException e) {
+							paramB = 0;
+						}
+						engine.eval("var B = " + paramB);
+					}
+					if (!"".equals(item.getParamC())) {
+						int paramB;
+						try {
+							paramB = Integer.parseInt(item.getParamC());
+						} catch (NumberFormatException e) {
+							paramB = 0;
+						}
+						engine.eval("var C = " + paramB);
+					}
+					if (!"".equals(item.getParamD())) {
+						int paramB;
+						try {
+							paramB = Integer.parseInt(item.getParamD());
+						} catch (NumberFormatException e) {
+							paramB = 0;
+						}
+						engine.eval("var D = " + paramB);
+					}
+					if (!"".equals(item.getParamE())) {
+						int paramB;
+						try {
+							paramB = Integer.parseInt(item.getParamE());
+						} catch (NumberFormatException e) {
+							paramB = 0;
+						}
+						engine.eval("var E = " + paramB);
+					}
+					if (!"".equals(item.getParamF())) {
+						int paramB;
+						try {
+							paramB = Integer.parseInt(item.getParamF());
+						} catch (NumberFormatException e) {
+							paramB = 0;
+						}
+						engine.eval("var F = " + paramB);
+					}
 					if ((boolean) engine.get("KQ")) {
 						// ket qua thu hien theo tinh dung
 						String RESULT = "";
@@ -1461,6 +1505,7 @@ public class KPIPersonBean extends AbstractBean<KPIPerson> {
 					kpiPersonOfMonths.get(i).setRatioComplete(0);
 					kpiPersonOfMonths.get(i).setRatioCompleteIsWeighted(0);
 					totalCV += 0;
+					// e.printStackTrace();
 				}
 
 			}

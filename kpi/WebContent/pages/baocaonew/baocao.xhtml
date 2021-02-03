@@ -86,6 +86,11 @@ function cancel() {
 						onclick="PF('wgvABCPersonMonth').show()"
 						update=":formABCPersonMonth,:messages" process="@this"
 						icon="fa fa-file-pdf-o" />
+					<p:commandButton type="submit"
+						value="BC ds nhân viên chưa đăng ký KPI" disabled="true"
+						onclick="PF('wgvABCPersonMonth').show()"
+						update=":formABCPersonMonth,:messages" process="@this"
+						icon="fa fa-file-pdf-o" />
 				</h:panelGrid>
 			</p:panel>
 		</h:form>
@@ -125,13 +130,13 @@ function cancel() {
 							<p:ajax process="@this" />
 						</p:spinner>
 						<p:commandButton type="submit" value="PDF" ajax="false"
-							style="background:#fbe4c6"
+							style="background:#fbe4c6;margin-left:100px"
 							actionListener="#{reportBean.showReportABCPersonMonth()}"
 							onclick="this.form.target='_blank'" icon="ui-icon-calculator" />
 						<p:commandButton value="Xuất excel" immediate="true"
-							style="float:right" ajax="false" id="btnPersonalMonth"
-							actionListener="#{reportBean.excelPersonalMonth()}"
-							onclick="start()" widgetVar="startButton1" />
+							onclick="this.form.target='_blank'" style="float:right"
+							ajax="false" id="btnPersonalMonth"
+							actionListener="#{reportBean.excelABCPersonalMonth()}" />
 					</h:panelGrid>
 				</center>
 				<p:separator />

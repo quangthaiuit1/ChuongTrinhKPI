@@ -128,6 +128,9 @@ public class CaiDatNgoaiLeBean extends AbstractBean<KPIPerson> {
 									if (menuExceptionSelected.equals("THAISAN")) {
 										e.setIs_thaisan(true);
 									}
+									if (menuExceptionSelected.equals("NGHIOM")) {
+										e.setIs_nghiom(true);
+									}
 									EMPLOYEE_DONT_KPI_SERVICE.create(e);
 								}
 							}

@@ -4,6 +4,7 @@ public class ABCPersonMonth {
 	private long id;
 	private String employeeName;
 	private String departmentName;
+	private String departmentLv3;
 	private double kpiTo; // diem kpi to
 	private double kpiCaNhan; // diem kpi ca nhan
 	private double tongdiem;
@@ -91,4 +92,11 @@ public class ABCPersonMonth {
 		this.note = note;
 	}
 
+	public String getDepartmentLv3() {
+		return departmentLv3;
+	}
+
+	public void setDepartmentLv3(String departmentLv3) {
+		this.departmentLv3 = departmentLv3;
+	}
 }
