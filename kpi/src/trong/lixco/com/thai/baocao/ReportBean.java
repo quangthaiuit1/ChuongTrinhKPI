@@ -145,13 +145,13 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		yearSelectedPersonal2 = lc.getYear();
 		yearSelectedPersonal3 = lc.getYear();
 		DEPARTMENT_SERVICE_PUBLIC = new DepartmentServicePublicProxy();
-		EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
+		// EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
 		departmentSelectedPersonalYear = new Department();
 		departmentSelectedPersonalQuy = new Department();
 		departmentSelectedPersonalMonth = new Department();
 
 		allCodeDepartment = new ArrayList<>();
-		allCodeEmployee = new ArrayList<>();
+		// allCodeEmployee = new ArrayList<>();
 		departments = new ArrayList<Department>();
 		departmentsLv1 = new ArrayList<>();
 
@@ -182,23 +182,52 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			allCodeDepartmentArray = new String[allCodeDepartment.size()];
 			allCodeDepartmentArray = allCodeDepartment.toArray(allCodeDepartmentArray);
 
-			EmployeeDTO[] allEmployeeArray = EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
-			for (EmployeeDTO e : allEmployeeArray) {
-				allCodeEmployee.add(e.getCode());
-			}
+			// EmployeeDTO[] allEmployeeArray =
+			// EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
+			// for (EmployeeDTO e : allEmployeeArray) {
+			// allCodeEmployee.add(e.getCode());
+			// }
 
 			// Get phong ban cua a Trong
-			Department[] deps = DEPARTMENT_SERVICE_PUBLIC.getAllDepartSubByParent("10001");
+			// Department[] deps =
+			// DEPARTMENT_SERVICE_PUBLIC.getAllDepartSubByParent("10001");
+			// for (int i = 0; i < deps.length; i++) {
+			// if (deps[i].getLevelDep().getLevel() <= 2) {
+			// departments.add(deps[i]);
+			// }
+			// if (deps[i].getLevelDep().getLevel() == 1) {
+			// departmentsLv1.add(deps[i]);
+			// }
+			// }
+
+			Department[] deps = DEPARTMENT_SERVICE_PUBLIC.findAll();
 			for (int i = 0; i < deps.length; i++) {
-				if (deps[i].getLevelDep().getLevel() <= 2) {
-					departments.add(deps[i]);
-				}
-				if (deps[i].getLevelDep().getLevel() == 1) {
-					departmentsLv1.add(deps[i]);
+				if (deps[i].getLevelDep() != null) {
+					if (deps[i].getLevelDep().getLevel() == 1) {
+						departmentsLv1.add(deps[i]);
+					}
 				}
 			}
+			if (getAccount().isAdmin()) {
+
+				Department dFirst = new Department();
+				dFirst.setName("--Tất cả phòng ban--");
+				departments.add(dFirst);
+				for (int i = 0; i < deps.length; i++) {
+					if (deps[i].getLevelDep() != null) {
+						if (deps[i].getLevelDep().getLevel() <= 2) {
+							departments.add(deps[i]);
+						}
+					}
+				}
+
+			} else {
+				departments.add(member.getDepartment().getDepartment());
+			}
+
 			if (departments.size() != 0) {
 				departments = DepartmentUtil.sort(departments);
+				departmentSelectedPersonalMonth = departments.get(0);
 			}
 
 			if (member.getDepartment().getLevelDep().getLevel() == 3) {
@@ -269,11 +298,6 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			List<ABCPersonMonth> dataPersonalMonth = new ArrayList<>();
 			// tim danh sach nhan vien khong lam kpi
 			List<EmployeeDontKPIEver> allEmpDontKPIEver = EMPLOYEE_DONT_KPI_EVER_SERVICE.findAll();
-			// List<EmployeeDontKPI> allEmpDontKPITemp =
-			// EMPLOYEE_DONT_KPI_SERVICE.findDontKpiTempByMonth(month, year);
-			// List<EmployeeDontKPI> allEmpDontKPIThaiSan =
-			// EMPLOYEE_DONT_KPI_SERVICE.findDontKpiThaiSanByMonth(month,
-			// year);
 			allCodeEmployee = new ArrayList<>();
 			if (department == null || department.getCode() == null) {
 				DepartmentData[] allDepartByLv1 = DepartmentDataService.timtheophongquanly(departLv1.getCode());
@@ -575,14 +599,34 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	// data abc ca nhan thang
 	public List<ABCPersonMonth> createDataReportABCPersonMonth(int month, int year, Department department) {
 		try {
+			EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
 			List<ABCPersonMonth> dataPersonalMonth = new ArrayList<>();
 			// tim danh sach nhan vien khong lam kpi
 			List<EmployeeDontKPIEver> allEmpDontKPIEver = EMPLOYEE_DONT_KPI_EVER_SERVICE.findAll();
-			// List<EmployeeDontKPI> allEmpDontKPITemp =
-			// EMPLOYEE_DONT_KPI_SERVICE.findDontKpiTempByMonth(month, year);
-			// List<EmployeeDontKPI> allEmpDontKPIThaiSan =
-			// EMPLOYEE_DONT_KPI_SERVICE.findDontKpiThaiSanByMonth(month,
-			// year);
+
+			// tim cap duoi xuong san xuat
+			DepartmentData[] depsXuongSanXuat = DepartmentDataService.timtheophongquanly("30005");
+			DepartmentData[] depsXuongSanXuatBD = DepartmentDataService.timtheophongquanly("30015");
+			DepartmentData[] depsXuongSanXuatBN = DepartmentDataService.timtheophongquanly("30018");
+			List<DepartmentData> depsXuongSanXuatList = new ArrayList<>();
+			for (DepartmentData d : depsXuongSanXuat) {
+				if (!d.getCode().equals("40003")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+			// bd
+			for (DepartmentData d : depsXuongSanXuatBD) {
+				if (!d.getCode().equals("40026")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+			// bn
+			for (DepartmentData d : depsXuongSanXuatBN) {
+				if (!d.getCode().equals("40057")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+
 			allCodeEmployee = new ArrayList<>();
 			if (department == null || department.getCode() == null) {
 				DepartmentData[] allDepartByLv1 = DepartmentDataService.timtheophongquanly(departLv1.getCode());
@@ -597,8 +641,6 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 						s = builder.toString().substring(0, builder.toString().length() - 1);
 					}
 					EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongban(s);
-					// EmployeeDTO[] allEmployeeArray =
-					// EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
 					if (allEmployeeArrayNew != null) {
 						for (EmployeeData e : allEmployeeArrayNew) {
 							allCodeEmployee.add(e.getCode());
@@ -615,8 +657,6 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 				if (department.getLevelDep().getLevel() == 3) {
 					depsNew = DepartmentDataService.timtheophongquanly(department.getDepartment().getCode());
 				}
-				// EmployeeDTO[] allEmployeeArray =
-				// EMPLOYEE_SERVICE_PUBLIC.findByDep(tempDepartmentArr);
 				StringBuilder builder = new StringBuilder();
 				for (DepartmentData s : depsNew) {
 					builder.append(s.getCode());
@@ -650,11 +690,10 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 				// Tim nhan vien theo codeEmp KPIPerson -> nameEmp, nameDepart
 				EmployeeDTO memberTemp = EMPLOYEE_SERVICE_PUBLIC.findByCode(allCodeEmployee.get(i));
 				personalMonthTemp.setEmployeeName(memberTemp.getName());
+				personalMonthTemp.setEmployeeCode(memberTemp.getCode());
+				personalMonthTemp.setMonth(month);
+				personalMonthTemp.setYear(year);
 				personalMonthTemp.setId(i);
-
-				// if (memberTemp.getName().equals("Châu Thị Tuyền")) {
-				// System.out.println("Thai");
-				// }
 
 				// list KPIPerson by Employee and year
 				List<KPIPerson> kpiPersonByEmpCode = KPI_PERSON_SERVICE.findRange(allCodeEmployee.get(i), month, year);
@@ -719,32 +758,45 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 					}
 					// nhom co dinh
 					if (!personOtherTemp.isEmpty()) {
-						personalMonthTemp.setKpiCaNhan(personOtherTemp.get(0).getTotal());
-						List<KPITo> kpiToTemp = KPI_TO_SERVICE.findKPIDepMonth(month, year, depTemp.getCode());
-						// chua lam kpi to
-						if (kpiToTemp.isEmpty()) {
-							personalMonthTemp.setKpiTo(0);
-							// kpi to 40%, kpi to 60%
-							result = (double) ((0 * 40) / 100)
-									+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
-							result = (double) Math.round(result * 100) / 100;
-							// tinh tong kpiPersonal * 60 + kpiDeparment * 40
-							personalMonthTemp.setTongdiem(result);
-							personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
-							dataPersonalMonth.add(personalMonthTemp);
+						// kiem tra co phai xuong san xuat khong de lay kpi to
+						boolean isTo = false;
+						for (int t = 0; t < depsXuongSanXuatList.size(); t++) {
+							if (depTemp.getCode().equals(depsXuongSanXuatList.get(t).getCode())) {
+								isTo = true;
+								break;
+							}
 						}
-						// da co kpi to
+						List<KPITo> kpiToTemp = null;
+						// neu khong phai xuong san xuat -> kpi phong
+						if (!isTo) {
+							// kpi phong theo nhan vien
+							List<KPIDepMonth> kpiDepartmentByEmpCode = KPI_DEPARTMENT_MONTH.findKPIDepMonth(month, year,
+									depTemp.getDepartment().getCode());
+							if (kpiDepartmentByEmpCode.isEmpty()) {
+								personalMonthTemp.setKpiTo(0);
+							} else {
+								personalMonthTemp.setKpiTo(kpiDepartmentByEmpCode.get(0).getResult());
+							}
+						}
+						// kpi to
 						else {
-							personalMonthTemp.setKpiTo(kpiToTemp.get(0).getResult());
-							// kpi to 40%, kpi to 60%
-							result = (double) ((personalMonthTemp.getKpiTo() * 40) / 100)
-									+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
-							// tinh tong kpiPersonal * 60 + kpiDeparment * 40
-							result = (double) Math.round(result * 100) / 100;
-							personalMonthTemp.setTongdiem(result);
-							personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
-							dataPersonalMonth.add(personalMonthTemp);
+							kpiToTemp = KPI_TO_SERVICE.findKPIDepMonth(month, year, depTemp.getCode());
+							if (kpiToTemp.isEmpty()) {
+								personalMonthTemp.setKpiTo(0);
+							} else {
+								personalMonthTemp.setKpiTo(kpiToTemp.get(0).getResult());
+							}
 						}
+						personalMonthTemp.setKpiCaNhan(personOtherTemp.get(0).getTotal());
+
+						result = (double) ((personalMonthTemp.getKpiTo() * 40) / 100)
+								+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+						// tinh tong kpiPersonal * 60 + kpiDeparment * 40
+						result = (double) Math.round(result * 100) / 100;
+						personalMonthTemp.setTongdiem(result);
+						personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+						dataPersonalMonth.add(personalMonthTemp);
+						// }
 					}
 					// nhom khong lam kpi
 					else {
@@ -850,33 +902,44 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		// EmpNo
 		cell = row.createCell(0);
 		cell.setCellValue("Họ và tên");
-		// xep loai// EmpName
+		// EmpNo
 		cell = row.createCell(1);
+		cell.setCellValue("Mã nhân viên");
+		// xep loai// EmpName
+		cell = row.createCell(2);
 		cell.setCellValue("Đơn vị");
 		cell.setCellStyle(style);
 
-		cell = row.createCell(2);
+		cell = row.createCell(3);
 		cell.setCellValue("Bộ phận");
 		cell.setCellStyle(style);
 
-		cell = row.createCell(3);
+		cell = row.createCell(4);
 		cell.setCellValue("KPI Phòng/Tổ 40%");
 		cell.setCellStyle(style);
 		// Grade
-		cell = row.createCell(4);
+		cell = row.createCell(5);
 		cell.setCellValue("KPI cá nhân 60%");
 		cell.setCellStyle(style);
 		// Bonus
-		cell = row.createCell(5);
+		cell = row.createCell(6);
 		cell.setCellValue("Tổng điểm");
 		cell.setCellStyle(style);
 
-		cell = row.createCell(6);
+		cell = row.createCell(7);
 		cell.setCellValue("Xếp loại");
 		cell.setCellStyle(style);
 
-		cell = row.createCell(7);
+		cell = row.createCell(8);
 		cell.setCellValue("Ghi chú");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(9);
+		cell.setCellValue("Tháng");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(10);
+		cell.setCellValue("Năm");
 		cell.setCellStyle(style);
 
 		for (ABCPersonMonth kq : dataReportPersonalMonth) {
@@ -885,29 +948,38 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			// ho ten
 			cell = row.createCell(0);
 			cell.setCellValue(kq.getEmployeeName());
-			// Don vi (B)
+			// ho ten
 			cell = row.createCell(1);
+			cell.setCellValue(kq.getEmployeeCode());
+			// Don vi (B)
+			cell = row.createCell(2);
 			cell.setCellValue(kq.getDepartmentName());
 
-			cell = row.createCell(2);
+			cell = row.createCell(3);
 			cell.setCellValue(kq.getDepartmentLv3());
 
-			cell = row.createCell(3);
+			cell = row.createCell(4);
 			cell.setCellValue(kq.getKpiTo());
 
-			cell = row.createCell(4);
+			cell = row.createCell(5);
 			cell.setCellValue(kq.getKpiCaNhan());
 
-			cell = row.createCell(5);
+			cell = row.createCell(6);
 			cell.setCellValue(kq.getTongdiem());
 
-			cell = row.createCell(6);
+			cell = row.createCell(7);
 			cell.setCellValue(kq.getXeploai());
 
 			if (StringUtils.isNotEmpty(kq.getNote())) {
-				cell = row.createCell(7);
+				cell = row.createCell(8);
 				cell.setCellValue(kq.getNote());
 			}
+
+			cell = row.createCell(9);
+			cell.setCellValue(kq.getMonth());
+
+			cell = row.createCell(10);
+			cell.setCellValue(kq.getYear());
 		}
 		String filename = "abcthang.xlsx";
 		FacesContext facesContext = FacesContext.getCurrentInstance();

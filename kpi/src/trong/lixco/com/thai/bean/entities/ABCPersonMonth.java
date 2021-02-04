@@ -3,6 +3,7 @@ package trong.lixco.com.thai.bean.entities;
 public class ABCPersonMonth {
 	private long id;
 	private String employeeName;
+	private String employeeCode;
 	private String departmentName;
 	private String departmentLv3;
 	private double kpiTo; // diem kpi to
@@ -10,6 +11,8 @@ public class ABCPersonMonth {
 	private double tongdiem;
 	private String xeploai; // A , B, C
 	private String note = ""; // ghi chu: thai san , khong lam
+	private int month;
+	private int year;
 
 	public ABCPersonMonth() {
 		super();
@@ -98,5 +101,29 @@ public class ABCPersonMonth {
 
 	public void setDepartmentLv3(String departmentLv3) {
 		this.departmentLv3 = departmentLv3;
+	}
+
+	public String getEmployeeCode() {
+		return employeeCode;
+	}
+
+	public void setEmployeeCode(String employeeCode) {
+		this.employeeCode = employeeCode;
+	}
+
+	public int getMonth() {
+		return month;
+	}
+
+	public void setMonth(int month) {
+		this.month = month;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
 	}
 }

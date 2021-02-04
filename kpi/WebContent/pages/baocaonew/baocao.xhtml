@@ -113,8 +113,7 @@ function cancel() {
 							style="width:150px;" filter="true" filterMatchMode="custom"
 							filterFunction="customFilter">
 							<p:ajax process="@this" />
-							<f:selectItem itemLabel="--Tất cả phòng ban--"
-								itemValue="#{null}" />
+
 							<f:selectItems value="#{reportBean.departments}" var="item"
 								itemLabel="#{item.name}" itemValue="#{item}" />
 							<p:column>
