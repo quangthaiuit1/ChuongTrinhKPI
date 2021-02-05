@@ -21,6 +21,7 @@ public class EmployeeData {
 	private String cateJobCode;
 	private String madv;
 	private Date dateEndContract;//ngày kết thúc hợp đồng
+	private Date dateLayOff;//ngay nghi
 
 	public EmployeeData(long id, String code, String name, String nameDepart) {
 		this.id = id;
@@ -214,6 +215,14 @@ public class EmployeeData {
 
 	public void setDateEndContract(Date dateEndContract) {
 		this.dateEndContract = dateEndContract;
+	}
+
+	public Date getDateLayOff() {
+		return dateLayOff;
+	}
+
+	public void setDateLayOff(Date dateLayOff) {
+		this.dateLayOff = dateLayOff;
 	}
 
 }

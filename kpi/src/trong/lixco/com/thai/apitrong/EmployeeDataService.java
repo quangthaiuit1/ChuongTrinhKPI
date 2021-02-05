@@ -21,6 +21,36 @@ public class EmployeeDataService {
 		gson = gsonBuilder.create();
 	}
 
+	// @param = codedp,month,year
+	public static EmployeeData[] findByDepartForKPI(String param) {
+		try {
+			String link = "?cm=findByDepartForKPI&dt=" + param;
+			String data = process(link);
+			DataResponseAPI ketqua = gson.fromJson(data, DataResponseAPI.class);
+			EmployeeData[] employeeDatas = gson.fromJson(ketqua.getDt(), EmployeeData[].class);
+			return employeeDatas;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	// @param = List<codedepart>;month,year
+	public static EmployeeData[] findByListDepartForKPI(String param) {
+		try {
+			String link = "?cm=findByListDepartForKPI&dt=" + param;
+			String data = process(link);
+			DataResponseAPI ketqua = gson.fromJson(data, DataResponseAPI.class);
+			EmployeeData[] employeeDatas = gson.fromJson(ketqua.getDt(), EmployeeData[].class);
+			return employeeDatas;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
 	/**
 	 * Tat ca nhan vien
 	 * 

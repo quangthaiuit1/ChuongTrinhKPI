@@ -46,6 +46,8 @@ import trong.lixco.com.servicepublic.EmployeeServicePublic;
 import trong.lixco.com.servicepublic.EmployeeServicePublicProxy;
 import trong.lixco.com.thai.apitrong.DepartmentData;
 import trong.lixco.com.thai.apitrong.DepartmentDataService;
+import trong.lixco.com.thai.apitrong.EmployeeData;
+import trong.lixco.com.thai.apitrong.EmployeeDataService;
 import trong.lixco.com.thai.apitrong.PositionJobData;
 import trong.lixco.com.thai.apitrong.PositionJobDataService;
 import trong.lixco.com.thai.bean.entities.InfoPersonalPerformance;
@@ -566,35 +568,24 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 		if (depTempLv3 != null) {
 			try {
 				// toan bo nhan vien nhom khac
-				List<EmployeeDTO> allMemberOther = new ArrayList<>();
-				EmployeeDTO[] allMemberTemp;
-				List<String> depList = new ArrayList<>();
-				String[] depArray = null;
-				// // Phong ban
-				// if (isTruongPhong) {
-				// // tim tat ca cac to duoi cap phong
-				// DepartmentData[] totalDepByDepartmentArray =
-				// DepartmentDataService
-				// .timtheophongquanly(depTempLv3.getCode());
-				// List<DepartmentData> totalDepByDepartment = new ArrayList<>(
-				// Arrays.asList(totalDepByDepartmentArray));
-				// for (int t = 0; t < totalDepByDepartment.size(); t++) {
-				// depList.add(totalDepByDepartment.get(t).getCode());
-				// }
-				// // tim theo phong quan ly khong bao gom phong do -> phai
-				// // them
-				// // phong
-				// // do vao
-				// depList.add(memberPlaying.getDepartment().getCode());
-				// } else {
-				// depList.add(memberPlaying.getDepartment().getCode());
-				// }
-				depList.add(depTempLv3.getCode());
-				depArray = depList.toArray(new String[depList.size()]);
-				EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
-				allMemberTemp = EMPLOYEE_SERVICE_PUBLIC.findByDep(depArray);
+				List<EmployeeData> allMemberOther = new ArrayList<>();
+				// List<EmployeeDTO> allMemberOther = new ArrayList<>();
+				// EmployeeDTO[] allMemberTemp;
+				// List<String> depList = new ArrayList<>();
+				// String[] depArray = null;
+				// depList.add(depTempLv3.getCode());
+				// depArray = depList.toArray(new String[depList.size()]);
+				// EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
+				// allMemberTemp = EMPLOYEE_SERVICE_PUBLIC.findByDep(depArray);
+
+				String param = "";
+				param = param + depTempLv3.getCode() + "," + monthSearch + "," + yearSearch;
+				// new
+				EmployeeData[] allMemberTemp1 = EmployeeDataService.findByDepartForKPI(param);
+
 				// tat ca nhan vien
-				List<EmployeeDTO> allMember = Arrays.asList(allMemberTemp);
+				// List<EmployeeDTO> allMember = Arrays.asList(allMemberTemp);
+				List<EmployeeData> allMember = Arrays.asList(allMemberTemp1);
 				List<PositionDontKPI> allPositionDontKPI = POSITION_DONT_KPI_SERVICE.findAll();
 				if (allPositionDontKPI.size() == 0) {
 					MessageView.ERROR("Không có vị trí chức vụ");
@@ -619,15 +610,9 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 								allMemberOther.add(allMember.get(i));
 							}
 						}
-						// neu khong phai truong phong thi them vao
-						// if
-						// (!allMember.get(i).getCode().equals(depTemp.getCodeMem()))
-						// {
-						// allMemberOther.add(allMember.get(i));
-						// }
 					}
 					// Tao list tring toan bo code employee nhom khac
-					for (EmployeeDTO m : allMemberOther) {
+					for (EmployeeData m : allMemberOther) {
 						personalOthersTemp.add(m.getCode());
 					}
 					return personalOthersTemp;
