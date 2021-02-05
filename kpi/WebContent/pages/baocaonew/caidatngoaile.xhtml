@@ -23,9 +23,18 @@
 		<h:form id="formEmpl">
 			<div class="ui-g">
 				<div class="ui-g-7">
+					<p:outputLabel value="Tháng: "
+						style="margin-left:15%;margin-top:10px" />
+					<p:selectOneMenu id="month"
+						value="#{caiDatNgoaiLeBean.monthSelected}"
+						style="margin-left:10px">
+						<p:ajax event="change" update="dtEmployeeCenter"
+							listener="#{caiDatNgoaiLeBean.ajaxHandleSelectDepartment()}" />
+						<f:selectItems value="#{caiDatNgoaiLeBean.allMonthTemplate}" />
+					</p:selectOneMenu>
 					<p:selectOneMenu value="#{caiDatNgoaiLeBean.departmentSearch}"
 						converter="abstractConverter" effect="fade" var="t"
-						style="width:150px;margin-left:40%" id="iddeps" filter="true"
+						style="width:150px;margin-left:10%" id="iddeps" filter="true"
 						filterMatchMode="custom" filterFunction="customFilter">
 						<p:ajax event="change" update="dtEmployeeCenter"
 							listener="#{caiDatNgoaiLeBean.ajaxHandleSelectDepartment()}" />

@@ -46,6 +46,8 @@ public class CaiDatNgoaiLeBean extends AbstractBean<KPIPerson> {
 	private List<Month> months;
 	private boolean renderTableMonth = true;
 	private int yearSearch = 0;
+	private int[] allMonthTemplate = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+	private int monthSelected;
 
 	// table member Trong
 
@@ -63,6 +65,7 @@ public class CaiDatNgoaiLeBean extends AbstractBean<KPIPerson> {
 		try {
 			LocalDate lc = new LocalDate();
 			yearSearch = lc.getYear();
+			monthSelected = lc.getMonthOfYear();
 			departmentServicePublic = new DepartmentServicePublicProxy();
 			// memberServicePublic = new MemberServicePublicProxy();
 			departmentSearchs = new ArrayList<Department>();
@@ -147,14 +150,20 @@ public class CaiDatNgoaiLeBean extends AbstractBean<KPIPerson> {
 
 	public void ajaxHandleSelectDepartment() {
 		try {
-
-			EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongban(departmentSearch.getCode());
+			// tao param; codeDepart,month,year
+			String param = departmentSearch.getCode() + "," + monthSelected + "," + yearSearch;
+			EmployeeData[] allEmployeeArrayNew = EmployeeDataService.findByDepartForKPI(param);
 			// emplsByDepart = Arrays.asList(allEmployeeArrayNew);
 			List<String> emplsCode = new ArrayList<>();
-			for (EmployeeData e : allEmployeeArrayNew) {
-				emplsCode.add(e.getCode());
+			if (allEmployeeArrayNew != null) {
+				for (EmployeeData e : allEmployeeArrayNew) {
+					emplsCode.add(e.getCode());
+				}
+				allEmpl = EMPLOYEE_SYNC_DATA_CENTER_SERVICE.findByListEmplCode(emplsCode);
+			}else{
+				allEmpl = new ArrayList<>();
 			}
-			allEmpl = EMPLOYEE_SYNC_DATA_CENTER_SERVICE.findByListEmplCode(emplsCode);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -309,5 +318,21 @@ public class CaiDatNgoaiLeBean extends AbstractBean<KPIPerson> {
 
 	public void setYearSearch(int yearSearch) {
 		this.yearSearch = yearSearch;
+	}
+
+	public int[] getAllMonthTemplate() {
+		return allMonthTemplate;
+	}
+
+	public void setAllMonthTemplate(int[] allMonthTemplate) {
+		this.allMonthTemplate = allMonthTemplate;
+	}
+
+	public int getMonthSelected() {
+		return monthSelected;
+	}
+
+	public void setMonthSelected(int monthSelected) {
+		this.monthSelected = monthSelected;
 	}
 }

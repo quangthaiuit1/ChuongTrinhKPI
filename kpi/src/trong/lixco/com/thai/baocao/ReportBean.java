@@ -628,11 +628,14 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 				if (builder.toString().endsWith(",")) {
 					s = builder.toString().substring(0, builder.toString().length() - 1);
 				}
-
-				EmployeeData[] allEmployeeArrayNew = EmployeeDataService.timtheophongbancomail(s);
-
-				for (EmployeeData e : allEmployeeArrayNew) {
-					allCodeEmployee.add(e.getCode());
+				s = s + ";" + month + "," + year;
+				EmployeeData[] allEmployeeArrayNew = EmployeeDataService.findByListDepartForKPI(s);
+				// EmployeeData[] allEmployeeArrayNew =
+				// EmployeeDataService.timtheophongbancomail(s);
+				if (allEmployeeArrayNew != null) {
+					for (EmployeeData e : allEmployeeArrayNew) {
+						allCodeEmployee.add(e.getCode());
+					}
 				}
 			}
 			for (int i = 0; i < allCodeEmployee.size(); i++) {
