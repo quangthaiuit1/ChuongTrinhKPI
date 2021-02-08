@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -72,6 +73,7 @@ import trong.lixco.com.thai.bean.entities.DepartmentTotalMonth;
 import trong.lixco.com.thai.bean.entities.PersonalMonth;
 import trong.lixco.com.thai.bean.entities.PersonalQuy;
 import trong.lixco.com.thai.bean.entities.PersonalYear;
+import trong.lixco.com.thai.bean.entities.TongHopABC;
 import trong.lixco.com.thai.mail.CommonService;
 import trong.lixco.com.util.DepartmentUtil;
 import trong.lixco.com.util.Notify;
@@ -164,23 +166,25 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			HttpSession session = request.getSession();
 			nameLocation = (String) session.getAttribute("database");
 
-			Department[] allDepartmentArray = DEPARTMENT_SERVICE_PUBLIC.findAll();
-			allDepartmentArray = CommonService.findAll();
-			allDepartmentList = Arrays.asList(allDepartmentArray);
-			allDepartment = new ArrayList<>();
-			for (int i = 0; i < allDepartmentArray.length; i++) {
-				if (allDepartmentArray[i].getDepartment() != null) {
-					if (allDepartmentArray[i].getDepartment().getId() == 191
-							&& allDepartmentArray[i].getLevelDep().getLevel() == 2) {
-						allDepartment.add(allDepartmentArray[i]);
-						// lap de tao list code cua toan bo nhan vien
-						allCodeDepartment.add(allDepartmentArray[i].getCode());
-					}
-				}
-			}
-
-			allCodeDepartmentArray = new String[allCodeDepartment.size()];
-			allCodeDepartmentArray = allCodeDepartment.toArray(allCodeDepartmentArray);
+			// Department[] allDepartmentArray =
+			// DEPARTMENT_SERVICE_PUBLIC.findAll();
+			// allDepartmentArray = CommonService.findAll();
+			// allDepartmentList = Arrays.asList(allDepartmentArray);
+			// allDepartment = new ArrayList<>();
+			// for (int i = 0; i < allDepartmentArray.length; i++) {
+			// if (allDepartmentArray[i].getDepartment() != null) {
+			// if (allDepartmentArray[i].getDepartment().getId() == 191
+			// && allDepartmentArray[i].getLevelDep().getLevel() == 2) {
+			// allDepartment.add(allDepartmentArray[i]);
+			// // lap de tao list code cua toan bo nhan vien
+			// allCodeDepartment.add(allDepartmentArray[i].getCode());
+			// }
+			// }
+			// }
+			//
+			// allCodeDepartmentArray = new String[allCodeDepartment.size()];
+			// allCodeDepartmentArray =
+			// allCodeDepartment.toArray(allCodeDepartmentArray);
 
 			// EmployeeDTO[] allEmployeeArray =
 			// EMPLOYEE_SERVICE_PUBLIC.findByDep(allCodeDepartmentArray);
@@ -258,6 +262,740 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		}
 		// end
 	}
+
+	// bc tong hop ABC khoi truc tiep
+	public void showReportTongHopABCKhoiTrucTiep() throws JRException, IOException {
+		String departmentName = "";
+		departmentName = getDepartmentName(departmentSelectedPersonalMonth);
+		List<ABCPersonMonth> dataReportPersonalMonth = createDataReportTongHopABCKhoiTrucTiep(
+				this.monthSelectedPersonal, this.yearSelectedPersonal1, departmentSelectedPersonalMonth);
+		Map<String, List<ABCPersonMonth>> itemsGroupedByCode = dataReportPersonalMonth.stream()
+				.collect(Collectors.groupingBy(ABCPersonMonth::getDepartmentLv3));
+		List<TongHopABC> tonghops = new ArrayList<>();
+		for (String name : itemsGroupedByCode.keySet()) {
+			List<ABCPersonMonth> abc = itemsGroupedByCode.get(name);
+
+			TongHopABC t = new TongHopABC();
+			t.setTenphongban(name);
+			long A = 0, B = 0, C = 0, D = 0, khongXet = 0, thaiSan = 0, nghiOm = 0;
+			for (ABCPersonMonth a : abc) {
+				if (a.getNote().equals("Không xét")) {
+					khongXet = khongXet + 1;
+				}
+				if (a.getXeploai().equals("A")) {
+					A = A + 1;
+				}
+				if (a.getXeploai().equals("B")) {
+					B = B + 1;
+					if (a.getNote().equals("Thai sản")) {
+						thaiSan = thaiSan + 1;
+					}
+					if (a.getNote().equals("Nghỉ ốm")) {
+						nghiOm = nghiOm + 1;
+					}
+				}
+				if (a.getXeploai().equals("C")) {
+					C = C + 1;
+				}
+				if (a.getXeploai().equals("D")) {
+					D = D + 1;
+				}
+			}
+			t.setLoaiA(A);
+			t.setLoaiB(B);
+			t.setLoaiC(C);
+			t.setLoaiD(D);
+			t.setNghiom(nghiOm);
+			t.setThaisan(thaiSan);
+			t.setKhongxet(khongXet);
+			t.setTongso(t.getLoaiA() + t.getLoaiB() + t.getLoaiC() + t.getLoaiD() + t.getKhongxet());
+			tonghops.add(t);
+		}
+		tonghops.sort(Comparator.comparing(TongHopABC::getTenphongban));
+		if (!tonghops.isEmpty()) {
+			String reportPath = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/thaireports/kpi/tonghopABCTrucTiep.jasper");
+			JRDataSource beanDataSource = new JRBeanCollectionDataSource(tonghops);
+			Map<String, Object> importParam = new HashMap<String, Object>();
+
+			String image = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/gfx/lixco_logo.png");
+			importParam.put("logo", image);
+			importParam.put("location", nameLocation);
+			importParam.put("year", yearSelectedPersonal1);
+			importParam.put("month", monthSelectedPersonal);
+			importParam.put("department", departmentName);
+			importParam.put("listAbcPersonMonth", beanDataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			OutputStream outputStream;
+			outputStream = facesContext.getExternalContext().getResponseOutputStream();
+			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+			facesContext.responseComplete();
+		} else {
+			noticeError("Không có dữ liệu");
+		}
+	}
+	// end bc tong hop ABC khoi truc tiep
+
+	// data bc tong hop ABC khoi truc tiep
+	public List<ABCPersonMonth> createDataReportTongHopABCKhoiTrucTiep(int month, int year, Department department) {
+		try {
+			EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
+			List<ABCPersonMonth> dataPersonalMonth = new ArrayList<>();
+			// tim danh sach nhan vien khong lam kpi
+			List<EmployeeDontKPIEver> allEmpDontKPIEver = EMPLOYEE_DONT_KPI_EVER_SERVICE.findAll();
+
+			// tim cap duoi xuong san xuat
+			DepartmentData[] depsXuongSanXuat = DepartmentDataService.timtheophongquanly("30005");
+			DepartmentData[] depsXuongSanXuatBD = DepartmentDataService.timtheophongquanly("30015");
+			DepartmentData[] depsXuongSanXuatBN = DepartmentDataService.timtheophongquanly("30018");
+			List<DepartmentData> depsXuongSanXuatList = new ArrayList<>();
+			for (DepartmentData d : depsXuongSanXuat) {
+				if (!d.getCode().equals("40003") && !d.getCode().equals("40084")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+			// bd
+			for (DepartmentData d : depsXuongSanXuatBD) {
+				if (!d.getCode().equals("40026")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+			// bn
+			for (DepartmentData d : depsXuongSanXuatBN) {
+				if (!d.getCode().equals("40057")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+
+			allCodeEmployee = new ArrayList<>();
+			DepartmentData[] allDepart = null;
+			if (department == null || department.getCode() == null) {
+				allDepart = DepartmentDataService.timtheophongquanly(departLv1.getCode());
+
+			} else {
+				if (department.getLevelDep().getLevel() == 2) {
+					allDepart = DepartmentDataService.timtheophongquanly(department.getCode());
+				}
+				if (department.getLevelDep().getLevel() == 3) {
+					allDepart = DepartmentDataService.timtheophongquanly(department.getDepartment().getCode());
+				}
+			}
+			List<DepartmentData> allDepartNewTemp = new ArrayList<>();
+			// tim danh sach phong khoi gian gian tiep
+			for (int i = 0; i < allDepart.length; i++) {
+				boolean isHave = false;
+				for (int j = 0; j < depsXuongSanXuatList.size(); j++) {
+					if (allDepart[i].getCode().equals(depsXuongSanXuatList.get(j).getCode())) {
+						isHave = true;
+						break;
+					}
+				}
+				if (isHave) {
+					allDepartNewTemp.add(allDepart[i]);
+				}
+			}
+
+			if (allDepartNewTemp != null && !allDepartNewTemp.isEmpty()) {
+				StringBuilder builder = new StringBuilder();
+				for (DepartmentData d : allDepartNewTemp) {
+					builder.append(d.getCode());
+					builder.append(",");
+				}
+				String s = "";
+				if (builder.toString().endsWith(",")) {
+					s = builder.toString().substring(0, builder.toString().length() - 1);
+				}
+				s = s + ";" + month + "," + year;
+				EmployeeData[] allEmployeeArrayNew = EmployeeDataService.findByListDepartForKPI(s);
+				if (allEmployeeArrayNew != null) {
+					for (EmployeeData e : allEmployeeArrayNew) {
+						allCodeEmployee.add(e.getCode());
+					}
+				}
+			}
+			for (int i = 0; i < allCodeEmployee.size(); i++) {
+				boolean isContinue = false;
+				// kiem tra thu phai khong lam kpi hay khong
+				for (int j = 0; j < allEmpDontKPIEver.size(); j++) {
+					if (allEmpDontKPIEver.get(j).getEmployee_code().equals(allCodeEmployee.get(i))) {
+						isContinue = true;
+					}
+				}
+				// neu co nhan vien khong lam kpi se khong xuong code doan duoi
+				if (isContinue) {
+					continue;
+				}
+				// tao 1 item personalYear
+				ABCPersonMonth personalMonthTemp = new ABCPersonMonth();
+				// Tim nhan vien theo codeEmp KPIPerson -> nameEmp, nameDepart
+				EmployeeDTO memberTemp = EMPLOYEE_SERVICE_PUBLIC.findByCode(allCodeEmployee.get(i));
+				personalMonthTemp.setEmployeeName(memberTemp.getName());
+				personalMonthTemp.setEmployeeCode(memberTemp.getCode());
+				personalMonthTemp.setMonth(month);
+				personalMonthTemp.setYear(year);
+				personalMonthTemp.setId(i);
+
+				// list KPIPerson by Employee and year
+				List<KPIPerson> kpiPersonByEmpCode = KPI_PERSON_SERVICE.findRange(allCodeEmployee.get(i), month, year);
+				// kiem tra thang do nhan vien da vao lam hay chua
+				// truong hop kpi hang thang
+				if (!kpiPersonByEmpCode.isEmpty()) {
+					// tim phong ban
+					Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findByCode("code", memberTemp.getCodeDepart());
+					// kpi phong theo nhan vien
+					List<KPIDepMonth> kpiDepartmentByEmpCode = new ArrayList<>();
+					if (depTemp.getLevelDep().getLevel() == 2) {
+						personalMonthTemp.setDepartmentName(depTemp.getName());
+					}
+					if (depTemp.getLevelDep().getLevel() == 3) {
+						personalMonthTemp.setDepartmentName(depTemp.getDepartment().getName());
+					}
+					personalMonthTemp.setDepartmentLv3(depTemp.getName());
+					// kpi phong theo nhan vien
+					kpiDepartmentByEmpCode = KPI_DEPARTMENT_MONTH.findKPIDepMonth(month, year,
+							depTemp.getDepartment().getCode());
+					double result = 0;
+					// kiem tra duoi bang kpi ca nhan co null hay khong
+					// if (kpiPersonByEmpCode.isEmpty()) {
+					personalMonthTemp.setKpiCaNhan(kpiPersonByEmpCode.get(0).getTotal());
+					// kpi ca nhan va phong deu null
+					if (kpiDepartmentByEmpCode.isEmpty()) {
+						// diem kpi to hoac phong
+						personalMonthTemp.setKpiTo(0);
+						// kpi to 40%, kpi to 60%
+						result = (double) ((0 * 40) / 100) + (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+						// tinh tong kpiPersonal * 60 + kpiDeparment * 40
+						result = (double) Math.round(result * 100) / 100;
+						personalMonthTemp.setTongdiem(result);
+
+						// Cho nay se set xep loai -> bo sung sau
+						personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+						dataPersonalMonth.add(personalMonthTemp);
+					} else {
+						// diem kpi to hoac phong
+						personalMonthTemp.setKpiTo(kpiDepartmentByEmpCode.get(0).getResult());
+						result = (double) ((kpiDepartmentByEmpCode.get(0).getResult() * 40) / 100)
+								+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+						result = (double) Math.round(result * 100) / 100;
+						// tinh tong kpiPersonal * 60 + kpiDeparment * 40
+						personalMonthTemp.setTongdiem(result);
+
+						// Cho nay se set xep loai -> bo sung sau
+						personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+						dataPersonalMonth.add(personalMonthTemp);
+					}
+				}
+				// 2 truong hop: hoac nhom co dinh, hoac khong lam kpi
+				else {
+					double result = 0;
+					List<KPIPersonalOther> personOtherTemp = KPI_PERSON_OTHER_SERVICE.find(null, month, year,
+							allCodeEmployee.get(i));
+					// tim phong ban
+					Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findByCode("code", memberTemp.getCodeDepart());
+					if (depTemp != null) {
+						personalMonthTemp.setDepartmentName(depTemp.getDepartment().getName());
+						personalMonthTemp.setDepartmentLv3(depTemp.getName());
+					}
+					// nhom co dinh
+					if (!personOtherTemp.isEmpty()) {
+						// kiem tra co phai xuong san xuat khong de lay kpi to
+						boolean isTo = false;
+						for (int t = 0; t < depsXuongSanXuatList.size(); t++) {
+							if (depTemp.getCode().equals(depsXuongSanXuatList.get(t).getCode())) {
+								isTo = true;
+								break;
+							}
+						}
+						List<KPITo> kpiToTemp = null;
+						// neu khong phai xuong san xuat -> kpi phong
+						if (!isTo) {
+							// kpi phong theo nhan vien
+							List<KPIDepMonth> kpiDepartmentByEmpCode = KPI_DEPARTMENT_MONTH.findKPIDepMonth(month, year,
+									depTemp.getDepartment().getCode());
+							if (kpiDepartmentByEmpCode.isEmpty()) {
+								personalMonthTemp.setKpiTo(0);
+							} else {
+								personalMonthTemp.setKpiTo(kpiDepartmentByEmpCode.get(0).getResult());
+							}
+						}
+						// kpi to
+						else {
+							kpiToTemp = KPI_TO_SERVICE.findKPIDepMonth(month, year, depTemp.getCode());
+							if (kpiToTemp.isEmpty()) {
+								personalMonthTemp.setKpiTo(0);
+							} else {
+								personalMonthTemp.setKpiTo(kpiToTemp.get(0).getResult());
+							}
+						}
+						personalMonthTemp.setKpiCaNhan(personOtherTemp.get(0).getTotal());
+
+						result = (double) ((personalMonthTemp.getKpiTo() * 40) / 100)
+								+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+						// tinh tong kpiPersonal * 60 + kpiDeparment * 40
+						result = (double) Math.round(result * 100) / 100;
+						personalMonthTemp.setTongdiem(result);
+						personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+						dataPersonalMonth.add(personalMonthTemp);
+						// }
+					}
+					// nhom khong lam kpi
+					else {
+						// tim phong ban
+						Department depTemp1 = DEPARTMENT_SERVICE_PUBLIC.findByCode("code", memberTemp.getCodeDepart());
+						// neu la truong phong
+						if (depTemp1 != null && memberTemp.getCode().equals(depTemp1.getCodeMem())) {
+							// kpi phong theo nhan vien
+							List<KPIDepMonth> kpiDepartmentByEmpCode = new ArrayList<>();
+							if (depTemp1.getLevelDep().getLevel() == 2) {
+								personalMonthTemp.setDepartmentName(depTemp1.getName());
+							}
+							if (depTemp1.getLevelDep().getLevel() == 3) {
+								personalMonthTemp.setDepartmentName(depTemp1.getDepartment().getName());
+							}
+							personalMonthTemp.setDepartmentLv3(depTemp1.getName());
+							// kpi phong theo nhan vien
+							kpiDepartmentByEmpCode = KPI_DEPARTMENT_MONTH.findKPIDepMonth(month, year,
+									depTemp1.getDepartment().getCode());
+							double result1 = 0;
+							// kiem tra duoi bang kpi ca nhan co null hay khong
+
+							if (kpiDepartmentByEmpCode.isEmpty()) {
+								// diem kpi to hoac phong
+								personalMonthTemp.setKpiTo(0);
+								personalMonthTemp.setKpiCaNhan(0);
+							} else {
+								// diem kpi to hoac phong
+								personalMonthTemp.setKpiTo(kpiDepartmentByEmpCode.get(0).getResult());
+								personalMonthTemp.setKpiCaNhan(kpiDepartmentByEmpCode.get(0).getResult());
+							}
+							// kpi to 40%, kpi to 60%
+							result1 = (double) ((personalMonthTemp.getKpiTo() * 40) / 100)
+									+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+							// tinh tong kpiPersonal * 60 + kpiDeparment *
+							// 40
+							// lam tron
+							result1 = (double) Math.round(result1 * 100) / 100;
+							personalMonthTemp.setTongdiem(result1);
+							// Cho nay se set xep loai -> bo sung sau
+							personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+							dataPersonalMonth.add(personalMonthTemp);
+						}
+						// khong phai truong phong
+						else {
+							// thai san hoac khong xet
+							List<EmployeeDontKPI> emplDontKPI = EMPLOYEE_DONT_KPI_SERVICE
+									.findByEmplMonthYear(allCodeEmployee.get(i), month, year);
+							if (!emplDontKPI.isEmpty()) {
+								if (depTemp1 != null) {
+									personalMonthTemp.setDepartmentName(depTemp1.getDepartment().getName());
+									personalMonthTemp.setDepartmentLv3(depTemp1.getName());
+								}
+								if (emplDontKPI.get(0).isIs_temp()) {
+									personalMonthTemp.setNote("Không xét");
+									personalMonthTemp.setXeploai("");
+									dataPersonalMonth.add(personalMonthTemp);
+								}
+								if (emplDontKPI.get(0).isIs_thaisan()) {
+									personalMonthTemp.setXeploai("B");
+									personalMonthTemp.setNote("Thai sản");
+									dataPersonalMonth.add(personalMonthTemp);
+								}
+								if (emplDontKPI.get(0).isIs_nghiom()) {
+									personalMonthTemp.setXeploai("B");
+									personalMonthTemp.setNote("Nghỉ ốm");
+									dataPersonalMonth.add(personalMonthTemp);
+								}
+							}
+						}
+					}
+				}
+			}
+			if (dataPersonalMonth.size() != 0) {
+				return dataPersonalMonth;
+			} else {
+				List<ABCPersonMonth> abc = new ArrayList<>();
+				return abc;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	// end bc tong hop ABC khoi truc tiep
+
+	// bc tong hop ABC khoi gian tiep
+	public void showReportTongHopABCKhoiGianTiep() throws JRException, IOException {
+		String departmentName = "";
+		departmentName = getDepartmentName(departmentSelectedPersonalMonth);
+		List<ABCPersonMonth> dataReportPersonalMonth = createDataReportTongHopABCKhoiGianTiep(
+				this.monthSelectedPersonal, this.yearSelectedPersonal1, departmentSelectedPersonalMonth);
+		dataReportPersonalMonth.sort(Comparator.comparing(ABCPersonMonth::getDepartmentName)
+				.thenComparing(ABCPersonMonth::getDepartmentLv3));
+
+		Map<String, List<ABCPersonMonth>> itemsGroupedByCode = dataReportPersonalMonth.stream()
+				.collect(Collectors.groupingBy(ABCPersonMonth::getDepartmentName));
+		List<TongHopABC> tonghops = new ArrayList<>();
+		for (String name : itemsGroupedByCode.keySet()) {
+			List<ABCPersonMonth> abc = itemsGroupedByCode.get(name);
+
+			TongHopABC t = new TongHopABC();
+			t.setTenphongban(name);
+			long A = 0, B = 0, C = 0, D = 0, khongXet = 0, thaiSan = 0, nghiOm = 0;
+			for (ABCPersonMonth a : abc) {
+				if (a.getNote().equals("Không xét")) {
+					khongXet = khongXet + 1;
+				}
+				if (a.getXeploai().equals("A")) {
+					A = A + 1;
+				}
+				if (a.getXeploai().equals("B")) {
+					B = B + 1;
+					if (a.getNote().equals("Thai sản")) {
+						thaiSan = thaiSan + 1;
+					}
+					if (a.getNote().equals("Nghỉ ốm")) {
+						nghiOm = nghiOm + 1;
+					}
+				}
+				if (a.getXeploai().equals("C")) {
+					C = C + 1;
+				}
+				if (a.getXeploai().equals("D")) {
+					D = D + 1;
+				}
+			}
+			t.setLoaiA(A);
+			t.setLoaiB(B);
+			t.setLoaiC(C);
+			t.setLoaiD(D);
+			t.setNghiom(nghiOm);
+			t.setThaisan(thaiSan);
+			t.setKhongxet(khongXet);
+			t.setTongso(t.getLoaiA() + t.getLoaiB() + t.getLoaiC() + t.getLoaiD() + t.getKhongxet());
+			tonghops.add(t);
+		}
+		// for (TongHopABC t : tonghops) {
+		// System.out.println(t.getTenphongban() + ": " + "; A:" + t.getLoaiA()
+		// + "; B:" + t.getLoaiB() + "; C:"
+		// + t.getLoaiC() + "; D:" + t.getLoaiD() + "; Khong xet:" +
+		// t.getKhongxet() + "; Thai san:"
+		// + t.getThaisan() + "; Nghi Om:" + t.getNghiom());
+		// }
+		// end test
+		if (!tonghops.isEmpty()) {
+			String reportPath = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/thaireports/kpi/tonghopABCGianTiep.jasper");
+			JRDataSource beanDataSource = new JRBeanCollectionDataSource(tonghops);
+			Map<String, Object> importParam = new HashMap<String, Object>();
+
+			String image = FacesContext.getCurrentInstance().getExternalContext()
+					.getRealPath("/resources/gfx/lixco_logo.png");
+			importParam.put("logo", image);
+			importParam.put("location", nameLocation);
+			importParam.put("year", yearSelectedPersonal1);
+			importParam.put("month", monthSelectedPersonal);
+			importParam.put("department", departmentName);
+			importParam.put("listAbcPersonMonth", beanDataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			OutputStream outputStream;
+			outputStream = facesContext.getExternalContext().getResponseOutputStream();
+			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+			facesContext.responseComplete();
+		} else {
+			noticeError("Không có dữ liệu");
+		}
+	}
+	// end tong hop ABC khoi gian tiep
+
+	// data tong hop ABC khoi gian tiep
+	public List<ABCPersonMonth> createDataReportTongHopABCKhoiGianTiep(int month, int year, Department department) {
+		try {
+			EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
+			List<ABCPersonMonth> dataPersonalMonth = new ArrayList<>();
+			// tim danh sach nhan vien khong lam kpi
+			List<EmployeeDontKPIEver> allEmpDontKPIEver = EMPLOYEE_DONT_KPI_EVER_SERVICE.findAll();
+
+			// tim cap duoi xuong san xuat
+			DepartmentData[] depsXuongSanXuat = DepartmentDataService.timtheophongquanly("30005");
+			DepartmentData[] depsXuongSanXuatBD = DepartmentDataService.timtheophongquanly("30015");
+			DepartmentData[] depsXuongSanXuatBN = DepartmentDataService.timtheophongquanly("30018");
+			List<DepartmentData> depsXuongSanXuatList = new ArrayList<>();
+			for (DepartmentData d : depsXuongSanXuat) {
+				if (!d.getCode().equals("40003")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+			// bd
+			for (DepartmentData d : depsXuongSanXuatBD) {
+				if (!d.getCode().equals("40026")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+			// bn
+			for (DepartmentData d : depsXuongSanXuatBN) {
+				if (!d.getCode().equals("40057")) {
+					depsXuongSanXuatList.add(d);
+				}
+			}
+
+			allCodeEmployee = new ArrayList<>();
+			DepartmentData[] allDepart = null;
+			if (department == null || department.getCode() == null) {
+				allDepart = DepartmentDataService.timtheophongquanly(departLv1.getCode());
+
+			} else {
+				if (department.getLevelDep().getLevel() == 2) {
+					allDepart = DepartmentDataService.timtheophongquanly(department.getCode());
+				}
+				if (department.getLevelDep().getLevel() == 3) {
+					allDepart = DepartmentDataService.timtheophongquanly(department.getDepartment().getCode());
+				}
+			}
+			List<DepartmentData> allDepartNewTemp = new ArrayList<>();
+			// tim danh sach phong khoi gian gian tiep
+			for (int i = 0; i < allDepart.length; i++) {
+				boolean isHave = false;
+				for (int j = 0; j < depsXuongSanXuatList.size(); j++) {
+					if (allDepart[i].getCode().equals(depsXuongSanXuatList.get(j).getCode())) {
+						isHave = true;
+						break;
+					}
+				}
+				if (!isHave) {
+					allDepartNewTemp.add(allDepart[i]);
+				}
+			}
+
+			if (allDepartNewTemp != null && !allDepartNewTemp.isEmpty()) {
+				StringBuilder builder = new StringBuilder();
+				for (DepartmentData d : allDepartNewTemp) {
+					builder.append(d.getCode());
+					builder.append(",");
+				}
+				String s = "";
+				if (builder.toString().endsWith(",")) {
+					s = builder.toString().substring(0, builder.toString().length() - 1);
+				}
+				s = s + ";" + month + "," + year;
+				EmployeeData[] allEmployeeArrayNew = EmployeeDataService.findByListDepartForKPI(s);
+				if (allEmployeeArrayNew != null) {
+					for (EmployeeData e : allEmployeeArrayNew) {
+						allCodeEmployee.add(e.getCode());
+					}
+				}
+			}
+			for (int i = 0; i < allCodeEmployee.size(); i++) {
+				boolean isContinue = false;
+				// kiem tra thu phai khong lam kpi hay khong
+				for (int j = 0; j < allEmpDontKPIEver.size(); j++) {
+					if (allEmpDontKPIEver.get(j).getEmployee_code().equals(allCodeEmployee.get(i))) {
+						isContinue = true;
+					}
+				}
+				// neu co nhan vien khong lam kpi se khong xuong code doan duoi
+				if (isContinue) {
+					continue;
+				}
+				// tao 1 item personalYear
+				ABCPersonMonth personalMonthTemp = new ABCPersonMonth();
+				// Tim nhan vien theo codeEmp KPIPerson -> nameEmp, nameDepart
+				EmployeeDTO memberTemp = EMPLOYEE_SERVICE_PUBLIC.findByCode(allCodeEmployee.get(i));
+				personalMonthTemp.setEmployeeName(memberTemp.getName());
+				personalMonthTemp.setEmployeeCode(memberTemp.getCode());
+				personalMonthTemp.setMonth(month);
+				personalMonthTemp.setYear(year);
+				personalMonthTemp.setId(i);
+
+				// list KPIPerson by Employee and year
+				List<KPIPerson> kpiPersonByEmpCode = KPI_PERSON_SERVICE.findRange(allCodeEmployee.get(i), month, year);
+				// kiem tra thang do nhan vien da vao lam hay chua
+				// truong hop kpi hang thang
+				if (!kpiPersonByEmpCode.isEmpty()) {
+					// tim phong ban
+					Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findByCode("code", memberTemp.getCodeDepart());
+					// kpi phong theo nhan vien
+					List<KPIDepMonth> kpiDepartmentByEmpCode = new ArrayList<>();
+					if (depTemp.getLevelDep().getLevel() == 2) {
+						personalMonthTemp.setDepartmentName(depTemp.getName());
+					}
+					if (depTemp.getLevelDep().getLevel() == 3) {
+						personalMonthTemp.setDepartmentName(depTemp.getDepartment().getName());
+					}
+					personalMonthTemp.setDepartmentLv3(depTemp.getName());
+					// kpi phong theo nhan vien
+					kpiDepartmentByEmpCode = KPI_DEPARTMENT_MONTH.findKPIDepMonth(month, year,
+							depTemp.getDepartment().getCode());
+					double result = 0;
+					// kiem tra duoi bang kpi ca nhan co null hay khong
+					// if (kpiPersonByEmpCode.isEmpty()) {
+					personalMonthTemp.setKpiCaNhan(kpiPersonByEmpCode.get(0).getTotal());
+					// kpi ca nhan va phong deu null
+					if (kpiDepartmentByEmpCode.isEmpty()) {
+						// diem kpi to hoac phong
+						personalMonthTemp.setKpiTo(0);
+						// kpi to 40%, kpi to 60%
+						result = (double) ((0 * 40) / 100) + (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+						// tinh tong kpiPersonal * 60 + kpiDeparment * 40
+						result = (double) Math.round(result * 100) / 100;
+						personalMonthTemp.setTongdiem(result);
+
+						// Cho nay se set xep loai -> bo sung sau
+						personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+						dataPersonalMonth.add(personalMonthTemp);
+					} else {
+						// diem kpi to hoac phong
+						personalMonthTemp.setKpiTo(kpiDepartmentByEmpCode.get(0).getResult());
+						result = (double) ((kpiDepartmentByEmpCode.get(0).getResult() * 40) / 100)
+								+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+						result = (double) Math.round(result * 100) / 100;
+						// tinh tong kpiPersonal * 60 + kpiDeparment * 40
+						personalMonthTemp.setTongdiem(result);
+
+						// Cho nay se set xep loai -> bo sung sau
+						personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+						dataPersonalMonth.add(personalMonthTemp);
+					}
+				}
+				// 2 truong hop: hoac nhom co dinh, hoac khong lam kpi
+				else {
+					double result = 0;
+					List<KPIPersonalOther> personOtherTemp = KPI_PERSON_OTHER_SERVICE.find(null, month, year,
+							allCodeEmployee.get(i));
+					// tim phong ban
+					Department depTemp = DEPARTMENT_SERVICE_PUBLIC.findByCode("code", memberTemp.getCodeDepart());
+					if (depTemp != null) {
+						personalMonthTemp.setDepartmentName(depTemp.getDepartment().getName());
+						personalMonthTemp.setDepartmentLv3(depTemp.getName());
+					}
+					// nhom co dinh
+					if (!personOtherTemp.isEmpty()) {
+						// kiem tra co phai xuong san xuat khong de lay kpi to
+						boolean isTo = false;
+						for (int t = 0; t < depsXuongSanXuatList.size(); t++) {
+							if (depTemp.getCode().equals(depsXuongSanXuatList.get(t).getCode())) {
+								isTo = true;
+								break;
+							}
+						}
+						List<KPITo> kpiToTemp = null;
+						// neu khong phai xuong san xuat -> kpi phong
+						if (!isTo) {
+							// kpi phong theo nhan vien
+							List<KPIDepMonth> kpiDepartmentByEmpCode = KPI_DEPARTMENT_MONTH.findKPIDepMonth(month, year,
+									depTemp.getDepartment().getCode());
+							if (kpiDepartmentByEmpCode.isEmpty()) {
+								personalMonthTemp.setKpiTo(0);
+							} else {
+								personalMonthTemp.setKpiTo(kpiDepartmentByEmpCode.get(0).getResult());
+							}
+						}
+						// kpi to
+						else {
+							kpiToTemp = KPI_TO_SERVICE.findKPIDepMonth(month, year, depTemp.getCode());
+							if (kpiToTemp.isEmpty()) {
+								personalMonthTemp.setKpiTo(0);
+							} else {
+								personalMonthTemp.setKpiTo(kpiToTemp.get(0).getResult());
+							}
+						}
+						personalMonthTemp.setKpiCaNhan(personOtherTemp.get(0).getTotal());
+
+						result = (double) ((personalMonthTemp.getKpiTo() * 40) / 100)
+								+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+						// tinh tong kpiPersonal * 60 + kpiDeparment * 40
+						result = (double) Math.round(result * 100) / 100;
+						personalMonthTemp.setTongdiem(result);
+						personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+						dataPersonalMonth.add(personalMonthTemp);
+						// }
+					}
+					// nhom khong lam kpi
+					else {
+						// tim phong ban
+						Department depTemp1 = DEPARTMENT_SERVICE_PUBLIC.findByCode("code", memberTemp.getCodeDepart());
+						// neu la truong phong
+						if (depTemp1 != null && memberTemp.getCode().equals(depTemp1.getCodeMem())) {
+							// kpi phong theo nhan vien
+							List<KPIDepMonth> kpiDepartmentByEmpCode = new ArrayList<>();
+							if (depTemp1.getLevelDep().getLevel() == 2) {
+								personalMonthTemp.setDepartmentName(depTemp1.getName());
+							}
+							if (depTemp1.getLevelDep().getLevel() == 3) {
+								personalMonthTemp.setDepartmentName(depTemp1.getDepartment().getName());
+							}
+							personalMonthTemp.setDepartmentLv3(depTemp1.getName());
+							// kpi phong theo nhan vien
+							kpiDepartmentByEmpCode = KPI_DEPARTMENT_MONTH.findKPIDepMonth(month, year,
+									depTemp1.getDepartment().getCode());
+							double result1 = 0;
+							// kiem tra duoi bang kpi ca nhan co null hay khong
+
+							if (kpiDepartmentByEmpCode.isEmpty()) {
+								// diem kpi to hoac phong
+								personalMonthTemp.setKpiTo(0);
+								personalMonthTemp.setKpiCaNhan(0);
+							} else {
+								// diem kpi to hoac phong
+								personalMonthTemp.setKpiTo(kpiDepartmentByEmpCode.get(0).getResult());
+								personalMonthTemp.setKpiCaNhan(kpiDepartmentByEmpCode.get(0).getResult());
+							}
+							// kpi to 40%, kpi to 60%
+							result1 = (double) ((personalMonthTemp.getKpiTo() * 40) / 100)
+									+ (double) ((personalMonthTemp.getKpiCaNhan() * 60) / 100);
+							// tinh tong kpiPersonal * 60 + kpiDeparment *
+							// 40
+							// lam tron
+							result1 = (double) Math.round(result1 * 100) / 100;
+							personalMonthTemp.setTongdiem(result1);
+							// Cho nay se set xep loai -> bo sung sau
+							personalMonthTemp.setXeploai(tinhXepLoai(personalMonthTemp.getTongdiem()));
+							dataPersonalMonth.add(personalMonthTemp);
+						}
+						// khong phai truong phong
+						else {
+							// thai san hoac khong xet
+							List<EmployeeDontKPI> emplDontKPI = EMPLOYEE_DONT_KPI_SERVICE
+									.findByEmplMonthYear(allCodeEmployee.get(i), month, year);
+							if (!emplDontKPI.isEmpty()) {
+								if (depTemp1 != null) {
+									personalMonthTemp.setDepartmentName(depTemp1.getDepartment().getName());
+									personalMonthTemp.setDepartmentLv3(depTemp1.getName());
+								}
+								if (emplDontKPI.get(0).isIs_temp()) {
+									personalMonthTemp.setNote("Không xét");
+									personalMonthTemp.setXeploai("");
+									dataPersonalMonth.add(personalMonthTemp);
+								}
+								if (emplDontKPI.get(0).isIs_thaisan()) {
+									personalMonthTemp.setXeploai("B");
+									personalMonthTemp.setNote("Thai sản");
+									dataPersonalMonth.add(personalMonthTemp);
+								}
+								if (emplDontKPI.get(0).isIs_nghiom()) {
+									personalMonthTemp.setXeploai("B");
+									personalMonthTemp.setNote("Nghỉ ốm");
+									dataPersonalMonth.add(personalMonthTemp);
+								}
+							}
+						}
+					}
+				}
+			}
+			if (dataPersonalMonth.size() != 0) {
+				return dataPersonalMonth;
+			} else {
+				List<ABCPersonMonth> abc = new ArrayList<>();
+				return abc;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	// end data tong hop ABC khoi gian tiep
 
 	// bao cao ds nv chua lam kpi
 	// public void showReportEmployeeMissKPI() throws JRException, IOException {
@@ -529,6 +1267,7 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 				this.yearSelectedPersonal1, departmentSelectedPersonalMonth);
 		dataReportPersonalMonth.sort(Comparator.comparing(ABCPersonMonth::getDepartmentName)
 				.thenComparing(ABCPersonMonth::getDepartmentLv3));
+
 		if (!dataReportPersonalMonth.isEmpty()) {
 			String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 					.getRealPath("/resources/thaireports/kpi/AbcPersonalMonth.jasper");
@@ -1043,6 +1782,8 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	}
 
 	public void showReportDepartmentYear() throws JRException, IOException {
+		String departmentName = "";
+		departmentName = getDepartmentName(departmentSelectedPersonalMonth);
 		String reportPath = FacesContext.getCurrentInstance().getExternalContext()
 				.getRealPath("/resources/thaireports/kpi/departmentYear.jasper");
 		List<DepartmentTotalMonth> dataReportDepartmentYear = createDataReportKPIDepartmentYear(yearSelectedDepartment);
@@ -1056,6 +1797,8 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 			importParam.put("logo", image);
 			importParam.put("year", yearSelectedDepartment);
 			importParam.put("listKPIDepartmentYear", beanDataSource);
+			importParam.put("location", nameLocation);
+			importParam.put("department", departmentName);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, importParam, beanDataSource);
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			OutputStream outputStream;
@@ -1515,88 +2258,108 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	// Entity bao cao phong nam
 	// *** lam sao lay duoc danh sach phong ban dang hoat dong tai ho chi minh
 	public List<DepartmentTotalMonth> createDataReportKPIDepartmentYear(int yearSelectedDepartment) {
-		Department departmentTemp = new Department();
-		// Danh sach diem phong thang
-		List<DepartmentTotalMonth> departmentTotalMonth = new ArrayList<>();
-		// for (Department d : allDepartment) {
-		for (String d : allCodeDepartment) {
-			// danh sach kpi phong nam -> 12 thang
-			List<KPIDepMonth> temp = KPI_DEPARTMENT_MONTH.find(d, yearSelectedDepartment);
-			// kpi phong nam -> 1 phong 1 row
-			List<KPIDep> listKPIYear = KPI_DEPARTMENT_SERVICE.findKPIDep(d, yearSelectedDepartment);
-			// Select department -> nameDepart
-			try {
-				departmentTemp = DEPARTMENT_SERVICE_PUBLIC.findByCode("code", d);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			DepartmentTotalMonth departmentTotalTemp = new DepartmentTotalMonth();
-			departmentTotalTemp.setNameDepart(departmentTemp.getName());
-			if (!listKPIYear.isEmpty()) {
-				departmentTotalTemp.setKpiYear(listKPIYear.get(0).getResult());
-			}
-			for (int i = 0; i < temp.size(); i++) {
-				int monthTemp = temp.get(i).getMonth();
-				switch (monthTemp) {
-				case 1:
-					departmentTotalTemp.setThang1(temp.get(i).getResult());
-					break;
-				case 2:
-					departmentTotalTemp.setThang2(temp.get(i).getResult());
-					break;
-				case 3:
-					departmentTotalTemp.setThang3(temp.get(i).getResult());
-					break;
-				case 4:
-					departmentTotalTemp.setThang4(temp.get(i).getResult());
-					break;
-				case 5:
-					departmentTotalTemp.setThang5(temp.get(i).getResult());
-					break;
-				case 6:
-					departmentTotalTemp.setThang6(temp.get(i).getResult());
-					break;
-				case 7:
-					departmentTotalTemp.setThang7(temp.get(i).getResult());
-					break;
-				case 8:
-					departmentTotalTemp.setThang8(temp.get(i).getResult());
-					break;
-				case 9:
-					departmentTotalTemp.setThang9(temp.get(i).getResult());
-					break;
-				case 10:
-					departmentTotalTemp.setThang10(temp.get(i).getResult());
-					break;
-				case 11:
-					departmentTotalTemp.setThang11(temp.get(i).getResult());
-					break;
-				case 12:
-					departmentTotalTemp.setThang12(temp.get(i).getResult());
-					break;
+		try {
 
-				default:
-					break;
+			Department departmentTemp = new Department();
+			// Danh sach diem phong thang
+			List<DepartmentTotalMonth> departmentTotalMonth = new ArrayList<>();
+			// kiem tra xem co phai admin hay khong
+			List<Department> departs = new ArrayList<>();
+			if (getAccount().isAdmin()) {
+				Department[] depsTemp = DEPARTMENT_SERVICE_PUBLIC.getAllDepartSubByParent(departLv1.getCode());
+				for (int i = 0; i < depsTemp.length; i++) {
+					if (depsTemp[i].getLevelDep().getLevel() <= 2 && !depsTemp[i].getCode().equals("30029")
+							&& !depsTemp[i].getCode().equals("30026") && !depsTemp[i].getCode().equals("30030")) {
+						departs.add(depsTemp[i]);
+					}
 				}
-
+			} else {
+				departs.addAll(departments);
 			}
-			double kpiAvgYear = Math
-					.round(((departmentTotalTemp.getThang1() + departmentTotalTemp.getThang2()
+			// for (Department d : allDepartment) {
+			for (Department d : departs) {
+				// danh sach kpi phong nam -> 12 thang
+				List<KPIDepMonth> temp = KPI_DEPARTMENT_MONTH.find(d.getCode(), yearSelectedDepartment);
+				// kpi phong nam -> 1 phong 1 row
+				List<KPIDep> listKPIYear = KPI_DEPARTMENT_SERVICE.findKPIDep(d.getCode(), yearSelectedDepartment);
+				// Select department -> nameDepart
+				try {
+					departmentTemp = DEPARTMENT_SERVICE_PUBLIC.findByCode("code", d.getCode());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (departmentTemp != null) {
+					DepartmentTotalMonth departmentTotalTemp = new DepartmentTotalMonth();
+					departmentTotalTemp.setNameDepart(departmentTemp.getName());
+					if (!listKPIYear.isEmpty()) {
+						departmentTotalTemp.setKpiYear(listKPIYear.get(0).getResult());
+					}
+					for (int i = 0; i < temp.size(); i++) {
+						int monthTemp = temp.get(i).getMonth();
+						switch (monthTemp) {
+						case 1:
+							departmentTotalTemp.setThang1(temp.get(i).getResult());
+							break;
+						case 2:
+							departmentTotalTemp.setThang2(temp.get(i).getResult());
+							break;
+						case 3:
+							departmentTotalTemp.setThang3(temp.get(i).getResult());
+							break;
+						case 4:
+							departmentTotalTemp.setThang4(temp.get(i).getResult());
+							break;
+						case 5:
+							departmentTotalTemp.setThang5(temp.get(i).getResult());
+							break;
+						case 6:
+							departmentTotalTemp.setThang6(temp.get(i).getResult());
+							break;
+						case 7:
+							departmentTotalTemp.setThang7(temp.get(i).getResult());
+							break;
+						case 8:
+							departmentTotalTemp.setThang8(temp.get(i).getResult());
+							break;
+						case 9:
+							departmentTotalTemp.setThang9(temp.get(i).getResult());
+							break;
+						case 10:
+							departmentTotalTemp.setThang10(temp.get(i).getResult());
+							break;
+						case 11:
+							departmentTotalTemp.setThang11(temp.get(i).getResult());
+							break;
+						case 12:
+							departmentTotalTemp.setThang12(temp.get(i).getResult());
+							break;
+
+						default:
+							break;
+						}
+
+					}
+					double kpiAvgYear = Math.round(((departmentTotalTemp.getThang1() + departmentTotalTemp.getThang2()
 							+ departmentTotalTemp.getThang3() + departmentTotalTemp.getThang4()
 							+ departmentTotalTemp.getThang5() + departmentTotalTemp.getThang6()
 							+ departmentTotalTemp.getThang7() + departmentTotalTemp.getThang8()
 							+ departmentTotalTemp.getThang9() + departmentTotalTemp.getThang10()
 							+ departmentTotalTemp.getThang11() + departmentTotalTemp.getThang12()) / 12) * 100.0)
-					/ 100.0;
-			departmentTotalTemp.setKpiAvgYear(kpiAvgYear);
-			departmentTotalMonth.add(departmentTotalTemp);
+							/ 100.0;
+					departmentTotalTemp.setKpiAvgYear(kpiAvgYear);
+					departmentTotalMonth.add(departmentTotalTemp);
+				}
+			}
+			return departmentTotalMonth;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
 		}
-		return departmentTotalMonth;
 	}
 
 	public String getDepartmentName(Department department) {
-		if (department != null) {
+		if (department != null && department.getCode() != null) {
 			return department.getName();
 		} else {
 			return "Tất cả";

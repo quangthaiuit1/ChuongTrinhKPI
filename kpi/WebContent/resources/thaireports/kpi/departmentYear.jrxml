@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="personalMonth" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bbf823c1-4c6c-47e8-8073-598fa034c7d7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -14,6 +14,8 @@
 	<parameter name="listKPIDepartMonthByYearDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="logo" class="java.lang.String"/>
 	<parameter name="year" class="java.lang.Integer"/>
+	<parameter name="department" class="java.lang.String"/>
+	<parameter name="location" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -74,6 +76,40 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="574" y="43" width="137" height="14" forecolor="#0E5EC7" uuid="55d94548-8008-4d75-bab2-d3034a0d6551"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{department}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="525" y="43" width="64" height="14" forecolor="#0E5EC7" uuid="0c647fa9-44eb-4fba-a2bd-930542a1d39c"/>
+				<box>
+					<pen lineColor="#0E5EC7"/>
+				</box>
+				<textElement>
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<text><![CDATA[Đơn vị:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="434" y="43" width="80" height="14" forecolor="#0E5EC7" uuid="8457af41-7e23-46a0-859a-5b49508f05d1"/>
+				<box>
+					<pen lineColor="#0E5EC7"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{location}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="376" y="43" width="96" height="14" forecolor="#0E5EC7" uuid="02324ed0-064c-42bf-8016-970f1e8d6cdb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="FontReport" size="12"/>
+				</textElement>
+				<text><![CDATA[Khu vực   :]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
@@ -427,6 +463,7 @@
 			</textField>
 			<textField>
 				<reportElement x="760" y="0" width="49" height="19" uuid="0d8efba8-74bc-4416-b006-4e7900b1308a"/>
+				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{kpiYear}]]></textFieldExpression>
 			</textField>
 		</band>
