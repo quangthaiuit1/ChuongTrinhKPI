@@ -103,6 +103,8 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 	private EmployeeDontKPIService EMPLOYEE_DONT_KPI_SERVICE;
 	@Inject
 	private EmployeeDontKPIEverService EMPLOYEE_DONT_KPI_EVER_SERVICE;
+	@Inject
+	private KPIDepService KPI_DEPART_SERVICE;
 
 	// nam KPI phong
 	private int yearSelectedDepartment;
@@ -2348,6 +2350,9 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 							+ departmentTotalTemp.getThang11() + departmentTotalTemp.getThang12()) / 12) * 100.0)
 							/ 100.0;
 					departmentTotalTemp.setKpiAvgYear(kpiAvgYear);
+					// tim kpi phong nam
+					KPIDep kYearTemp = KPI_DEPART_SERVICE.findKPIDep(yearSelectedDepartment, d.getCode());
+					departmentTotalTemp.setKpiYear(kYearTemp.getResult());
 					departmentTotalMonth.add(departmentTotalTemp);
 				}
 			}
