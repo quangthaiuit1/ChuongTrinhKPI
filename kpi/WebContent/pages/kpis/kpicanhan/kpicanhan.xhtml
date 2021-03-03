@@ -348,7 +348,7 @@
 											widgetVar="varTooltip" />
 									</p:column>
 									<p:column headerText="STT" visible="#{kPIPersonBean.list[1]}"
-										style="text-align:center" width="10">
+										style="text-align:center" width="16">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.no}" />
@@ -386,7 +386,7 @@
 												styleClass="ui-icon ui-icon-check" />
 										</center>
 									</p:column>
-									<p:column headerText="Trọng số(%)" width="20"
+									<p:column headerText="Trọng số(%)" width="30"
 										visible="#{kPIPersonBean.list[4]}">
 										<p:cellEditor>
 											<f:facet name="output">
@@ -462,7 +462,7 @@
 
 									</p:column>
 									<p:column headerText="Kế hoạch(KH)" style="text-align:center"
-										visible="#{kPIPersonBean.list[9]}" width="49">
+										visible="#{kPIPersonBean.list[9]}" width="65">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.planKPI}" title="ĐVT" />
@@ -477,7 +477,7 @@
 										</p:cellEditor>
 									</p:column>
 									<p:column headerText="Thực hiện(TH)" style="text-align:center"
-										visible="#{kPIPersonBean.list[10]}" width="49">
+										visible="#{kPIPersonBean.list[10]}" width="65">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{item.performKPI}" title="ĐVT" />
