@@ -58,6 +58,12 @@ function cancel() {
 						update="
 									:dialogKPIDepartmentYear,:messages"
 						process="@this" icon="fa fa-file-pdf-o" disabled="false" />
+					<p:commandButton type="submit"
+						value="BC DS cá nhân chưa đánh giá KQ KPI"
+						onclick="PF('wgvEmplMissResultKPI').show()"
+						update="
+									:dialogKPIPersonalYear,:messages"
+						process="@this" icon="fa fa-file-pdf-o" disabled="false" />
 					<p:commandButton type="submit" value="BC KPI cá nhân quý"
 						onclick="PF('widgetKPIPersonalQuy').show()"
 						update="
@@ -71,6 +77,49 @@ function cancel() {
 				</h:panelGrid>
 			</p:panel>
 		</h:form>
+		<!-- NV CHUA DANH GIA KET QUA -->
+		<p:dialog widgetVar="wgvEmplMissResultKPI" resizable="false"
+			width="700" height="100" closeOnEscape="true"
+			header="Báo cáo ds nhân viên chưa đánh giá kết quả KPI" modal="true">
+			<h:form id="formEmplMissResultKPI">
+				<center>
+					<h:panelGrid columns="7" style="width:100%" cellspacing="1">
+						<p:outputLabel value="Tháng: " />
+						<p:selectOneMenu id="month"
+							value="#{reportBean.monthSelectedPersonal}">
+							<p:ajax process="@this" />
+							<f:selectItems value="#{reportBean.months}" />
+						</p:selectOneMenu>
+						<p:selectOneMenu
+							value="#{reportBean.departmentSelectedPersonalMonth}"
+							converter="abstractConverter" effect="fade" var="t"
+							style="width:150px;" filter="true" filterMatchMode="custom"
+							filterFunction="customFilter">
+							<p:ajax process="@this" />
+							<f:selectItems value="#{reportBean.departments}" var="item"
+								itemLabel="#{item.name}" itemValue="#{item}" />
+							<p:column>
+								<h:outputText value="#{t.code}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{t.showAllNameDepart()}" escape="false" />
+							</p:column>
+						</p:selectOneMenu>
+						<p:outputLabel value="Năm" />
+						<p:spinner size="10" value="#{reportBean.yearSelectedPersonal1}"
+							min="2017" max="2050">
+							<p:ajax process="@this" />
+						</p:spinner>
+						<p:commandButton value="Xuất excel" immediate="true"
+							onclick="this.form.target='_blank'" style="float:right"
+							ajax="false" id="btnExcelMissResult"
+							actionListener="#{reportBean.excelEmployeeMissResultKPI()}" />
+					</h:panelGrid>
+				</center>
+				<p:separator />
+			</h:form>
+		</p:dialog>
+		<!--END NV CHUA DANH GIA KET QUA -->
 		<p:separator style="margin-top:80px" />
 		<h:form id="list1" style="margin-top:10px">
 			<p:panel

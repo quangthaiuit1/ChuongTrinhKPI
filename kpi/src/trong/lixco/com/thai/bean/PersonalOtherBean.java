@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -279,6 +280,9 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 	public void showBehaviour() {
 		behaviourOthers = BEHAVIOUR_PERSON_OTHER_SERVICE.findAll();
+		if (!behaviourOthers.isEmpty()) {
+			behaviourOthers.sort(Comparator.comparing(BehaviourPersonOther::getCode));
+		}
 	}
 
 	public void addBehaviourDetail() {
@@ -305,7 +309,7 @@ public class PersonalOtherBean extends AbstractBean<KPIPersonalOther> {
 
 	public void addViTriChucVu() {
 		// Them moi
-		List<KPIPersonalOtherDetail> listDetailAdd = new ArrayList<>();
+//		List<KPIPersonalOtherDetail> listDetailAdd = new ArrayList<>();
 		try {
 			for (int i = 0; i < listInfoPersonalPerformances.size(); i++) {
 				List<KPIPersonalPerformance> vitrichucvu = listInfoPersonalPerformances.get(i)

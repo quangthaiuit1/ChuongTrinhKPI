@@ -66,21 +66,21 @@
 			<staticText>
 				<reportElement x="337" y="30" width="96" height="14" forecolor="#0E5EC7" uuid="3a7e948f-c2c0-4baf-8305-262ef712055a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="FontReport" size="12"/>
+					<font fontName="FontReport" size="10"/>
 				</textElement>
 				<text><![CDATA[Khu vực   :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="337" y="44" width="95" height="20" forecolor="#0E5EC7" uuid="266efb98-4c18-4621-bbfb-a2962d1e1dcb"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="FontReport" size="12"/>
+					<font fontName="FontReport" size="10"/>
 				</textElement>
 				<text><![CDATA[Thời điểm: Tháng]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="428" y="44" width="52" height="20" forecolor="#0E5EC7" uuid="5eca0cbe-724e-4d76-8635-be03de5e5723"/>
+				<reportElement x="413" y="44" width="52" height="20" forecolor="#0E5EC7" uuid="5eca0cbe-724e-4d76-8635-be03de5e5723"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="FontReport" size="12" isBold="false"/>
+					<font fontName="FontReport" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{month}]]></textFieldExpression>
 			</textField>
@@ -90,24 +90,24 @@
 					<pen lineColor="#0E5EC7"/>
 				</box>
 				<textElement>
-					<font fontName="FontReport" size="12"/>
+					<font fontName="FontReport" size="10"/>
 				</textElement>
 				<text><![CDATA[Đơn vị:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="535" y="30" width="137" height="14" forecolor="#0E5EC7" uuid="bb713a29-795a-4aad-a09f-b032f3ece192"/>
+				<reportElement x="521" y="30" width="256" height="14" forecolor="#0E5EC7" uuid="bb713a29-795a-4aad-a09f-b032f3ece192"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="FontReport" size="10"/>
+					<font fontName="FontReport" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{department}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="395" y="30" width="80" height="14" forecolor="#0E5EC7" uuid="bc02b37d-4bfc-4724-9642-2bc30c62a459"/>
+				<reportElement x="384" y="30" width="80" height="14" forecolor="#0E5EC7" uuid="bc02b37d-4bfc-4724-9642-2bc30c62a459"/>
 				<box>
 					<pen lineColor="#0E5EC7"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="FontReport" size="12"/>
+					<font fontName="FontReport" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{location}]]></textFieldExpression>
 			</textField>
@@ -124,7 +124,7 @@
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="40" y="13" width="120" height="25" forecolor="#FFFFFF" backcolor="#487FD9" uuid="81930066-0532-4e79-a283-c3f0dad0c170">
+				<reportElement x="40" y="13" width="110" height="25" forecolor="#FFFFFF" backcolor="#487FD9" uuid="81930066-0532-4e79-a283-c3f0dad0c170">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -155,7 +155,7 @@
 				<text><![CDATA[Xếp loại]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="160" y="13" width="166" height="25" forecolor="#FFFFFF" backcolor="#487FD9" uuid="ae454905-d716-418b-9220-9d148cefd4cd">
+				<reportElement x="150" y="13" width="176" height="25" forecolor="#FFFFFF" backcolor="#487FD9" uuid="ae454905-d716-418b-9220-9d148cefd4cd">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -265,53 +265,53 @@
 				</graphicElement>
 			</rectangle>
 			<textField>
-				<reportElement x="160" y="0" width="166" height="19" forecolor="#2E2D2D" uuid="b32795f2-d4e8-4493-8681-a332394038d3">
+				<reportElement x="150" y="0" width="176" height="19" forecolor="#2E2D2D" uuid="b32795f2-d4e8-4493-8681-a332394038d3">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10"/>
+					<font fontName="FontReport" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{departmentName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="40" y="0" width="120" height="19" uuid="f5fb7ab6-9c84-4805-b6af-e3e8c03c794f"/>
+				<reportElement x="40" y="0" width="110" height="19" uuid="f5fb7ab6-9c84-4805-b6af-e3e8c03c794f"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10" isBold="false"/>
+					<font fontName="FontReport" size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{employeeName}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="504" y="0" width="75" height="19" uuid="ebd8cf69-da78-4609-aace-dcbf710c5ab4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10"/>
+					<font fontName="FontReport" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{kpiTo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="647" y="0" width="48" height="19" uuid="211278b4-615a-4f53-8a64-f27d4cbe74be"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10"/>
+					<font fontName="FontReport" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tongdiem}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="695" y="0" width="44" height="19" uuid="bc134092-eec5-49b1-b708-1e9021ced3c5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10"/>
+					<font fontName="FontReport" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{xeploai}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="579" y="0" width="68" height="19" uuid="30c6002d-2077-4b7b-820e-63d65a5d9228"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10"/>
+					<font fontName="FontReport" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{kpiCaNhan}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="739" y="0" width="63" height="19" uuid="c0a82623-baa6-4e8c-b45a-d2ad560b2b2f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10"/>
+					<font fontName="FontReport" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
 			</textField>
@@ -320,23 +320,23 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10"/>
+					<font fontName="FontReport" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{departmentLv3}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="-1" y="0" width="41" height="19" uuid="2f355a8f-d9de-4145-b12d-37336112354e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="FontReport" size="10" isBold="false"/>
+					<font fontName="FontReport" size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<summary>
-		<band height="120" splitType="Stretch">
+		<band height="154" splitType="Stretch">
 			<rectangle>
-				<reportElement x="-1" y="11" width="803" height="107" forecolor="#0E5EC7" uuid="64a36ae5-1e8f-412b-9f8f-ad10e76d178f">
+				<reportElement x="-1" y="11" width="803" height="143" forecolor="#0E5EC7" uuid="64a36ae5-1e8f-412b-9f8f-ad10e76d178f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<graphicElement>
@@ -354,14 +354,14 @@
 				<text><![CDATA[Phê duyệt]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="61" y="83" width="80" height="20" uuid="2e08f11d-880f-4afc-98b1-aaa669f284ad"/>
+				<reportElement x="61" y="121" width="80" height="20" uuid="2e08f11d-880f-4afc-98b1-aaa669f284ad"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="FontReport" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Date:....../....../...]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="352" y="30" width="100" height="76" uuid="b15e8fdc-bb29-4fd9-91a1-92375c1b9105"/>
+				<reportElement x="352" y="30" width="100" height="111" uuid="b15e8fdc-bb29-4fd9-91a1-92375c1b9105"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
@@ -374,14 +374,14 @@
 				<text><![CDATA[Phụ trách đơn vị]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="362" y="86" width="80" height="20" uuid="108335e8-dfc2-4f7e-9a0a-734e184116c0"/>
+				<reportElement x="362" y="121" width="80" height="20" uuid="108335e8-dfc2-4f7e-9a0a-734e184116c0"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="FontReport" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Date:....../....../...]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="630" y="30" width="100" height="80" isRemoveLineWhenBlank="true" uuid="20276fbb-d3da-4f28-82f4-9f37f1c5ba5f"/>
+				<reportElement x="630" y="30" width="100" height="111" isRemoveLineWhenBlank="true" uuid="20276fbb-d3da-4f28-82f4-9f37f1c5ba5f"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
@@ -394,7 +394,7 @@
 				<text><![CDATA[Phòng Nhân sự]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="640" y="90" width="80" height="20" uuid="c74d4cdd-402a-4e2d-8f96-eb8907aed0a6"/>
+				<reportElement x="640" y="121" width="80" height="20" uuid="c74d4cdd-402a-4e2d-8f96-eb8907aed0a6"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="FontReport" isBold="false"/>
 				</textElement>

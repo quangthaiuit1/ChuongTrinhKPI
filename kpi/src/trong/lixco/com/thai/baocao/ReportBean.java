@@ -265,6 +265,135 @@ public class ReportBean extends AbstractBean<KPIPerson> {
 		// end
 	}
 
+	// EXCEL NHAN VIEN CHUA DANH GIA KET QUA
+	// Handle: Lay toan bo danh sach tu bang kpi ca nhan -> loc nhung nguoi nao
+	// total <= 10
+	public void excelEmployeeMissResultKPI() throws IOException {
+		List<KPIPerson> dataReportPersonalMonth = createDataReportEmployeeMissResultKPI(this.monthSelectedPersonal,
+				this.yearSelectedPersonal1, departmentSelectedPersonalMonth);
+		List<EmployeeDTO> emplsNew = new ArrayList<>();
+		EMPLOYEE_SERVICE_PUBLIC = new EmployeeServicePublicProxy();
+		for (int i = 0; i < dataReportPersonalMonth.size(); i++) {
+			if (dataReportPersonalMonth.get(i).getCodeEmp() != null) {
+				EmployeeDTO e = EMPLOYEE_SERVICE_PUBLIC.findByCode(dataReportPersonalMonth.get(i).getCodeEmp());
+				emplsNew.add(e);
+			}
+		}
+		emplsNew.sort(Comparator.comparing(EmployeeDTO::getNameDepart));
+
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("DS-Chua-DG-KQ");
+
+		int rownum = 0;
+		Cell cell;
+		Row row;
+		XSSFCellStyle style = createStyleForTitle(workbook);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+
+		row = sheet.createRow(rownum);
+
+		// EmpNo
+		cell = row.createCell(0);
+		cell.setCellValue("Họ và tên");
+		cell.setCellStyle(style);
+		// EmpNo
+		cell = row.createCell(1);
+		cell.setCellValue("Mã nhân viên");
+		cell.setCellStyle(style);
+		// xep loai// EmpName
+		cell = row.createCell(2);
+		cell.setCellValue("Đơn vị");
+		cell.setCellStyle(style);
+
+		// cell = row.createCell(3);
+		// cell.setCellValue("Bộ phận");
+		// cell.setCellStyle(style);
+
+		cell = row.createCell(3);
+		cell.setCellValue("Tháng");
+		cell.setCellStyle(style);
+
+		cell = row.createCell(4);
+		cell.setCellValue("Năm");
+		cell.setCellStyle(style);
+
+		for (EmployeeDTO kq : emplsNew) {
+			rownum++;
+			row = sheet.createRow(rownum);
+			// ho ten
+			cell = row.createCell(0);
+			cell.setCellValue(kq.getName());
+			// ho ten
+			cell = row.createCell(1);
+			cell.setCellValue(kq.getCode());
+			// Don vi (B)
+			cell = row.createCell(2);
+			cell.setCellValue(kq.getNameDepart());
+
+			// cell = row.createCell(3);
+			// cell.setCellValue(kq.getDepartmentLv3());
+
+			cell = row.createCell(3);
+			cell.setCellValue(this.monthSelectedPersonal);
+
+			cell = row.createCell(4);
+			cell.setCellValue(this.yearSelectedPersonal1);
+		}
+		String filename = "dsnvchuadanhgiakpi.xlsx";
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		externalContext.setResponseContentType("application/vnd.ms-excel");
+		externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+		workbook.write(externalContext.getResponseOutputStream());
+		// cancel progress
+		facesContext.responseComplete();
+	}
+
+	// DATA
+	public List<KPIPerson> createDataReportEmployeeMissResultKPI(int month, int year, Department department) {
+		try {
+			List<KPIPerson> allKPIFilter = new ArrayList<>();
+			List<KPIPerson> allKPIEnd = new ArrayList<>();
+			List<KPIPerson> allKPI = KPI_PERSON_SERVICE.findRange(month, year);
+			EmployeeData[] emplsByDep = null;
+			if (department.getCode() != null) {
+				emplsByDep = EmployeeDataService.timtheophongban(department.getCode());
+				if (emplsByDep != null) {
+					for (int j = 0; j < emplsByDep.length; j++) {
+						for (int i = 0; i < allKPI.size(); i++) {
+							if (emplsByDep[j].getCode().equals(allKPI.get(i).getCodeEmp())) {
+								allKPIFilter.add(allKPI.get(i));
+								break;
+							}
+						}
+					}
+				}
+			}
+			// tat ca phong ban
+			if (emplsByDep == null) {
+				for (KPIPerson k : allKPI) {
+					// ket qua duoi 10 them vao
+					if (k.getTotal() <= 10) {
+						allKPIEnd.add(k);
+					}
+				}
+			} else {
+				for (KPIPerson k : allKPIFilter) {
+					// ket qua duoi 10 them vao
+					if (k.getTotal() <= 10) {
+						allKPIEnd.add(k);
+					}
+				}
+			}
+			return allKPIEnd;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	// END DATA
+	// END NHAN VIEN CHUA DANH GIA KET QUA
+
 	// bc tong hop ABC khoi truc tiep
 	public void showReportTongHopABCKhoiTrucTiep() throws JRException, IOException {
 		String departmentName = "";
